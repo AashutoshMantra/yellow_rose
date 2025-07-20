@@ -1,0 +1,162 @@
+enum PassengerTypeEnum {
+  ACC("ACCOMPANYING ADULT"),
+  ADT("ADULT"),
+  AGT("AGENT"),
+  ANN("COMPANION WITH AGE"),
+  ASB("ADULT STANDBY"),
+  ASF("AIR-SEA FARE"),
+  AST("AIRLINE STAFF STANDBY"),
+  BAG("EXCESS BAGGAGE"),
+  BLD("BLIND PASSENGER"),
+  BRV("BEREAVEMENT"),
+  BUD("AIRLINE BUDDY STANDBY FARE"),
+  CCM("CARD CARRYING MEMBER"),
+  CLG("CLERGY"),
+  CMA("PRIMARY COMPANION"),
+  CMM("COMMUTER"),
+  CMP("COMPANION"),
+  CH("CHILD"),
+  CHD("CHILD"),
+  CHLD("CHILD"),
+
+  CNV("CONVENTION"),
+  CPN("COUPON DISCOUNT PSGR"),
+  CSB("CHILD STANDBY"),
+  CTZ("CATEGORY Z PSGR"),
+  DNN("CNN EQUIVALENT"),
+  DOD("DEPARTMENT OF DEFENSE"),
+  EMI("EMIGRANT"),
+  ENN("GROUP INCLUSIVE TOUR CHILD"),
+  FAM("FAMILY MEMBER"),
+  FFY("FREQUENT FLYER"),
+  FFC("FAMILY PLAN CHILD"),
+  FFN("GOVERNMENT CONTRACT"),
+  GCF("CITY/COUNTY GOVERNMENT TRAVEL"),
+  GCT("GOVERNMENT EMPLOYEE DEPENDENT"),
+  GDP("GOVERNMENT EXCHANGE PSGR"),
+  GEX("GROUP INCLUSIVE TOUR"),
+  GIT("GOV / CT / MIL / CATZ"),
+  GMZ("GROUP CHILD"),
+  GNN("GROUP PSGR"),
+  GRP("GROUP STUDENT PARTY"),
+  GSP("STATE GOVERNMENT"),
+  GST("GOVERNMENT CHILD"),
+  GTC("GOVERNMENT TRAVEL"),
+  GTF("GOV / GOVCT / MIL"),
+  GVM("GOVERNMENT TRAVEL"),
+  GVZ("GOVERNMENT / GOVCT / CATZ"),
+  HNN("PRIVATE CHILD"),
+  HOF("HEAD OF FAMILY"),
+  ICP("INCENTIVE CERTIFICATES"),
+  INF("INFANT NOT OCCUPYING A SEAT"),
+  INFT("INFANT NOT OCCUPYING A SEAT"),
+
+  IN("INFANT NOT OCCUPYING A SEAT"),
+
+  INS("INFANT WITH A SEAT"),
+  IIT("INDIVIDUAL INCLUSIVE TOUR ADULT"),
+  INN("INDIVIDUAL INCLUSIVE TOUR CHILD"),
+  INR("INFANT NO SEAT RESIDENT"),
+  ITF("INDIVIDUAL INCLUSIVE TOUR INFANT"),
+  ITX("INDIVIDUAL INCLUSIVE TOUR PSGR"),
+  JOB("JOB CORPS"),
+  LBR("LABORER/WORKER"),
+  LIF("LABORER/WORKER INFANT"),
+  LNN("LABORER/WORKER CHILD"),
+  MBT("MILITARY-BASIC TRAINING GRADUATE"),
+  MCR("MILITARY CHARTER"),
+  MDP("MILITARY DEPENDENT"),
+  MED("PATIENTS TRAVEL. FOR MEDICAL TREATMT"),
+  MFM("MILITARY IMMEDIATE FAMILY"),
+  MIL("MILITARY CONFIRMED PSGR"),
+  MIR("MILITARY RESERVE ON ACTIVE DUTY"),
+  MIS("MISSIONARY"),
+  MLZ("MILITARY / CATZ"),
+  MNN("MILITARY CHILD"),
+  MPA("MILITARY PARENTS/PARENTS IN LAW"),
+  MRE("MILITARY RETIRED AND DEPENDENTS"),
+  MSB("MILITARY STANDBY"),
+  MSG("MULTI STATE GOVERNMENT"),
+  MUS("MILITARY/DOD AND DEPENDENTS IN USA"),
+  MXS("MILITARY/DOD, DEPNDTS NOT BASED IN US"),
+  NAT("NATO"),
+  NSB("NONREVENUE STANDBY"),
+  OTS("PSGRS OCCUPYING TWO SEATS"),
+  PCF("PRIVATE CHILD"),
+  PCR("ADULT CHARTER"),
+  PIL("PILGRIM"),
+  PMP("NEGOTIATED"),
+  PNN("CHILDREN CHARTER"),
+  PON("NEGOTIATED"),
+  REC("MILITARY RECRUIT"),
+  REF("REFUGEE"),
+  SDB("STUDENT STANDBY"),
+  SEA("SEAMAN"),
+  SPA("ACCOMPANIED SPOUSE"),
+  SPH("HEAD OF FAMILY SPOUSE"),
+  SPS("SPOUSE"),
+  SRC("SENIOR CITIZEN"),
+  STR("STATE RESIDENT"),
+  STU("STUDENT"),
+  TNN("FREQUENT FLYER CHILD"),
+  TUR("TOUR CONDUCTOR"),
+  UAM("UNACCOMPANIED MINOR"),
+  UNN("UNACCOMPANIED CHILD"),
+  VAC("VISIT ANOTHER COUNTRY ADULT"),
+  VAG("VISIT ANOTHER COUNTRY GROUP ADULT"),
+  VFR("VISIT FRIENDS/RELATIVES"),
+  VNN("VISIT ANOTHER COUNTRY CHILD"),
+  VUG("VISIT ANOTHER COUNTRY ADULT"),
+  VUS("VISIT ANOTHER COUNTRY ADULT"),
+  WEB("INTERNET FARE"),
+  YCB("SENIOR CITIZEN STANDBY"),
+  YCR("YOUTH CHARTER"),
+  YNN("GOVERNMENT TRAVEL CHILD"),
+  YSB("YOUTH STANDBY"),
+  CNN("CHILD"),
+  YTH("YOUTH CONFIRMED"),
+  ZNN("VISIT ANOTHER COUNTRY GROUP");
+
+  final String description;
+
+  const PassengerTypeEnum(this.description);
+
+  static PassengerTypeEnum getByName(String value) {
+    for (PassengerTypeEnum status in PassengerTypeEnum.values) {
+      if (status.name == value) return status;
+    }
+    throw ArgumentError("No PassengerTypeEnum found for value: $value");
+  }
+
+  bool isInfant() {
+    return this == PassengerTypeEnum.INF ||
+        this == PassengerTypeEnum.INFT ||
+        this == PassengerTypeEnum.IN ||
+        this == PassengerTypeEnum.INS ||
+        this == PassengerTypeEnum.INR;
+  }
+
+  bool isChild() {
+    return this == PassengerTypeEnum.CHD ||
+        this == PassengerTypeEnum.CNN ||
+        this == PassengerTypeEnum.CH ||
+        this == PassengerTypeEnum.CHLD;
+  }
+
+  bool isAdult() {
+    return this == PassengerTypeEnum.ADT;
+  }
+
+  static PassengerTypeEnum fromString(String value) {
+    switch (value.toUpperCase()) {
+      case "ADULT":
+        return PassengerTypeEnum.ADT;
+      case "INFANT":
+        return PassengerTypeEnum.INF;
+      case "CHILD":
+        return PassengerTypeEnum.CHD;
+      default:
+        return getByName(value.toUpperCase());
+    }
+  }
+}

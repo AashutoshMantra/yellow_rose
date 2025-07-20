@@ -1,0 +1,66 @@
+{
+    
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "yellow_rose",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--flavor",
+                "dev",
+                "--target",
+                "lib/main.dart",
+                // "--dart-define-from-file=config_dev.json",
+            ]
+        },
+        {
+            "name": "yellow_rose_relase_debug",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--flavor",
+                "prod",
+                "--target",
+                "lib/main.dart",
+                // "--dart-define-from-file=config_prod.json",
+            ]
+        },
+        {
+            "name": "yellow_rose (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "args": [
+                "--flavor",
+                "dev",
+                // "--dart-define-from-file=config_dev.json",
+            ]
+        },
+        {
+            "name": "yellow_rose (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "prod",
+                // "--dart-define-from-file=config_prod.json",
+            ]
+        },
+        {
+            "name": "yellow_rose (profile mode) geneate sksl",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "args": [
+                "--flavor",
+                "dev",
+                // "--dart-define-from-file=config_dev.json",
+                "--cache-sksl"
+            ]
+        },
+    ]
+}

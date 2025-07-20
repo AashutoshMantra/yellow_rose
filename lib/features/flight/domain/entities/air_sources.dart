@@ -1,0 +1,10 @@
+enum AirSource {
+  AMADEUS,
+  GALELIO,
+  AKASA,
+  AIRASIA,
+  INDIGO,
+  SPICEJET,
+  RIYATRAVEL,
+  AIRIQ;
+}

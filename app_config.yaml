@@ -1,0 +1,6 @@
+dev:
+  apiBaseUrl: "https://vaptapi.gilpinonline.com/api"
+
+prod:
+  apiBaseUrl: "https://iun8m5lmd3.execute-api.ap-south-1.amazonaws.com/prod"
+

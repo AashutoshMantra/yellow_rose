@@ -1,0 +1,6 @@
+enum ErrorSourceEnum {
+  APPLICATION,
+  LOCAL,
+  CONTENT_SOURCE,
+  SUPPLIER;
+}
