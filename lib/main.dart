@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           SizeConfig().init(constratints, orientation);
 
           return MaterialApp(
-            title: 'Yellow Rose',
+            title: 'Gilpin Travels',
             theme: AppTheme.lightThemeData(context),
             home: BlocBuilder<AuthCubit, AuthState>(
               builder: (context, state) {

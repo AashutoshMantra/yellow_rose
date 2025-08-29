@@ -2,7 +2,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
+import 'package:yellow_rose/core/common_widgets/custom_list_tile.dart';
 import 'package:yellow_rose/core/common_widgets/increment_box.dart';
+import 'package:yellow_rose/core/common_widgets/increment_box_pax_widget.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
@@ -92,21 +94,36 @@ class _TravelerClassSelectionScreenState
             SizedBox(
               height: 19.h,
             ),
-            getPaxWidget("Adults", "12 yrs & above", (value) {
-              setState(() {
-                _adultCount = value;
-              });
-            }, initialValue: widget.adultCount),
-            getPaxWidget("Children", "2 - 12 yrs", (value) {
-              setState(() {
-                _childCount = value;
-              });
-            }, initialValue: widget.childCount),
-            getPaxWidget("Infants", "Under 2 yrs", (value) {
-              setState(() {
-                _infantCount = value;
-              });
-            }, initialValue: widget.infantCount, maxValue: _adultCount),
+            IncrementBoxPaxWidget(
+              title: "Adults",
+              subtitle: "12 yrs & above",
+              onChange: (value) {
+                setState(() {
+                  _adultCount = value;
+                });
+              },
+              initialValue: widget.adultCount,
+              minValue: 1,
+            ),
+            IncrementBoxPaxWidget(
+                title: "Children",
+                subtitle: "2 - 12 yrs",
+                onChange: (value) {
+                  setState(() {
+                    _childCount = value;
+                  });
+                },
+                initialValue: widget.childCount),
+            IncrementBoxPaxWidget(
+                title: "Infants",
+                subtitle: "Under 2 yrs",
+                onChange: (value) {
+                  setState(() {
+                    _infantCount = value;
+                  });
+                },
+                initialValue: widget.infantCount,
+                maxValue: _adultCount),
             SizedBox(
               height: 20.h,
             ),
@@ -182,58 +199,6 @@ class _TravelerClassSelectionScreenState
           ],
         ),
       ),
-    );
-  }
-
-  CustomListTile getPaxWidget(
-      String title, String subtitle, Function(int) onChange,
-      {int initialValue = 0, int? maxValue}) {
-    return CustomListTile(
-      title: Text(
-        title,
-        style: TextStyles.bodyLargeSemiBoldStyle(),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyles.bodySmallStyle()
-            .copyWith(color: AppColors.primaryTextSwatch[500]),
-      ),
-      trailing: IncrementBoxWidget(
-          onValueChange: onChange,
-          initialValue: initialValue,
-          maxValue: maxValue),
-    );
-  }
-}
-
-class CustomListTile extends StatelessWidget {
-  final Widget title;
-  final Widget? subtitle;
-  final Widget? trailing;
-  const CustomListTile({
-    super.key,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Flexible(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [title, if (subtitle != null) subtitle!],
-          ),
-        ),
-        const Spacer(),
-        SizedBox(
-          width: 40.h,
-        ),
-        if (trailing != null) Flexible(child: trailing!)
-      ],
     );
   }
 }

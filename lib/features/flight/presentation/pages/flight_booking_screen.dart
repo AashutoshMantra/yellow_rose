@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/base_appbar.dart';
 import 'package:yellow_rose/core/common_widgets/cutom_dropdown_field.dart';
+import 'package:yellow_rose/core/common_widgets/labelled_drop_dowdn.dart';
 import 'package:yellow_rose/core/common_widgets/loader.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
@@ -20,7 +21,7 @@ import 'package:yellow_rose/features/flight/presentation/pages/flight_search_lis
 import 'package:yellow_rose/features/flight/presentation/widgets/bottom_button.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/dasshed_arrow_line.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/itineray_detail_card.dart';
-import 'package:yellow_rose/features/flight/presentation/widgets/traveller_details_widget.dart';
+import 'package:yellow_rose/core/common_widgets/passenger_detail/traveller_details_widget.dart';
 
 class FlightBookingScreen extends StatelessWidget {
   final AirSearch airSearch;
@@ -159,44 +160,31 @@ class FlightBookingScreen extends StatelessWidget {
                             height: 16.h,
                           ),
                           Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: AppColors.primarySwatch[200]!,
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: AppColors.primaryTextSwatch[50]),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Billing Entity",
-                                      style: TextStyles.h6Style()
-                                          .copyWith(color: AppColors.primary),
-                                    ),
-                                    SizedBox(
-                                      height: 16.h,
-                                    ),
-                                    CustomDropDownField(
-                                      data: billingEntities
-                                          .map((e) => e.entityName ?? "")
-                                          .toList(),
-                                      onchange: (value) {
-                                        var found = billingEntities
-                                            .firstWhereOrNull((e) =>
-                                                e.entityName?.equalsIgnoreCase(
-                                                    value ?? '') ==
-                                                true);
-                                        context
-                                            .read<FlightBookingCubit>()
-                                            .onBillingEntityChange(found);
-                                      },
-                                      val: state.billingEntity?.entityName,
-                                    ),
-                                  ],
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.primarySwatch[200]!,
                                 ),
-                              )),
+                                borderRadius: BorderRadius.circular(10),
+                                color: AppColors.primaryTextSwatch[50]),
+                            child: LabeledDropDownField(
+                              label: "Billing Entity",
+                              items: billingEntities
+                                  .map((e) => e.entityName ?? "")
+                                  .toList(),
+                              selectedValue: state.billingEntity?.entityName,
+                              onChanged: (value) {
+                                var found = billingEntities.firstWhereOrNull(
+                                  (e) =>
+                                      e.entityName
+                                          ?.equalsIgnoreCase(value ?? '') ==
+                                      true,
+                                );
+                                context
+                                    .read<FlightBookingCubit>()
+                                    .onBillingEntityChange(found);
+                              },
+                            ),
+                          ),
                           SizedBox(
                             height: 150.h,
                           ),

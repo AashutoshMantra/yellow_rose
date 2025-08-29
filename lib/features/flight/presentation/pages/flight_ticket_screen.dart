@@ -15,7 +15,7 @@ import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/order_status.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/order/ticket_details/air_ticekt_widget.dart';
-import 'package:yellow_rose/features/home_screen/presentation/widgets/air/order_detail_card.dart';
+import 'package:yellow_rose/features/home_screen/presentation/widgets/air/air_order_detail_card.dart';
 
 class FlightTicketScreen extends StatefulWidget {
   static const String routeName = "/eTicektScreen";

@@ -16,7 +16,6 @@ class AppConfig {
 
   late AppStage _currentStage;
 
-
   late Map<String, String> _urls;
 
   AppConfig._init();
@@ -34,7 +33,6 @@ class AppConfig {
       final Map<String, dynamic> appConfigData =
           Map<String, dynamic>.from(appConfigYaml[appFlavor]);
       _urls = Map<String, String>.from(appConfigData);
-     
     } else {
       throw Exception('Unknown app flavor: $appFlavor');
     }
@@ -42,5 +40,5 @@ class AppConfig {
 
   AppStage get currentStage => _currentStage;
   String get apiBaseUrl => _urls['apiBaseUrl']!;
-  
+  String get googleApiKey => const String.fromEnvironment('GOOGLE_API_KEY');
 }

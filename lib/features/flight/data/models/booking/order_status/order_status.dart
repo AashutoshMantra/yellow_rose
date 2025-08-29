@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:yellow_rose/core/utils/extensions.dart';
 
+import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_request.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/booking_channel_enum.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/air_booking_status.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/air_order_iitinerary.dart';
+import 'package:yellow_rose/features/hotel/data/models/order/hotel_order_request.dart';
 
 class OrderStatus {
   final int? id;
@@ -17,7 +18,7 @@ class OrderStatus {
 
   // final Object flightBooking;
 
-  // final Object hotelBooking;
+  final HotelOrderRequest? hotelBooking;
 
   final String? email;
 
@@ -137,6 +138,7 @@ class OrderStatus {
     this.id,
     this.uuid,
     this.requestUuid,
+    this.hotelBooking,
     this.email,
     this.hotelSource,
     this.bookingPaymentType,
@@ -193,6 +195,7 @@ class OrderStatus {
     int? id,
     String? uuid,
     String? requestUuid,
+    HotelOrderRequest? hotelBooking,
     String? email,
     String? hotelSource,
     String? bookingPaymentType,
@@ -248,6 +251,7 @@ class OrderStatus {
       id: id ?? this.id,
       uuid: uuid ?? this.uuid,
       requestUuid: requestUuid ?? this.requestUuid,
+      hotelBooking: hotelBooking ?? this.hotelBooking,
       email: email ?? this.email,
       hotelSource: hotelSource ?? this.hotelSource,
       bookingPaymentType: bookingPaymentType ?? this.bookingPaymentType,
@@ -313,6 +317,9 @@ class OrderStatus {
     if (requestUuid != null) {
       result.addAll({'requestUuid': requestUuid});
     }
+    if (hotelBooking != null) {
+      result.addAll({'hotelBooking': hotelBooking!.toMap()});
+    }
     if (email != null) {
       result.addAll({'email': email});
     }
@@ -364,7 +371,7 @@ class OrderStatus {
       result.addAll({'billingEntity': billingEntity});
     }
     if (status != null) {
-      result.addAll({'status': status});
+      result.addAll({'status': status!.name});
     }
     if (ipAddress != null) {
       result.addAll({'ipAddress': ipAddress});
@@ -404,7 +411,7 @@ class OrderStatus {
       result.addAll({'approvalStatus': approvalStatus});
     }
     if (bookingStatus != null) {
-      result.addAll({'bookingStatus': bookingStatus});
+      result.addAll({'bookingStatus': bookingStatus!.name});
     }
     if (paymentStatus != null) {
       result.addAll({'paymentStatus': paymentStatus});
@@ -470,6 +477,9 @@ class OrderStatus {
       id: map['id']?.toInt(),
       uuid: map['uuid'],
       requestUuid: map['requestUuid'],
+      hotelBooking: map['hotelBooking'] != null
+          ? HotelOrderRequest.fromMap(map['hotelBooking'])
+          : null,
       email: map['email'],
       hotelSource: map['hotelSource'],
       bookingPaymentType: map['bookingPaymentType'],
@@ -547,7 +557,7 @@ class OrderStatus {
 
   @override
   String toString() {
-    return 'OrderStatus(id: $id, uuid: $uuid, requestUuid: $requestUuid, email: $email, hotelSource: $hotelSource, bookingPaymentType: $bookingPaymentType, hotelSupplier: $hotelSupplier, hotelContactNumber: $hotelContactNumber, hotelContactEmail: $hotelContactEmail, segmentType: $segmentType, specialRequest: $specialRequest, tripId: $tripId, branch: $branch, whiteLabelId: $whiteLabelId, cartType: $cartType, channel: $channel, riskScore: $riskScore, contactNumber: $contactNumber, gstNumber: $gstNumber, gstEmail: $gstEmail, billingEntity: $billingEntity, status: $status, ipAddress: $ipAddress, Latitude: $Latitude, Longitude: $Longitude, pnr: $pnr, bookingId: $bookingId, cabinClass: $cabinClass, orderError: $orderError, paymentMedium: $paymentMedium, isAirGrouped: $isAirGrouped, airItineraries: $airItineraries, invoiceStatus: $invoiceStatus, approvalStatus: $approvalStatus, bookingStatus: $bookingStatus, paymentStatus: $paymentStatus, paymentTryCount: $paymentTryCount, bookingUser: $bookingUser, corporate: $corporate, createdBy: $createdBy, DocNo: $DocNo, CreditDocNo: $CreditDocNo, bookedFor: $bookedFor, searchRequest: $searchRequest, creationTs: $creationTs, modTs: $modTs, bookingTs: $bookingTs, bookingRequestTs: $bookingRequestTs, invoicingTs: $invoicingTs, tripApprovalStatus: $tripApprovalStatus, emailAllowed: $emailAllowed, showTicketPricing: $showTicketPricing, userBookingContext: $userBookingContext)';
+    return 'OrderStatus(id: $id, uuid: $uuid, requestUuid: $requestUuid, hotelBooking: $hotelBooking, email: $email, hotelSource: $hotelSource, bookingPaymentType: $bookingPaymentType, hotelSupplier: $hotelSupplier, hotelContactNumber: $hotelContactNumber, hotelContactEmail: $hotelContactEmail, segmentType: $segmentType, specialRequest: $specialRequest, tripId: $tripId, branch: $branch, whiteLabelId: $whiteLabelId, cartType: $cartType, channel: $channel, riskScore: $riskScore, contactNumber: $contactNumber, gstNumber: $gstNumber, gstEmail: $gstEmail, billingEntity: $billingEntity, status: $status, ipAddress: $ipAddress, Latitude: $Latitude, Longitude: $Longitude, pnr: $pnr, bookingId: $bookingId, cabinClass: $cabinClass, orderError: $orderError, paymentMedium: $paymentMedium, isAirGrouped: $isAirGrouped, airItineraries: $airItineraries, invoiceStatus: $invoiceStatus, approvalStatus: $approvalStatus, bookingStatus: $bookingStatus, paymentStatus: $paymentStatus, paymentTryCount: $paymentTryCount, bookingUser: $bookingUser, corporate: $corporate, createdBy: $createdBy, DocNo: $DocNo, CreditDocNo: $CreditDocNo, bookedFor: $bookedFor, searchRequest: $searchRequest, creationTs: $creationTs, modTs: $modTs, bookingTs: $bookingTs, bookingRequestTs: $bookingRequestTs, invoicingTs: $invoicingTs, tripApprovalStatus: $tripApprovalStatus, emailAllowed: $emailAllowed, showTicketPricing: $showTicketPricing, userBookingContext: $userBookingContext)';
   }
 
   @override
@@ -558,6 +568,7 @@ class OrderStatus {
         other.id == id &&
         other.uuid == uuid &&
         other.requestUuid == requestUuid &&
+        other.hotelBooking == hotelBooking &&
         other.email == email &&
         other.hotelSource == hotelSource &&
         other.bookingPaymentType == bookingPaymentType &&
@@ -615,6 +626,7 @@ class OrderStatus {
     return id.hashCode ^
         uuid.hashCode ^
         requestUuid.hashCode ^
+        hotelBooking.hashCode ^
         email.hashCode ^
         hotelSource.hashCode ^
         bookingPaymentType.hashCode ^

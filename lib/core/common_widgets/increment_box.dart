@@ -6,8 +6,13 @@ class IncrementBoxWidget extends StatefulWidget {
   final int initialValue;
   final Function(int)? onValueChange;
   final int? maxValue;
+  final int minValue;
   const IncrementBoxWidget(
-      {super.key, this.initialValue = 0, this.onValueChange, this.maxValue});
+      {super.key,
+      this.initialValue = 0,
+      this.onValueChange,
+      this.maxValue,
+      this.minValue = 0});
 
   @override
   State<IncrementBoxWidget> createState() => _IncrementBoxWidgetState();
@@ -32,9 +37,9 @@ class _IncrementBoxWidgetState extends State<IncrementBoxWidget> {
               icon: const Icon(
                 Icons.remove_circle_outline,
               ),
-              onPressed: _value > 0
+              onPressed: _value > widget.minValue
                   ? () {
-                      if (_value > 0) {
+                      if (_value > widget.minValue) {
                         setState(() {
                           _value--;
                         });

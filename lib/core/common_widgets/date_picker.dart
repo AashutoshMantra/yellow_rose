@@ -12,13 +12,16 @@ class DatePicker extends StatefulWidget {
   final DateTime? startDate;
   final DateTime? endDate;
   final DateTime? minDate;
+  final bool requireBothStartAndEndDates; // ✅ New prop
 
-  const DatePicker(
-      {super.key,
-      this.isRangePicker = false,
-      this.startDate,
-      this.endDate,
-      this.minDate});
+  const DatePicker({
+    super.key,
+    this.isRangePicker = false,
+    this.startDate,
+    this.endDate,
+    this.minDate,
+    this.requireBothStartAndEndDates = false, // ✅ Default false
+  });
 
   @override
   State<DatePicker> createState() => _DatePickerState();
@@ -28,6 +31,7 @@ class _DatePickerState extends State<DatePicker> {
   DateTime? _startDate;
   DateTime? _endDate;
   late List<DateTime> _initialSelectedDates;
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +47,13 @@ class _DatePickerState extends State<DatePicker> {
   }
 
   void saveAndReturn() {
+    // ✅ Block save if both dates are required but one is missing
+    if (widget.requireBothStartAndEndDates &&
+        widget.isRangePicker &&
+        (_startDate == null || _endDate == null)) {
+      return;
+    }
+
     List<DateTime> selectedDates = [];
     if (_startDate != null) {
       selectedDates.add(_startDate!);
@@ -96,6 +107,7 @@ class _DatePickerState extends State<DatePicker> {
                 _endDate = args.value.endDate;
               } else if (args.value is DateTime) {
                 _startDate = args.value;
+                _endDate = null;
               }
               setState(() {});
             },
@@ -104,7 +116,8 @@ class _DatePickerState extends State<DatePicker> {
                 ? DateRangePickerSelectionMode.range
                 : DateRangePickerSelectionMode.single,
           ),
-         
+
+          // Show from-to info if range picker is enabled
           if (widget.isRangePicker)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,9 +130,7 @@ class _DatePickerState extends State<DatePicker> {
                         : "N/A",
                   ),
                 ),
-                SizedBox(
-                  width: 12.w,
-                ),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: LabeledInfoWidget(
                     title: "To",
@@ -127,15 +138,20 @@ class _DatePickerState extends State<DatePicker> {
                         ? CustomDateUtils.dayMonthYearFormat(_endDate!)
                         : "N/A",
                   ),
-                )
+                ),
               ],
             ),
-             SizedBox(
-            height: 24.h,
-          ),
+
+          SizedBox(height: 24.h),
+
+          // ✅ Disable Save if both dates required but not selected
           CustomButton(
             text: "Save",
-            onPressed: saveAndReturn,
+            onPressed: (widget.requireBothStartAndEndDates &&
+                    widget.isRangePicker &&
+                    (_startDate == null || _endDate == null))
+                ? null
+                : saveAndReturn,
           ),
         ],
       ),

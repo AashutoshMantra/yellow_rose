@@ -12,7 +12,7 @@
                 "dev",
                 "--target",
                 "lib/main.dart",
-                // "--dart-define-from-file=config_dev.json",
+                "--dart-define-from-file=config_secret.json",
             ]
         },
         {
@@ -25,7 +25,7 @@
                 "prod",
                 "--target",
                 "lib/main.dart",
-                // "--dart-define-from-file=config_prod.json",
+                "--dart-define-from-file=config_secret.json",
             ]
         },
         {
@@ -36,7 +36,7 @@
             "args": [
                 "--flavor",
                 "dev",
-                // "--dart-define-from-file=config_dev.json",
+                "--dart-define-from-file=config_secret.json",
             ]
         },
         {
@@ -47,7 +47,7 @@
             "args": [
                 "--flavor",
                 "prod",
-                // "--dart-define-from-file=config_prod.json",
+                "--dart-define-from-file=config_secret.json",
             ]
         },
         {
@@ -58,7 +58,7 @@
             "args": [
                 "--flavor",
                 "dev",
-                // "--dart-define-from-file=config_dev.json",
+                "--dart-define-from-file=config_secret.json",
                 "--cache-sksl"
             ]
         },

@@ -12,6 +12,7 @@ import 'package:yellow_rose/features/flight/data/models/booking/order/segment.da
 import 'package:yellow_rose/features/flight/data/models/booking/order/user_booking_request.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/ssor_options.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
+import 'package:yellow_rose/features/flight/domain/entities/passenger_details_entity.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_booking/flight_booking_cubit.dart';
 
 class AirMapperUtility {
@@ -189,6 +190,8 @@ class AirMapperUtility {
       bookingRequest: bookingRequest,
     );
   }
+
+
 
   static (String, String, String, String) getFlightDetailFromSelectedSsrKeys(
       String key) {

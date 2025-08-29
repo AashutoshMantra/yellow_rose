@@ -47,7 +47,9 @@ class WidgetUtil {
   }
 
   static Future showBottomSheet(BuildContext context, Widget body,
-      {bool isDismissible = true, double radius = 24}) async {
+      {bool isDismissible = true,
+      double radius = 24,
+      double? maxHeight}) async {
     return await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -63,10 +65,55 @@ class WidgetUtil {
         return Padding(
           padding:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Wrap(
-            children: [
-              body,
-            ],
+          child: Container(
+            constraints:
+                maxHeight != null ? BoxConstraints(maxHeight: maxHeight) : null,
+            child: Wrap(
+              children: [
+                body,
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+  static Future<T?> showWrapContentBottomSheet<T>({
+    required BuildContext context,
+    required Widget child,
+    double maxHeightFraction = 0.8,
+    bool isDismissible = true,
+    double borderRadius = 24,
+    Color backgroundColor = Colors.white,
+  }) {
+    final maxHeight = MediaQuery.of(context).size.height * maxHeightFraction;
+
+    return showModalBottomSheet<T>(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: isDismissible,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: maxHeight),
+                child: ClipRRect(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(borderRadius)),
+                  child: Material(
+                    color: backgroundColor,
+                    child: SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      child: child,
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         );
       },

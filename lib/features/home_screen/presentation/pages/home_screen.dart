@@ -5,6 +5,7 @@ import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_search_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/show_recent_searches_widget.dart';
+import 'package:yellow_rose/features/hotel/presentation/pages/hotel_search_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -25,6 +26,9 @@ class HomeScreen extends StatelessWidget {
                     if (supportedService == SupportedService.Flights) {
                       Navigator.of(context)
                           .pushNamed(FlightSearchScreen.routeName);
+                    } else if (supportedService == SupportedService.Hotels) {
+                      Navigator.of(context)
+                          .pushNamed(HotelSearchScreen.routeName);
                     }
                   },
                   image: AssetImage(

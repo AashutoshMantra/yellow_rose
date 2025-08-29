@@ -12,7 +12,7 @@ import 'package:yellow_rose/features/flight/domain/entities/name_code.dart';
 import 'package:yellow_rose/features/flight/domain/entities/source_date_pair.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_search_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/cubit/home_screen_cubit.dart';
-import 'package:yellow_rose/features/home_screen/presentation/pages/flight_order_list_screen.dart';
+import 'package:yellow_rose/features/home_screen/presentation/pages/order_list_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/pages/home_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/bottom_navigation_bar.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/flight_recent_search.dart';

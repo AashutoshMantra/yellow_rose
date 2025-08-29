@@ -16,6 +16,19 @@ import 'package:yellow_rose/features/flight/presentation/pages/flight_search_lis
 import 'package:yellow_rose/features/flight/presentation/pages/flight_search_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_ticket_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/pages/dashboard.dart';
+import 'package:yellow_rose/features/hotel/data/models/details/hotel_detail_resonse.dart';
+import 'package:yellow_rose/features/hotel/data/models/search/hotel_search_response.dart';
+import 'package:yellow_rose/features/hotel/domain/entities/hotel_search.dart';
+import 'package:yellow_rose/features/hotel/domain/entities/rooms/hotel_room.dart';
+import 'package:yellow_rose/features/hotel/presentation/cubit/hotel_book_cubit/hotel_book_cubit.dart';
+import 'package:yellow_rose/features/hotel/presentation/cubit/hotel_detail_cubit/hotel_detail_cubit_cubit.dart';
+import 'package:yellow_rose/features/hotel/presentation/cubit/hotel_search_listing_cubit/hotel_search_listing_cubit.dart';
+import 'package:yellow_rose/features/hotel/presentation/pages/hotel_book_form_screen.dart';
+import 'package:yellow_rose/features/hotel/presentation/pages/hotel_detail_screen.dart';
+import 'package:yellow_rose/features/hotel/presentation/pages/hotel_payment_screen.dart';
+import 'package:yellow_rose/features/hotel/presentation/pages/hotel_search_list_scree.dart';
+import 'package:yellow_rose/features/hotel/presentation/pages/hotel_search_screen.dart';
+import 'package:yellow_rose/features/hotel/presentation/pages/hotel_booking_review_screen.dart';
 
 String formatScreenName(String input) {
   return input.replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
@@ -130,6 +143,103 @@ class AppRouter {
             builder: (_) => FlightTicketScreen(orderStatus: orderStatus),
           );
         }
+      // Hotels
+
+      case HotelSearchScreen.routeName:
+        var args = settings.arguments as Map?;
+        HotelSearch? hotelSearch;
+        if (args?['hotelSearch'] != null) {
+          hotelSearch = args!["hotelSearch"] as HotelSearch;
+        }
+        return MaterialPageRoute(
+          settings: RouteSettings(
+              name: formatScreenName((FlightSearchScreen).toString())),
+          builder: (_) => HotelSearchScreen(
+            hotelSeatch: hotelSearch,
+          ),
+        );
+      case HotelSearchListScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['hotelSearch'] != null) {
+          var airSearch = args!["hotelSearch"] as HotelSearch;
+
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((HotelSearchListScreen).toString())),
+            builder: (_) => BlocProvider(
+              create: (context) =>
+                  HotelSearchListingCubit(airSearch)..searchHotels(airSearch),
+              child: const HotelSearchListScreen(),
+            ),
+          );
+        }
+      case HotelDetailScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['hotelSearch'] != null) {
+          var hotelSearch = args!["hotelSearch"] as HotelSearch;
+          var hotelSearchResponse =
+              args["hotelSearchResponse"] as HotelSearchResponse;
+
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((HotelSearchListScreen).toString())),
+            builder: (_) => BlocProvider(
+              create: (context) => HotelDetailCubitCubit()
+                ..loadInitial(hotelSearch, hotelSearchResponse),
+              child: HotelDetailScreen(
+                hotelSearch: hotelSearch,
+                hotelSearchResponse: hotelSearchResponse,
+              ),
+            ),
+          );
+        }
+      case HotelBookFormScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['hotelSearch'] != null && args?['hotelDetail'] != null) {
+          var hotelSearch = args!["hotelSearch"] as HotelSearch;
+          var hotelDetailResponse = args["hotelDetail"] as HotelDetailResponse;
+          var selectedRoom = args["selectedRoom"] as HotelRoom;
+
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((HotelBookFormScreen).toString())),
+            builder: (_) => BlocProvider(
+              create: (context) => HotelBookCubit()
+                ..createOrderAndUpdate(
+                    hotelDetailResponse, selectedRoom, hotelSearch),
+              child: HotelBookFormScreen(
+                hotelSearch: hotelSearch,
+                hotelDetailResponse: hotelDetailResponse,
+              ),
+            ),
+          );
+        }
+      case HotelBookingReviewScreen.routeName:
+        // Review screen expects HotelBookCubit to already be available in the widget tree.
+        var args = settings.arguments as Map?;
+        if (args?["cubit"] == null) break;
+        return MaterialPageRoute(
+          settings: RouteSettings(
+              name: formatScreenName((HotelBookingReviewScreen).toString())),
+          builder: (_) => BlocProvider.value(
+            value: (args!["cubit"] as HotelBookCubit),
+            child: const HotelBookingReviewScreen(),
+          ),
+        );
+      case HotelPaymentScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?["cubit"] == null) break;
+        return MaterialPageRoute(
+          settings: RouteSettings(
+              name: formatScreenName((HotelPaymentScreen).toString())),
+          builder: (context) => BlocProvider.value(
+            value: (args!["cubit"] as HotelBookCubit),
+            child: HotelPaymentScreen(
+                orderUpdateResponse:
+                    ((args["cubit"] as HotelBookCubit).state as HotelBookLoaded)
+                        .updateOrderDetailResponse!),
+          ),
+        );
 
       default:
     }

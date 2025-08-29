@@ -14,23 +14,29 @@ class HomeScreenInitial extends HomeScreenState {
 
 class HomeScreenLoaded extends HomeScreenState {
   final List<AirSearch> recentAirSearch;
+  final List<HotelSearch> recentHotelSearch;
+
   HomeScreenLoaded(
     super.selectedPage, {
     List<AirSearch>? recentAirSearch,
-  }) : recentAirSearch = recentAirSearch ?? List.empty();
+    List<HotelSearch>? recentHotelSearch,
+  })  : recentAirSearch = recentAirSearch ?? List.empty(),
+        recentHotelSearch = recentHotelSearch ?? List.empty();
 
   HomeScreenLoaded copyWith({
     List<AirSearch>? recentAirSearch,
+    List<HotelSearch>? recentHotelSearch,
     int? selectedPage,
   }) {
     return HomeScreenLoaded(
       selectedPage ?? this.selectedPage,
+      recentHotelSearch: recentHotelSearch ?? this.recentHotelSearch,
       recentAirSearch: recentAirSearch ?? this.recentAirSearch,
     );
   }
 
   @override
-  List<Object> get props => [recentAirSearch, selectedPage];
+  List<Object> get props => [recentAirSearch, selectedPage, recentHotelSearch];
 }
 
 class HomeScreenError extends HomeScreenState {
