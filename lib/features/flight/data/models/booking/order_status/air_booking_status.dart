@@ -19,7 +19,7 @@ enum AirBookingStatusEnum {
 
   PARTIALlYRESCHEDULED("PARTIALlYRESCHEDULED", "PS", ""),
   PARTIALLYBOOKED("PARTIALLYBOOKED", "Z", "Partially Booked"),
-  PARTIALLYCACELLED("PARTIALLYCACELLED", "X", ""),
+  PARTIALLYCACELLED("PARTIALLYCACELLED", "X", "Partially Cancelled"),
   REQUESTED("REQUESTED", "R", ""),
   AMENDEDWITHSUPPLIER("AMENDED WITH SUPPLIER", "", ""),
   PROCESSED("PROCESSED", "PR", ""),
@@ -29,7 +29,9 @@ enum AirBookingStatusEnum {
   SUBMITTED("SUBMITTED", "S", ""),
   NOTPERFORMED("NOT PERFORMED", "NP", ""),
   REOPEN("REOPEN", "RO", ""),
-  COMPLETED("COMPLETED", "C", "");
+  COMPLETED("COMPLETED", "C", ""),
+  PENDINGHOTELCONFIRMATION(
+      "PENDINGHOTELCONFIRMATION", "HP", "Pending Confirmation");
 
   final String text;
   final String code;
@@ -37,9 +39,10 @@ enum AirBookingStatusEnum {
   const AirBookingStatusEnum(this.text, this.code, this.displayText);
 
   static AirBookingStatusEnum getFromCode(String code) {
-    return AirBookingStatusEnum.values
-        .where((d) => d.code.equalsIgnoreCase(code))
-        .first;
+    return AirBookingStatusEnum.values.firstWhere(
+      (d) => d.code.equalsIgnoreCase(code),
+      orElse: () => AirBookingStatusEnum.NEW,
+    );
   }
 
   Color get color {
@@ -59,6 +62,11 @@ enum AirBookingStatusEnum {
         return AppColors.errorSwatch[400]!; // Purple
 
       case PARTIALLYCANCELLED:
+        return const Color.from(
+            alpha: 1, red: 1, green: 0.875, blue: 0.431); // Cyan
+      case PENDINGHOTELCONFIRMATION:
+        return AppColors.warning; // Cyan
+      case PARTIALLYCACELLED:
         return AppColors.warning; // Cyan
       case BOOKED:
         return AppColors.primaryGreen; // Light Green

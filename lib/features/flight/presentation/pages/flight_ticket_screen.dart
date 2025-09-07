@@ -9,6 +9,8 @@ import 'package:yellow_rose/core/app_config.dart';
 import 'package:yellow_rose/core/common_widgets/base_appbar.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/loader.dart';
+import 'package:yellow_rose/core/theme/app_colors.dart';
+import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/dio_client.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
@@ -72,20 +74,45 @@ class _FlightTicketScreenState extends State<FlightTicketScreen> {
               : null,
       body: Stack(
         children: [
-          ListView.separated(
-            itemBuilder: (ctx, idx) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-                child: AirTicektWidget(
-                  airOrderItinerary: widget.orderStatus.airItineraries![idx],
-                  orderStatus: widget.orderStatus,
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Ticket Details", style: TextStyles.bodyMediumBoldStyle()),
+                SizedBox(height: 6.h),
+                Text.rich(
+                  TextSpan(
+                    text: "Cart ID: ",
+                    style: TextStyles.bodySmallMediumStyle()
+                        .copyWith(color: AppColors.primaryTextSwatch[600]),
+                    children: [
+                      TextSpan(
+                        text: widget.orderStatus.uuid ?? '',
+                        style: TextStyles.bodySmallBoldStyle(),
+                      ),
+                    ],
+                  ),
                 ),
-              );
-            },
-            separatorBuilder: (ctx, idx) {
-              return const SizedBox(height: 1);
-            },
-            itemCount: widget.orderStatus.airItineraries?.length ?? 0,
+                SizedBox(height: 12.h),
+                Expanded(
+                  child: ListView.separated(
+                    itemBuilder: (ctx, idx) {
+                      return AirTicektWidget(
+                        airOrderItinerary:
+                            widget.orderStatus.airItineraries![idx],
+                        orderStatus: widget.orderStatus,
+                        orderId: widget.orderStatus.uuid!,
+                      );
+                    },
+                    separatorBuilder: (ctx, idx) {
+                      return const SizedBox(height: 1);
+                    },
+                    itemCount: widget.orderStatus.airItineraries?.length ?? 0,
+                  ),
+                ),
+              ],
+            ),
           ),
           if (_loading) const Loader()
         ],

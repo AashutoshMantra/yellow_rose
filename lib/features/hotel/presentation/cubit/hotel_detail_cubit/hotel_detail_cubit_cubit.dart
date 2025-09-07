@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
@@ -28,7 +30,8 @@ class HotelDetailCubitCubit extends Cubit<HotelDetailCubitState> {
 
       emit(HotelDetailCubitLoaded(
           hotelDetailResponse: hotelDetails, rooms: rooms));
-    } catch (e) {
+    } catch (e, s) {
+      log("$e $s");
       emit(HotelDetailCubitError(e.toString()));
     }
   }

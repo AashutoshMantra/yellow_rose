@@ -2,6 +2,7 @@ import 'package:yellow_rose/features/flight/data/models/airports.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_request.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/create_order_response.dart';
+import 'package:yellow_rose/features/flight/data/models/booking/order/order_cancel.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/order_details.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_payment.dart';
@@ -21,17 +22,19 @@ abstract interface class AirRepository {
   Future<AirSeatMapResponse> getSeatMap(
       String orderId, AirSeatMapRequest request);
   Future<SsrResponse> getSsr(String orderId, AirSeatMapRequest request);
-   Future<CreateOrderResponse> createOrder(OrderDetails request);
-  Future<UpdateOrderDetailResponse> updateOrder(String orderId, OrderDetails request);
+  Future<CreateOrderResponse> createOrder(OrderDetails request);
+  Future<UpdateOrderDetailResponse> updateOrder(
+      String orderId, OrderDetails request);
 
   Future<OrderDetails> getOrderDetails(String orderId);
-    Future<List<PNR_RetrieveResponseData>> bookOrder(String orderId);
+  Future<List<PNR_RetrieveResponseData>> bookOrder(String orderId);
   Future<CreateOrderResponse> updateOrderPayment(
       String orderId, UpdatePaymentRequest request);
 
-      Future<List<OrderStatus>> getOrders(
+  Future<List<OrderStatus>> getOrders(
       OrderStatusListRequest orderStatusListRequest);
 
   Future<OrderStatus> getDetailedOrderStauts(String orderId);
-  
+  Future<List<PNR_RetrieveResponseData>> cancelOrder(
+      OrderCancelRequest cancelRequest, String orderId);
 }

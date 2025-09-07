@@ -20,7 +20,7 @@ class ExpediaHotelSearchResponsePriceCheckLink {
     final result = <String, dynamic>{};
 
     if (priceCheck != null) {
-      result.addAll({'priceCheck': priceCheck!.toMap()});
+      result.addAll({'price_check': priceCheck!.toMap()});
     }
 
     return result;

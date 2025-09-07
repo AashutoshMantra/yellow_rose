@@ -307,7 +307,7 @@ class SearchDetailRespHotels {
       hotelId: map['hotelId']?.toInt(),
       mmtId: map['mmtId'],
       agodaId: map['agodaId']?.toInt(),
-      expediaId: map['expediaId'],
+      expediaId: map['expediaId']?.toString(),
       name: map['name'],
       hotelChainName: map['hotelChainName'],
       address: map['address'],

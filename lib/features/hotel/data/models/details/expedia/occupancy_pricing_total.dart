@@ -72,7 +72,7 @@ class ExpediaHotelDetailUIRespPricingTotals {
               map['property_fees'])
           : null,
       requestedCurrencyTotalPrice:
-          map['requested_currency_total_price']?.toDouble(),
+          map['requestedCurrencyTotalPrice']?.toDouble(),
     );
   }
 

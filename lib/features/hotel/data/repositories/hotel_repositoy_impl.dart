@@ -11,7 +11,7 @@ import 'package:yellow_rose/features/hotel/data/models/search/hotel_search_reque
 import 'package:yellow_rose/features/hotel/data/models/search/hotel_search_response.dart';
 import 'package:yellow_rose/features/hotel/domain/repositories/hotel_repository.dart';
 
-class HotelRepositoryImpl implements HotelRepository{
+class HotelRepositoryImpl implements HotelRepository {
   final _hotelService = getIt<HotelService>();
   @override
   Future<HotelBookingResponse> bookHotel(String orderId) {
@@ -19,23 +19,31 @@ class HotelRepositoryImpl implements HotelRepository{
   }
 
   @override
-  Future<CreateOrderResponse> createHotelOrder(HotelOrderRequest hotelOrderRequest) {
+  Future<CreateOrderResponse> createHotelOrder(
+      HotelOrderRequest hotelOrderRequest) {
     return _hotelService.createHotelOrder(hotelOrderRequest);
   }
 
   @override
-  Future<HotelDetailResponse> getHotelDetails(HotelDetailRequest hotelDetailRequest) {
+  Future<HotelDetailResponse> getHotelDetails(
+      HotelDetailRequest hotelDetailRequest) {
     return _hotelService.getHotelDetails(hotelDetailRequest);
   }
 
   @override
-  Future<HotelResponseList> getHotels(HotelListSearchRequest hotelSearchRequest) {
+  Future<HotelResponseList> getHotels(
+      HotelListSearchRequest hotelSearchRequest) {
     return _hotelService.getHotels(hotelSearchRequest);
   }
 
   @override
-  Future<UpdateOrderDetailResponse> updateHotelOrder(String orderId, HotelOrderRequest hotelOrderRequest) {
+  Future<UpdateOrderDetailResponse> updateHotelOrder(
+      String orderId, HotelOrderRequest hotelOrderRequest) {
     return _hotelService.updateHotelOrder(orderId, hotelOrderRequest);
   }
 
+  @override
+  Future udpateHotelPriceDetail(String orderId) {
+    return _hotelService.udpateHotelPriceDetail(orderId);
+  }
 }

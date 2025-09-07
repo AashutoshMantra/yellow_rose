@@ -8,6 +8,7 @@ import 'package:yellow_rose/features/flight/data/models/airports.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_request.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/create_order_response.dart';
+import 'package:yellow_rose/features/flight/data/models/booking/order/order_cancel.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/order_details.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_payment.dart';
@@ -37,6 +38,8 @@ abstract interface class AirService {
       OrderStatusListRequest orderStatusListRequest);
 
   Future<OrderStatus> getDetailedOrderStauts(String orderId);
+  Future<List<PNR_RetrieveResponseData>> cancelOrder(
+      OrderCancelRequest cancelRequest, String orderId);
 }
 
 class AirServiceImpl implements AirService {
@@ -81,7 +84,7 @@ class AirServiceImpl implements AirService {
     var response = await _dioClient.post(
         "${AppConfig.instance.apiBaseUrl}/product/air/ssrMap/v1/$orderId",
         data: request.toMap());
-    
+
     return SsrResponse.fromMap(response.data);
   }
 
@@ -117,8 +120,8 @@ class AirServiceImpl implements AirService {
   @override
   Future<List<PNR_RetrieveResponseData>> bookOrder(String orderId) async {
     var response = await _dioClient.post(
-      '${AppConfig.instance.apiBaseUrl}/order/book/v1/$orderId',
-    );
+        '${AppConfig.instance.apiBaseUrl}/order/book/v1/$orderId',
+        data: {});
 
     return List<PNR_RetrieveResponseData>.from(
         ((response.data?["result"]) ?? [])
@@ -157,5 +160,24 @@ class AirServiceImpl implements AirService {
     );
 
     return OrderStatus.fromMap(response.data);
+  }
+
+  @override
+  Future<List<PNR_RetrieveResponseData>> cancelOrder(
+      OrderCancelRequest cancelRequest, String orderId) async {
+    var response = await _dioClient.post(
+      '${AppConfig.instance.apiBaseUrl}/order/cancel/v1/$orderId',
+      data: cancelRequest.toMap(),
+    );
+    
+    var mappedResponse = List<PNR_RetrieveResponseData>.from(
+        ((response.data?["result"]) ?? [])
+            .map<PNR_RetrieveResponseData>(
+                (data) => PNR_RetrieveResponseData.fromMap(data))
+            .toList());
+    if (mappedResponse.isEmpty) {
+      throw Exception(response.data?["message"]);
+    }
+    return mappedResponse;
   }
 }

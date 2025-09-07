@@ -6,6 +6,7 @@ import 'package:yellow_rose/features/flight/data/models/airports.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_request.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/create_order_response.dart';
+import 'package:yellow_rose/features/flight/data/models/booking/order/order_cancel.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/order_details.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_payment.dart';
@@ -101,5 +102,11 @@ class AirRepositoryImpl implements AirRepository {
   Future<List<OrderStatus>> getOrders(
       OrderStatusListRequest orderStatusListRequest) async {
     return await _airService.getOrders(orderStatusListRequest);
+  }
+
+  @override
+  Future<List<PNR_RetrieveResponseData>> cancelOrder(
+      OrderCancelRequest cancelRequest, String orderId) {
+    return _airService.cancelOrder(cancelRequest, orderId);
   }
 }

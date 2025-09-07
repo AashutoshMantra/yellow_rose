@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 extension EnumParsing on String {
   T? toEnum<T>(List<T> enumValues) {
     return enumValues.firstWhereOrNull(
-      (e) => e.toString().toLowerCase() == toLowerCase(),
+      (e) => (e as Enum?)?.name.toLowerCase() == toLowerCase(),
     );
   }
 }

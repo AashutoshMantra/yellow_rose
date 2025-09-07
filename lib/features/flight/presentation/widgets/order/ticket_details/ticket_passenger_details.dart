@@ -6,6 +6,8 @@ import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/order_passenger_details.dart';
 
+String CANCELLED_PASSENGER_PNR_STATUS = "HX";
+
 class AirTicketPassengerDetails extends StatelessWidget {
   final OrdersPassengersDetails passengersDetails;
   final int passengerIndex;
@@ -46,7 +48,8 @@ class AirTicketPassengerDetails extends StatelessWidget {
             Container(
               padding:
                   EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 8.0.h),
-              color: passengersDetails.pnrStatus == "HX" ||
+              color: passengersDetails.pnrStatus ==
+                          CANCELLED_PASSENGER_PNR_STATUS ||
                       passengersDetails.pnrStatus == null
                   ? AppColors.error
                   : AppColors.primaryGreen,
@@ -58,7 +61,8 @@ class AirTicketPassengerDetails extends StatelessWidget {
                     style: TextStyles.bodySmallMediumStyle()
                         .copyWith(color: Colors.white),
                   ),
-                  if (passengersDetails.pnrStatus == "HX")
+                  if (passengersDetails.pnrStatus ==
+                      CANCELLED_PASSENGER_PNR_STATUS)
                     Text(
                       "Cancelled",
                       style: TextStyles.bodySmallMediumStyle()

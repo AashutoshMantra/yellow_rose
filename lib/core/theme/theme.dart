@@ -48,12 +48,11 @@ class AppTheme {
           side: WidgetStateProperty.resolveWith<BorderSide>(
             (Set<WidgetState> states) {
               if (states.contains(WidgetState.disabled)) {
-                BorderSide(color: AppColors.primaryTextSwatch[100]!);
+                return BorderSide(color: AppColors.primaryTextSwatch[100]!);
               }
               return BorderSide(
                 color: Theme.of(context).primaryColor,
               );
-              // Defer to the widget's default.
             },
           ),
         ),
@@ -74,6 +73,19 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return AppColors.disabledButton;
+          }
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primaryGreen;
+          }
+          return Colors.white; // Default color
+        }),
+        checkColor: WidgetStateProperty.all<Color>(Colors.white),
+        side: const BorderSide(color: AppColors.primaryText),
       ),
     );
   }

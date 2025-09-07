@@ -4,14 +4,17 @@ import 'package:yellow_rose/features/auth/presentation/pages/sign_in_screen.dart
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_response_data.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/fare_details_with_type.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
+import 'package:yellow_rose/features/flight/data/models/booking/order_status/air_order_iitinerary.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/order_status.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_booking/flight_booking_cubit.dart';
+import 'package:yellow_rose/features/flight/presentation/cubit/flight_order_modify/flight_order_modify_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_search_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_search_listing_cubit/flight_search_listing_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/air_addond_selection_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/booking_detailed_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_booking_screen.dart';
+import 'package:yellow_rose/features/flight/presentation/pages/flight_order_modify_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_search_list.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_search_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_ticket_screen.dart';
@@ -143,6 +146,29 @@ class AppRouter {
             builder: (_) => FlightTicketScreen(orderStatus: orderStatus),
           );
         }
+      case FlightOrderModifyScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['airOrderItinerary'] != null) {
+          var airOrderItinerary =
+              args!["airOrderItinerary"] as AirOrderItinerary;
+          var orderId = args["orderId"] as String;
+          var orderStatus = args["orderStatus"] as OrderStatus;
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((FlightOrderModifyScreen).toString())),
+            builder: (_) => BlocProvider(
+              create: (context) => FlightOrderModifyCubit(
+                  airOrderItinerary: airOrderItinerary,
+                  orderStatus: orderStatus,
+                  orderId: orderId),
+              child: FlightOrderModifyScreen(
+                airOrderItinerary: airOrderItinerary,
+                orderStatus: orderStatus,
+              ),
+            ),
+          );
+        }
+
       // Hotels
 
       case HotelSearchScreen.routeName:

@@ -17,11 +17,8 @@ class HotelOrderDetailCard extends StatelessWidget {
     return CustomDateUtils.givenFormat(d, 'dd MMM yyyy');
   }
 
-  int _computeNights(String? ci, String? co) {
+  int _computeNights(DateTime? a, DateTime? b) {
     try {
-      if (ci == null || co == null) return 0;
-      final a = DateTime.tryParse(ci);
-      final b = DateTime.tryParse(co);
       if (a == null || b == null) return 0;
       return b.difference(a).inDays;
     } catch (_) {
@@ -45,24 +42,26 @@ class HotelOrderDetailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hotelDetail = orderStatus.hotelBooking?.selectedHotelOrder?.hotel;
+    final hotelSearch = orderStatus.hotelBooking?.hotelRequest;
+
     final hotelName = hotelDetail?.name ?? 'Hotel';
     final hotelAddress = hotelDetail?.address ?? '-';
-    final checkIn = hotelDetail?.checkIn;
-    final checkOut = hotelDetail?.checkOut;
+    final checkIn = hotelSearch?.checkInDate;
+    final checkOut = hotelSearch?.checkOutDate;
     final nights = _computeNights(checkIn, checkOut);
     final guests = _guestCount();
     final bookingDate = orderStatus.bookingTs ?? orderStatus.creationTs;
 
-  final imageUrl = hotelDetail != null
-    ? (hotelDetail.mmtMedia != null && hotelDetail.mmtMedia!.isNotEmpty
-      ? hotelDetail.mmtMedia!.first
-      : (hotelDetail.agodaMedia != null &&
-          hotelDetail.agodaMedia!.isNotEmpty
-        ? hotelDetail.agodaMedia!.first
-        : null))
-    : null;
+    final imageUrl = hotelDetail != null
+        ? (hotelDetail.mmtMedia != null && hotelDetail.mmtMedia!.isNotEmpty
+            ? hotelDetail.mmtMedia!.first
+            : (hotelDetail.agodaMedia != null &&
+                    hotelDetail.agodaMedia!.isNotEmpty
+                ? hotelDetail.agodaMedia!.first
+                : null))
+        : null;
 
-  final resolvedImageUrl = HotelMapperUtiity.getImageUrl(imageUrl);
+    final resolvedImageUrl = HotelMapperUtiity.getImageUrl(imageUrl);
 
     return Container(
       decoration: BoxDecoration(
@@ -122,31 +121,32 @@ class HotelOrderDetailCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Image
-                
+
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
                     width: 84.w,
                     height: 84.w,
                     color: AppColors.primaryTextSwatch[50],
-                    child: resolvedImageUrl != null && resolvedImageUrl.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: resolvedImageUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (_, __) => Center(
-                                child: SizedBox(
-                                    width: 24.w,
-                                    height: 24.w,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.0,
-                                      color: AppColors.primary,
-                                    ))),
-                            errorWidget: (_, __, ___) => Icon(Icons.hotel,
+                    child:
+                        resolvedImageUrl != null && resolvedImageUrl.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: resolvedImageUrl,
+                                fit: BoxFit.cover,
+                                placeholder: (_, __) => Center(
+                                    child: SizedBox(
+                                        width: 24.w,
+                                        height: 24.w,
+                                        child: const CircularProgressIndicator(
+                                          strokeWidth: 2.0,
+                                          color: AppColors.primary,
+                                        ))),
+                                errorWidget: (_, __, ___) => Icon(Icons.hotel,
+                                    color: AppColors.primaryTextSwatch[300]),
+                              )
+                            : Icon(Icons.hotel,
+                                size: 36.w,
                                 color: AppColors.primaryTextSwatch[300]),
-                          )
-                        : Icon(Icons.hotel,
-                            size: 36.w,
-                            color: AppColors.primaryTextSwatch[300]),
                   ),
                 ),
                 SizedBox(width: 12.w),
@@ -166,7 +166,7 @@ class HotelOrderDetailCard extends StatelessWidget {
                       ),
                       SizedBox(height: 8.h),
                       Text(
-                        '${_formatDate(DateTime.tryParse(checkIn ?? ''))}  •  ${_formatDate(DateTime.tryParse(checkOut ?? ''))}',
+                        '${_formatDate(checkIn)}  •  ${_formatDate(checkOut)}',
                         style: TextStyles.bodySmallMediumStyle()
                             .copyWith(color: AppColors.primaryTextSwatch[400]),
                       ),

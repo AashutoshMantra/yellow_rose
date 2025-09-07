@@ -45,9 +45,8 @@ class HotelDetailScreen extends StatelessWidget {
       body: BlocListener<HotelDetailCubitCubit, HotelDetailCubitState>(
         listener: (context, state) {
           if (state is HotelDetailCubitError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage)),
-            );
+            WidgetUtil.showSnackBar("Error fetching details", context);
+
             Navigator.of(context).pop();
           }
         },

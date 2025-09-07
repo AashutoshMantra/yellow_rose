@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:yellow_rose/core/common_widgets/date_picker.dart';
+import 'package:yellow_rose/core/common_widgets/popup.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 
 class WidgetUtil {
-  static Future<dynamic> showDialog(BuildContext context, Widget body,
-      {double width = double.maxFinite, double? height}) {
+  static Future<T?> showDialog<T>(BuildContext context, Widget body,
+      {double width = double.maxFinite, double? height,
+    bool barrierDismissible = true,
+    Color barrierColor = const Color(0x80000000),
+  }) {
     return showGeneralDialog(
       transitionDuration: const Duration(milliseconds: 200),
-      barrierDismissible: true,
+      barrierDismissible: barrierDismissible,
       barrierLabel: '',
+      barrierColor: barrierColor,
       context: context,
       pageBuilder: (context, animation1, animation2) {
         return Container();
@@ -78,6 +83,7 @@ class WidgetUtil {
       },
     );
   }
+
   static Future<T?> showWrapContentBottomSheet<T>({
     required BuildContext context,
     required Widget child,
@@ -133,5 +139,42 @@ class WidgetUtil {
         ),
         persistent: persist,
         displayDuration: Duration(milliseconds: milliseconds));
+  }
+
+  static Future<T?> showPopup<T>(
+    BuildContext context, {
+    Widget? icon,
+    String? title,
+    String? message,
+    Widget? content,
+    List<PopupButton>? buttons,
+    bool barrierDismissible = true,
+    double width = double.maxFinite,
+    double? height,
+    double borderRadius = 15.0,
+    Color backgroundColor = Colors.white,
+    TextStyle? titleTextStyle,
+    TextStyle? messageTextStyle,
+    bool showCloseIcon = true,
+  }) {
+    final popup = PopupDialog(
+      leading: icon,
+      title: title,
+      message: message,
+      content: content,
+      buttons: buttons ?? const [],
+      showCloseIcon: showCloseIcon,
+      borderRadius: borderRadius,
+      backgroundColor: backgroundColor,
+      titleTextStyle: titleTextStyle,
+      messageTextStyle: messageTextStyle,
+    );
+
+    return showDialog<T>(
+      context,
+      popup,
+      width: width,
+      height: height,
+    );
   }
 }

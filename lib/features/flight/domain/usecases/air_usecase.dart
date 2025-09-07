@@ -3,6 +3,7 @@ import 'package:yellow_rose/features/flight/data/models/airports.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_request.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/create_order_response.dart';
+import 'package:yellow_rose/features/flight/data/models/booking/order/order_cancel.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/order_details.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_payment.dart';
@@ -34,6 +35,8 @@ abstract interface class AirUseCase {
       OrderStatusListRequest orderStatusListRequest);
 
   Future<OrderStatus> getDetailedOrderStauts(String orderId);
+  Future<List<PNR_RetrieveResponseData>> cancelOrder(
+      OrderCancelRequest cancelRequest, String orderId);
 }
 
 class AirUseCaseImpl implements AirUseCase {
@@ -101,5 +104,11 @@ class AirUseCaseImpl implements AirUseCase {
   Future<List<OrderStatus>> getOrders(
       OrderStatusListRequest orderStatusListRequest) async {
     return await _airRepo.getOrders(orderStatusListRequest);
+  }
+
+  @override
+  Future<List<PNR_RetrieveResponseData>> cancelOrder(
+      OrderCancelRequest cancelRequest, String orderId) {
+    return _airRepo.cancelOrder(cancelRequest, orderId);
   }
 }

@@ -18,5 +18,7 @@ abstract class HotelRepository {
   Future<UpdateOrderDetailResponse> updateHotelOrder(
       String orderId, HotelOrderRequest hotelOrderRequest);
   Future<HotelBookingResponse> bookHotel(String orderId);
+    Future<dynamic> udpateHotelPriceDetail(String orderId);
+
   
 }

@@ -28,6 +28,7 @@ abstract class HotelBookUseCase {
 
   Future<List<OrderStatus>> getOrders(
       OrderStatusListRequest orderStatusListRequest);
+  Future<dynamic> udpateHotelPriceDetail(String orderId);
 
   Future<OrderStatus> getDetailedOrderStauts(String orderId);
 }
@@ -48,10 +49,12 @@ class HotelBookUseCaseImpl implements HotelBookUseCase {
 
   @override
   Future<CreateOrderResponse> createHotelOrder(HotelDetailResponse hotel,
-      HotelRoom selectedRoom, HotelSearch hotelSearch) {
+      HotelRoom selectedRoom, HotelSearch hotelSearch) async {
     var orderRequest = HotelMapperUtiity.createHotelOrderRequest(
         hotel, selectedRoom, hotelSearch);
-    return _hotelRepository.createHotelOrder(orderRequest);
+    var response = await _hotelRepository.createHotelOrder(orderRequest);
+    var repriceResponse = await udpateHotelPriceDetail(response.orderNumber);
+    return response;
   }
 
   @override
@@ -80,5 +83,12 @@ class HotelBookUseCaseImpl implements HotelBookUseCase {
   Future<List<OrderStatus>> getOrders(
       OrderStatusListRequest orderStatusListRequest) {
     return _airUseCase.getOrders(orderStatusListRequest);
+  }
+
+  @override
+  Future udpateHotelPriceDetail(String orderId) {
+    return _hotelRepository.udpateHotelPriceDetail(
+      orderId,
+    );
   }
 }

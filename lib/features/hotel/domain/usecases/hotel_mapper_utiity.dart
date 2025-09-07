@@ -1,4 +1,6 @@
 import 'package:collection/collection.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/v4.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/passenger_detiald.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/segment.dart';
@@ -69,12 +71,17 @@ class HotelMapperUtiity {
     var selectedHotelOrder = hotel;
     var mmtRoomSelected = getSelectedHotelRoomMmt(hotel, selectedRoom);
     var expediaRoomSelected = getSelectedHotelRoomExpedia(hotel, selectedRoom);
+    var randomUid = const Uuid().v4();
     selectedHotelOrder = selectedHotelOrder.copyWith(
+        expediaSessionId: expediaRoomSelected != null ? randomUid : null,
+        mmtRequestId: mmtRoomSelected != null ? randomUid : null,
         hotel: hotel.hotel?.copyWith(
             mmtRooms: mmtRoomSelected != null ? [mmtRoomSelected] : null,
             expediaRooms:
                 expediaRoomSelected != null ? [expediaRoomSelected] : null));
     return HotelOrderRequest(
+        requestUuid: randomUid,
+        source: selectedRoom.hotelSourceEnum.name,
         hotelRequest: hotelSearchMapped,
         selectedHotelOrder: selectedHotelOrder);
   }
@@ -149,7 +156,7 @@ class HotelMapperUtiity {
     HotelDetailResponse hotel,
     HotelRoom selectedRoom,
   ) {
-    if (selectedRoom.hotelSourceEnum != HotelSourceEnum.MMT) {
+    if (selectedRoom.hotelSourceEnum != HotelSourceEnum.EXPEDIA) {
       return null;
     }
     var allMmtRooms = hotel.hotel?.expediaRooms;
@@ -212,7 +219,7 @@ class HotelMapperUtiity {
       }).toList();
       return HotelRoomType(
           id: id ?? '',
-          totalcost: totalCost!,
+          totalcost: totalCost ?? 0,
           hotelRoomAmenities: amenities,
           hotelRoomPenalty: cancelpenalty);
     }).toList();

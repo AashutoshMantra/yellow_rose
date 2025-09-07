@@ -5,7 +5,7 @@ import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 
-enum OrderStatusEnum { success, error, warning }
+enum OrderStatusEnum { success, error, warning, flight_cancel }
 
 class OrderStatusScreen extends StatelessWidget {
   final OrderStatusEnum orderStatus;
@@ -25,6 +25,10 @@ class OrderStatusScreen extends StatelessWidget {
       OrderStatusEnum.warning => (
           "Partial Order completed",
           "You can check your e-Ticket by clicking the button below."
+        ),
+      OrderStatusEnum.flight_cancel => (
+          "Your Flight Has Been Cancelled!",
+          "You can check your canceled flight details by clicking the button below."
         ),
     };
     return Scaffold(
@@ -66,7 +70,9 @@ class OrderStatusScreen extends StatelessWidget {
               if (orderStatus != OrderStatusEnum.error)
                 CustomButton(
                   text: "Check E-Ticket",
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
               SizedBox(
                 height: 16.h,

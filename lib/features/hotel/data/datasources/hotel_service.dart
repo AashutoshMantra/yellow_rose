@@ -22,6 +22,7 @@ abstract class HotelService {
       HotelOrderRequest hotelOrderRequest);
   Future<UpdateOrderDetailResponse> updateHotelOrder(
       String orderId, HotelOrderRequest hotelOrderRequest);
+  Future<dynamic> udpateHotelPriceDetail(String orderId);
   Future<HotelBookingResponse> bookHotel(String orderId);
 }
 
@@ -73,6 +74,18 @@ class HotelServiceImpl implements HotelService {
   Future<HotelBookingResponse> bookHotel(String orderId) async {
     var response = await _dioClient
         .post("${AppConfig.instance.apiBaseUrl}/order/hotel/book/v1/$orderId");
-    return HotelBookingResponse.fromMap(response.data);
+
+    if (response.data["resStatus"] != "OK") {
+      throw Exception(response.data["message"] ?? "Something went wrong");
+    }
+    return HotelBookingResponse.fromMap(response.data?["result"]);
+  }
+
+  @override
+  Future udpateHotelPriceDetail(String orderId) async {
+    var response = await _dioClient.post(
+        "${AppConfig.instance.apiBaseUrl}/order/hotel/details/v1/$orderId",
+        data: {});
+    return response.data;
   }
 }
