@@ -23,7 +23,8 @@ class OrderListScreen extends StatefulWidget {
   State<OrderListScreen> createState() => _OrderListScreenState();
 }
 
-class _OrderListScreenState extends State<OrderListScreen> {
+class _OrderListScreenState extends State<OrderListScreen>
+    with WidgetsBindingObserver {
   final _airUseCase = getIt<AirUseCase>();
 
   // Services shown on this screen. To add a new product, add it here.
@@ -81,9 +82,25 @@ class _OrderListScreenState extends State<OrderListScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // default load both product lists concurrently so users can switch instantly
+    _refreshAllData();
+  }
+
+  /// Refresh data for all services
+  void _refreshAllData() {
     _fetchForProduct(SupportedService.Flights);
     _fetchForProduct(SupportedService.Hotels);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Refresh data when app comes to foreground
+    if (state == AppLifecycleState.resumed && mounted) {
+      log('App resumed, refreshing order data');
+      _refreshAllData();
+    }
   }
 
   String _productCodeFor(SupportedService s) {
@@ -134,6 +151,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
     super.dispose();
   }
@@ -200,30 +218,66 @@ class _OrderListScreenState extends State<OrderListScreen> {
                                 child: Loader(color: Colors.transparent));
 
                           if (service == SupportedService.Flights) {
-                            if (bookings.isEmpty) return emptyWidget('Flight');
-                            return ListView.separated(
-                              padding: EdgeInsets.only(top: 8.h, bottom: 24.h),
-                              itemCount: bookings.length,
-                              itemBuilder: (ctx, idx) {
-                                return AirOrderDetailCard(
-                                    orderStatus: bookings[idx]);
-                              },
-                              separatorBuilder: (_, __) =>
-                                  SizedBox(height: 16.h),
+                            if (bookings.isEmpty) {
+                              return RefreshIndicator(
+                                onRefresh: () async =>
+                                    _fetchForProduct(service),
+                                child: ListView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  children: [
+                                    SizedBox(height: 200.h),
+                                    emptyWidget('Flight'),
+                                  ],
+                                ),
+                              );
+                            }
+                            return RefreshIndicator(
+                              onRefresh: () async => _fetchForProduct(service),
+                              child: ListView.separated(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding:
+                                    EdgeInsets.only(top: 8.h, bottom: 24.h),
+                                itemCount: bookings.length,
+                                itemBuilder: (ctx, idx) {
+                                  return AirOrderDetailCard(
+                                      orderStatus: bookings[idx]);
+                                },
+                                separatorBuilder: (_, __) =>
+                                    SizedBox(height: 16.h),
+                              ),
                             );
                           }
 
                           if (service == SupportedService.Hotels) {
-                            if (bookings.isEmpty) return emptyWidget('Hotel');
-                            return ListView.separated(
-                              padding: EdgeInsets.only(top: 8.h, bottom: 24.h),
-                              itemCount: bookings.length,
-                              itemBuilder: (ctx, idx) {
-                                return HotelOrderDetailCard(
-                                    orderStatus: bookings[idx]);
-                              },
-                              separatorBuilder: (_, __) =>
-                                  SizedBox(height: 16.h),
+                            if (bookings.isEmpty) {
+                              return RefreshIndicator(
+                                onRefresh: () async =>
+                                    _fetchForProduct(service),
+                                child: ListView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  children: [
+                                    SizedBox(height: 200.h),
+                                    emptyWidget('Hotel'),
+                                  ],
+                                ),
+                              );
+                            }
+                            return RefreshIndicator(
+                              onRefresh: () async => _fetchForProduct(service),
+                              child: ListView.separated(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding:
+                                    EdgeInsets.only(top: 8.h, bottom: 24.h),
+                                itemCount: bookings.length,
+                                itemBuilder: (ctx, idx) {
+                                  return HotelOrderDetailCard(
+                                      orderStatus: bookings[idx]);
+                                },
+                                separatorBuilder: (_, __) =>
+                                    SizedBox(height: 16.h),
+                              ),
                             );
                           }
 

@@ -36,6 +36,8 @@ class AirSearch {
 
   final List<SourceDestinationDatePair> sources;
   final FlightSearchClass? searchClass;
+  final NameCode? preferredCarrier;
+  final bool? directFlight;
   final String requestId;
   AirSearch({
     this.childCount = 0,
@@ -43,6 +45,8 @@ class AirSearch {
     this.infantCount = 0,
     required this.sources,
     required this.searchClass,
+    this.preferredCarrier,
+    this.directFlight,
   }) : requestId = const Uuid().v4();
 
   Map<String, dynamic> toMap() {
@@ -60,6 +64,12 @@ class AirSearch {
     result.addAll({'sources': filteredSources.map((x) => x.toMap()).toList()});
     if (searchClass != null) {
       result.addAll({'searchClass': searchClass!.name});
+    }
+    if (preferredCarrier != null) {
+      result.addAll({'preferredCarrier': preferredCarrier!.toMap()});
+    }
+    if (directFlight != null) {
+      result.addAll({'directFlight': directFlight});
     }
 
     return result;
@@ -79,6 +89,11 @@ class AirSearch {
           .toList(),
       searchClass: stringToEnum(map['searchClass'], FlightSearchClass.values) ??
           FlightSearchClass.Economy,
+      preferredCarrier: map['preferredCarrier'] != null
+          ? NameCode.fromMap(Map<String, dynamic>.from(map['preferredCarrier']))
+          : null,
+      directFlight:
+          map['directFlight'] == null ? null : (map['directFlight'] as bool),
     );
   }
 

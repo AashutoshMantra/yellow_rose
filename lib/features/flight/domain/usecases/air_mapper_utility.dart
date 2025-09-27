@@ -12,7 +12,6 @@ import 'package:yellow_rose/features/flight/data/models/booking/order/segment.da
 import 'package:yellow_rose/features/flight/data/models/booking/order/user_booking_request.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/ssor_options.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
-import 'package:yellow_rose/features/flight/domain/entities/passenger_details_entity.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_booking/flight_booking_cubit.dart';
 
 class AirMapperUtility {
@@ -93,6 +92,8 @@ class AirMapperUtility {
         countryTo: airSearch.sources.lastOrNull?.destination?.country!,
         paxCount: airSearch.adultCount + airSearch.childCount,
         requestId: airSearch.requestId,
+        prefAirline: airSearch.preferredCarrier?.code,
+        directFlight: airSearch.directFlight,
         journeyType: airSearch.sources.length == 1
             ? JourneyType.oneWay
             : JourneyType.Return,
@@ -120,8 +121,14 @@ class AirMapperUtility {
     var paxCount = adultCount + childCount;
     var selectedSeats = flightBookingLoadedDetails.selectedSeats;
     var selectedSSr = flightBookingLoadedDetails.selectedSsr;
+    var selectedBaggage = flightBookingLoadedDetails.selectedBaggage;
+    var selectedSpecialRequests =
+        flightBookingLoadedDetails.selectedSpecialRequests;
+
     var passengerDetailsList = passengerDetails.map((passenger) {
       var seatMeal = List<Segment>.empty(growable: true);
+
+      // Handle seat selections
       if (selectedSeats.isNotEmpty) {
         for (var action in selectedSeats.entries) {
           var flightDetailsKey = action.key;
@@ -143,6 +150,8 @@ class AirMapperUtility {
           }
         }
       }
+
+      // Handle meal selections
       var passengerSsrs = extractPassengerSsrOptions(selectedSSr, passenger.id);
       passengerSsrs.forEach((segmentKey, ssrOptions) {
         if (ssrOptions.isNotEmpty) {
@@ -157,6 +166,48 @@ class AirMapperUtility {
               mealBasePrice: ssr.baseFare,
               mealPreferences: ssr.code,
               mealUnitKey: ssr.ssrKey,
+            ));
+          }
+        }
+      });
+
+      // Handle baggage selections
+      var passengerBaggage =
+          extractPassengerSsrOptions(selectedBaggage, passenger.id);
+      passengerBaggage.forEach((segmentKey, baggageOptions) {
+        if (baggageOptions.isNotEmpty) {
+          for (var baggage in baggageOptions) {
+            var (carrierName, flightNumber, fromAirport, toAirport) =
+                getFlightDetailFromSelectedSsrKeys(segmentKey);
+            seatMeal.add(Segment(
+              carrierName: carrierName,
+              flightNumber: flightNumber,
+              from: fromAirport,
+              to: toAirport,
+              baggageSsr: baggage.code,
+              baggageSsrBasePrice: baggage.baseFare,
+              baggageSsrUnitKey: baggage.ssrKey,
+            ));
+          }
+        }
+      });
+
+      // Handle special request selections
+      var passengerSpecialRequests =
+          extractPassengerSsrOptions(selectedSpecialRequests, passenger.id);
+      passengerSpecialRequests.forEach((segmentKey, specialRequestOptions) {
+        if (specialRequestOptions.isNotEmpty) {
+          for (var specialRequest in specialRequestOptions) {
+            var (carrierName, flightNumber, fromAirport, toAirport) =
+                getFlightDetailFromSelectedSsrKeys(segmentKey);
+            seatMeal.add(Segment(
+              carrierName: carrierName,
+              flightNumber: flightNumber,
+              from: fromAirport,
+              to: toAirport,
+              specialSsr: specialRequest.code,
+              specialSsrBasePrice: specialRequest.baseFare,
+              specialSsrUnitKey: specialRequest.ssrKey,
             ));
           }
         }
@@ -190,8 +241,6 @@ class AirMapperUtility {
       bookingRequest: bookingRequest,
     );
   }
-
-
 
   static (String, String, String, String) getFlightDetailFromSelectedSsrKeys(
       String key) {

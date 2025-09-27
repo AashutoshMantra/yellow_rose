@@ -17,6 +17,8 @@ class FlightBookingLoaded extends FlightBookingState {
   final List<PassengerDetailsEntity> passengerDetails;
   final Map<String, List<SelectedSeat>> selectedSeats;
   final Map<String, Map<String, SsrOption>> selectedSsr;
+  final Map<String, Map<String, SsrOption>> selectedBaggage;
+  final Map<String, Map<String, SsrOption>> selectedSpecialRequests;
   final Map<String, AirSeatMapResponse?> seatMaps;
   final Map<String, SsrResponse?> ssrOptions;
   final OrderDetails orderDetails;
@@ -32,6 +34,8 @@ class FlightBookingLoaded extends FlightBookingState {
       Map<String, List<SelectedSeat>>? selectedSeats,
       required this.airSearch,
       Map<String, Map<String, SsrOption>>? selectedSsr,
+      Map<String, Map<String, SsrOption>>? selectedBaggage,
+      Map<String, Map<String, SsrOption>>? selectedSpecialRequests,
       Map<String, AirSeatMapResponse?>? seatMaps,
       Map<String, SsrResponse?>? ssrOptions})
       : selectedFares = selectedFares ??
@@ -40,33 +44,39 @@ class FlightBookingLoaded extends FlightBookingState {
         passengerDetails = passengerDetails ?? [],
         selectedSeats = selectedSeats ?? <String, List<SelectedSeat>>{},
         selectedSsr = selectedSsr ?? <String, Map<String, SsrOption>>{},
+        selectedBaggage = selectedBaggage ?? <String, Map<String, SsrOption>>{},
+        selectedSpecialRequests =
+            selectedSpecialRequests ?? <String, Map<String, SsrOption>>{},
         seatMaps = seatMaps ?? <String, AirSeatMapResponse>{},
         ssrOptions = ssrOptions ?? <String, SsrResponse>{};
 
-  FlightBookingLoaded copyWith({
-    List<AirResponseData>? selectedItineraries,
-    Map<int, FareDetailsWithType>? selectedFares,
-    List<PassengerDetailsEntity>? passengerDetails,
-    Map<String, List<SelectedSeat>>? selectedSeats,
-    Map<String, Map<String, SsrOption>>? selectedSsr,
-    Map<String, AirSeatMapResponse?>? seatMaps,
-    Map<String, SsrResponse?>? ssrOptions,
-    OrderDetails? orderDetails,
-    BillingEntity? billingEntity,
-     AirSearch? airSearch
-  }) {
+  FlightBookingLoaded copyWith(
+      {List<AirResponseData>? selectedItineraries,
+      Map<int, FareDetailsWithType>? selectedFares,
+      List<PassengerDetailsEntity>? passengerDetails,
+      Map<String, List<SelectedSeat>>? selectedSeats,
+      Map<String, Map<String, SsrOption>>? selectedSsr,
+      Map<String, Map<String, SsrOption>>? selectedBaggage,
+      Map<String, Map<String, SsrOption>>? selectedSpecialRequests,
+      Map<String, AirSeatMapResponse?>? seatMaps,
+      Map<String, SsrResponse?>? ssrOptions,
+      OrderDetails? orderDetails,
+      BillingEntity? billingEntity,
+      AirSearch? airSearch}) {
     return FlightBookingLoaded(
-      selectedItineraries: selectedItineraries ?? this.selectedItineraries,
-      selectedFares: selectedFares ?? this.selectedFares,
-      passengerDetails: passengerDetails ?? this.passengerDetails,
-      selectedSeats: selectedSeats ?? this.selectedSeats,
-      selectedSsr: selectedSsr ?? this.selectedSsr,
-      seatMaps: seatMaps ?? this.seatMaps,
-      ssrOptions: ssrOptions ?? this.ssrOptions,
-      orderDetails: orderDetails ?? this.orderDetails,
-      billingEntity: billingEntity ?? this.billingEntity,
-      airSearch: airSearch??this.airSearch
-    );
+        selectedItineraries: selectedItineraries ?? this.selectedItineraries,
+        selectedFares: selectedFares ?? this.selectedFares,
+        passengerDetails: passengerDetails ?? this.passengerDetails,
+        selectedSeats: selectedSeats ?? this.selectedSeats,
+        selectedSsr: selectedSsr ?? this.selectedSsr,
+        selectedBaggage: selectedBaggage ?? this.selectedBaggage,
+        selectedSpecialRequests:
+            selectedSpecialRequests ?? this.selectedSpecialRequests,
+        seatMaps: seatMaps ?? this.seatMaps,
+        ssrOptions: ssrOptions ?? this.ssrOptions,
+        orderDetails: orderDetails ?? this.orderDetails,
+        billingEntity: billingEntity ?? this.billingEntity,
+        airSearch: airSearch ?? this.airSearch);
   }
 
   @override
@@ -76,6 +86,8 @@ class FlightBookingLoaded extends FlightBookingState {
         passengerDetails,
         selectedSeats,
         selectedSsr,
+        selectedBaggage,
+        selectedSpecialRequests,
         ssrOptions,
         seatMaps,
         orderDetails,

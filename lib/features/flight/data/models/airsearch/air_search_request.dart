@@ -40,6 +40,8 @@ class AirSearchRequest {
   bool? pointerEvents;
   String? countryTo;
   String? countryFrom;
+  String? prefAirline;
+  bool? directFlight;
   String? userBookingContext;
 
   AirSearchRequest({
@@ -54,6 +56,8 @@ class AirSearchRequest {
     this.pointerEvents,
     this.countryTo,
     this.countryFrom,
+    this.prefAirline,
+    this.directFlight,
     this.userBookingContext = "C",
   });
 
@@ -96,6 +100,12 @@ class AirSearchRequest {
     if (countryFrom != null) {
       result.addAll({'countryFrom': countryFrom});
     }
+    if (prefAirline != null) {
+      result.addAll({'prefAirline': prefAirline});
+    }
+    if (directFlight != null) {
+      result.addAll({'directFlight': directFlight});
+    }
     if (userBookingContext != null) {
       result.addAll({'userBookingContext': userBookingContext});
     }
@@ -122,6 +132,8 @@ class AirSearchRequest {
       pointerEvents: map['pointerEvents'],
       countryTo: map['countryTo'],
       countryFrom: map['countryFrom'],
+      prefAirline: map['prefAirline'],
+      directFlight: map['directFlight'],
       userBookingContext: map['userBookingContext'],
     );
   }
@@ -143,6 +155,8 @@ class AirSearchRequest {
     bool? pointerEvents,
     String? countryTo,
     String? countryFrom,
+    String? prefAirline,
+    bool? directFlight,
     String? userBookingContext,
   }) {
     return AirSearchRequest(
@@ -158,6 +172,8 @@ class AirSearchRequest {
       pointerEvents: pointerEvents ?? this.pointerEvents,
       countryTo: countryTo ?? this.countryTo,
       countryFrom: countryFrom ?? this.countryFrom,
+      prefAirline: prefAirline ?? this.prefAirline,
+      directFlight: directFlight ?? this.directFlight,
       userBookingContext: userBookingContext ?? this.userBookingContext,
     );
   }
@@ -184,6 +200,8 @@ class AirSearchRequest {
         other.pointerEvents == pointerEvents &&
         other.countryTo == countryTo &&
         other.countryFrom == countryFrom &&
+        other.prefAirline == prefAirline &&
+        other.directFlight == directFlight &&
         other.userBookingContext == userBookingContext;
   }
 
@@ -200,6 +218,8 @@ class AirSearchRequest {
         pointerEvents.hashCode ^
         countryTo.hashCode ^
         countryFrom.hashCode ^
+        (prefAirline?.hashCode ?? 0) ^
+        (directFlight?.hashCode ?? 0) ^
         userBookingContext.hashCode;
   }
 }

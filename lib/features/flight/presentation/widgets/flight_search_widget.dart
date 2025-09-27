@@ -7,20 +7,21 @@ import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/date_picker.dart';
 import 'package:yellow_rose/core/common_widgets/flex_switch.dart';
 import 'package:yellow_rose/core/common_widgets/labeled_info_widget.dart';
-import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
+import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
-import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
 import 'package:yellow_rose/features/flight/domain/entities/source_date_pair.dart';
-import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_search_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/airport_search_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/traveller_class_selection_screen.dart';
-import 'package:yellow_rose/features/home_screen/domain/repositories/recent_search_repo.dart';
 import 'package:yellow_rose/features/home_screen/presentation/cubit/home_screen_cubit.dart';
+import 'package:yellow_rose/core/constants/airline_code.dart';
+import 'package:yellow_rose/features/flight/presentation/widgets/airline_selection_sheet.dart';
+import 'package:yellow_rose/features/flight/domain/entities/name_code.dart';
+import 'package:yellow_rose/core/nullable.dart';
 
 class FlightSearchWidget extends StatelessWidget {
   final Function(AirSearch) onSearchClick;
@@ -94,6 +95,35 @@ class FlightSearchWidget extends StatelessWidget {
       title: title,
       content: content ?? "",
       onCLick: onClick,
+    );
+  }
+
+  Widget getAirlineWidget(BuildContext context, FlightSearchState state) {
+    // build carriers list from map
+    final carriers = carrierCodeNameMap.entries
+        .map((e) => NameCode(name: e.value, code: e.key))
+        .toList();
+
+    return LabeledInfoWidget(
+      leading: const CustomImageIcon(
+        image: AssetImage("assets/images/icons/air.png"),
+        backgroundColor: Colors.white,
+      ),
+      title: "Airline",
+      content: state.preferredCarrier?.name ?? 'Any Airline',
+      onCLick: () async {
+        var result = await WidgetUtil.showBottomSheet(
+            context,
+            AirlineSelectionSheet(
+              initial: state.preferredCarrier,
+              carriers: carriers,
+            ));
+        if (result != null && result is NameCode) {
+          context.read<FlightSearchCubit>().onPreferredCarrierChange(result);
+        } else if (result == null) {
+          context.read<FlightSearchCubit>().onPreferredCarrierChange(null);
+        }
+      },
     );
   }
 
@@ -224,10 +254,63 @@ class FlightSearchWidget extends StatelessWidget {
                           SizedBox(
                             height: 16.h,
                           ),
-                          LabeledInfoWidget(
-                            title: "Class",
-                            content: state.searchClass.text,
-                            onCLick: () => onTravelerClassChange(context),
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: LabeledInfoWidget(
+                                    title: "Class",
+                                    content: state.searchClass.text,
+                                    onCLick: () =>
+                                        onTravelerClassChange(context),
+                                  ),
+                                ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  child: getAirlineWidget(context, state),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 12.h,
+                          ),
+                          // Filters wrap (Direct Flight and future chips)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Wrap(
+                              spacing: 8.w,
+                              runSpacing: 8.h,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Checkbox(
+                                      value: state.directFlight,
+                                      onChanged: (v) {
+                                        context
+                                            .read<FlightSearchCubit>()
+                                            .onDirectFlightChange(v ?? false);
+                                      },
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    GestureDetector(
+                                      onTap: () {
+                                        context
+                                            .read<FlightSearchCubit>()
+                                            .onDirectFlightChange(
+                                                !state.directFlight);
+                                      },
+                                      child: Text(
+                                        'Direct Flight',
+                                        style: TextStyles.bodyMediumStyle(),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(
                             height: 16.h,

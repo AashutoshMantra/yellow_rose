@@ -144,12 +144,25 @@ class FlightSearchCubit extends Cubit<FlightSearchState> {
     emit(currState.copyWith(searchClass: classs));
   }
 
+  void onPreferredCarrierChange(NameCode? carrier) {
+    var currState = state;
+    emit(currState.copyWith(preferredCarrier: Nullable(carrier)));
+  }
+
+  void onDirectFlightChange(bool value) {
+    var currState = state;
+    emit(currState.copyWith(directFlight: value));
+  }
+
   AirSearch getAirSearch() {
     return AirSearch(
-        adultCount: state.adultCount,
-        sources: state.sources,
-        childCount: state.childCount,
-        infantCount: state.infantCount,
-        searchClass: state.searchClass);
+      adultCount: state.adultCount,
+      sources: state.sources,
+      childCount: state.childCount,
+      infantCount: state.infantCount,
+      searchClass: state.searchClass,
+      preferredCarrier: state.preferredCarrier,
+      directFlight: state.directFlight,
+    );
   }
 }

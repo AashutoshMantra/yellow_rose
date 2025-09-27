@@ -196,7 +196,21 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
           .expand((s) => s.values)
           .map((s) => s.totalCost)
           .fold(0.0, (a, b) => a + b);
-      return selectedFLightCosts + seatPrice + ssrPrice;
+      var baggagePrice = loadedState.selectedBaggage.values
+          .where((s) => s.isNotEmpty)
+          .expand((s) => s.values)
+          .map((s) => s.totalCost)
+          .fold(0.0, (a, b) => a + b);
+      var specialRequestPrice = loadedState.selectedSpecialRequests.values
+          .where((s) => s.isNotEmpty)
+          .expand((s) => s.values)
+          .map((s) => s.totalCost)
+          .fold(0.0, (a, b) => a + b);
+      return selectedFLightCosts +
+          seatPrice +
+          ssrPrice +
+          baggagePrice +
+          specialRequestPrice;
     }
     return 0;
   }
@@ -255,6 +269,41 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
       currSelectedMealSsr[flightKey]![passengerId] = ssr;
       emit((state as FlightBookingLoaded)
           .copyWith(selectedSsr: currSelectedMealSsr));
+    }
+  }
+
+  onBaggageSelect(String flightKey, String passengerId, SsrOption ssr) {
+    if (state is FlightBookingLoaded) {
+      var currSelectedBaggage = Map<String, Map<String, SsrOption>>.from(
+          (state as FlightBookingLoaded).selectedBaggage);
+
+      if (!currSelectedBaggage.containsKey(flightKey)) {
+        currSelectedBaggage[flightKey] = <String, SsrOption>{};
+      } else {
+        currSelectedBaggage[flightKey] =
+            Map.fromEntries(currSelectedBaggage[flightKey]!.entries);
+      }
+      currSelectedBaggage[flightKey]![passengerId] = ssr;
+      emit((state as FlightBookingLoaded)
+          .copyWith(selectedBaggage: currSelectedBaggage));
+    }
+  }
+
+  onSpecialRequestSelect(String flightKey, String passengerId, SsrOption ssr) {
+    if (state is FlightBookingLoaded) {
+      var currSelectedSpecialRequests =
+          Map<String, Map<String, SsrOption>>.from(
+              (state as FlightBookingLoaded).selectedSpecialRequests);
+
+      if (!currSelectedSpecialRequests.containsKey(flightKey)) {
+        currSelectedSpecialRequests[flightKey] = <String, SsrOption>{};
+      } else {
+        currSelectedSpecialRequests[flightKey] =
+            Map.fromEntries(currSelectedSpecialRequests[flightKey]!.entries);
+      }
+      currSelectedSpecialRequests[flightKey]![passengerId] = ssr;
+      emit((state as FlightBookingLoaded)
+          .copyWith(selectedSpecialRequests: currSelectedSpecialRequests));
     }
   }
 

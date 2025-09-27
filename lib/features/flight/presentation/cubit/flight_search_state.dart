@@ -9,6 +9,8 @@ class FlightSearchState extends Equatable {
 
   final List<SourceDestinationDatePair> sources;
   final FlightSearchClass searchClass;
+  final NameCode? preferredCarrier;
+  final bool directFlight;
   const FlightSearchState({
     this.childCount = 0,
     this.adultCount = 1,
@@ -17,6 +19,8 @@ class FlightSearchState extends Equatable {
     required this.sources,
     this.isLoading = true,
     this.searchClass = FlightSearchClass.Economy,
+    this.preferredCarrier,
+    this.directFlight = false,
   });
   factory FlightSearchState.initial({AirSearch? airSearch}) {
     if (airSearch?.sources.isNotEmpty == true) {
@@ -26,7 +30,9 @@ class FlightSearchState extends Equatable {
           childCount: airSearch.childCount,
           infantCount: airSearch.infantCount,
           isLoading: false,
-          searchClass: airSearch.searchClass ?? FlightSearchClass.Economy);
+          directFlight: airSearch.directFlight ?? false,
+          searchClass: airSearch.searchClass ?? FlightSearchClass.Economy,
+          preferredCarrier: airSearch.preferredCarrier);
     }
     return FlightSearchState(sources: [
       SourceDestinationDatePair(
@@ -44,6 +50,8 @@ class FlightSearchState extends Equatable {
     bool? isLoading,
     List<SourceDestinationDatePair>? sources,
     FlightSearchClass? searchClass,
+    Nullable<NameCode>? preferredCarrier,
+    bool? directFlight,
   }) {
     return FlightSearchState(
       childCount: childCount ?? this.childCount,
@@ -51,6 +59,10 @@ class FlightSearchState extends Equatable {
       infantCount: infantCount ?? this.infantCount,
       sources: sources ?? this.sources,
       searchClass: searchClass ?? this.searchClass,
+      preferredCarrier: preferredCarrier == null
+          ? this.preferredCarrier
+          : preferredCarrier.value,
+      directFlight: directFlight ?? this.directFlight,
       error: error ?? this.error,
       isLoading: isLoading ?? this.isLoading,
     );
@@ -63,6 +75,8 @@ class FlightSearchState extends Equatable {
         infantCount,
         sources,
         searchClass,
+        preferredCarrier,
+        directFlight,
         error,
         isLoading
       ];

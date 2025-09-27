@@ -14,6 +14,7 @@ import 'package:yellow_rose/features/flight/presentation/pages/booking_detailed_
 import 'package:yellow_rose/features/flight/presentation/pages/flight_search_list.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/add_ons/meal/traveller_meal_selection_widget.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/add_ons/seatMap/seat_map_selection_widget.dart';
+import 'package:yellow_rose/features/flight/presentation/widgets/add_ons/traveller_addons_selection_widget.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/bottom_button.dart';
 
 class AirAddonSelectionScreen extends StatefulWidget {
@@ -31,6 +32,7 @@ class _AirAddonSelectionScreenState extends State<AirAddonSelectionScreen>
     with TickerProviderStateMixin {
   TabController? seatmapController;
   TabController? mealController;
+  TabController? addOnsController;
 
   TabController? controller;
 
@@ -41,7 +43,7 @@ class _AirAddonSelectionScreenState extends State<AirAddonSelectionScreen>
   bool showBook() {
     if (controller != null) {
       if (controller!.length - 1 == controller!.index) {
-        return mealController!.length - 1 == mealController!.index;
+        return addOnsController!.length - 1 == addOnsController!.index;
       }
     }
     return false;
@@ -68,6 +70,7 @@ class _AirAddonSelectionScreenState extends State<AirAddonSelectionScreen>
                 subtitle: "Total Cost",
                 onClick: () async {
                   if (controller!.index == 0) {
+                    // Seats tab
                     if (seatmapController!.index !=
                         seatmapController!.length - 1) {
                       seatmapController!
@@ -76,9 +79,19 @@ class _AirAddonSelectionScreenState extends State<AirAddonSelectionScreen>
                       seatmapController!.animateTo(0);
                       controller!.animateTo(controller!.index + 1);
                     }
-                  } else {
+                  } else if (controller!.index == 1) {
+                    // Meals tab
                     if (mealController!.index != mealController!.length - 1) {
                       mealController!.animateTo(mealController!.index + 1);
+                    } else {
+                      mealController!.animateTo(0);
+                      controller!.animateTo(controller!.index + 1);
+                    }
+                  } else {
+                    // Add-ons tab (index == 2)
+                    if (addOnsController!.index !=
+                        addOnsController!.length - 1) {
+                      addOnsController!.animateTo(addOnsController!.index + 1);
                     } else {
                       try {
                         var response = await context
@@ -141,9 +154,18 @@ class _AirAddonSelectionScreenState extends State<AirAddonSelectionScreen>
                   });
                 });
               }
+              if (addOnsController == null) {
+                addOnsController ??=
+                    TabController(length: state.seatMaps.length, vsync: this);
+                addOnsController!.addListener(() {
+                  setState(() {
+                    addOnIndex = addOnsController!.index;
+                  });
+                });
+              }
 
               return DefaultTabController(
-                length: 2,
+                length: 3,
                 child: Builder(builder: (context) {
                   if (controller == null) {
                     controller = DefaultTabController.of(context);
@@ -168,6 +190,7 @@ class _AirAddonSelectionScreenState extends State<AirAddonSelectionScreen>
                             children: const [
                               Tab(text: "Seats"),
                               Tab(text: "Meals"),
+                              Tab(text: "Add Ons"),
                             ],
                           )),
                       Expanded(
@@ -199,6 +222,29 @@ class _AirAddonSelectionScreenState extends State<AirAddonSelectionScreen>
                                         .read<FlightBookingCubit>()
                                         .onMealSelect(flightDetailsKey,
                                             passengerId, ssrOption);
+                                  }),
+                              TravelerAddOnsSelectionWidget(
+                                  passengerDetails: state.passengerDetails,
+                                  selectedBaggage: state.selectedBaggage,
+                                  selectedSpecialRequests:
+                                      state.selectedSpecialRequests,
+                                  ssrs: state.ssrOptions,
+                                  controller: addOnsController!,
+                                  onBaggageSelect: (flightDetailsKey,
+                                      passengerId, ssrOption) {
+                                    context
+                                        .read<FlightBookingCubit>()
+                                        .onBaggageSelect(flightDetailsKey,
+                                            passengerId, ssrOption);
+                                  },
+                                  onSpecialRequestSelect: (flightDetailsKey,
+                                      passengerId, ssrOption) {
+                                    context
+                                        .read<FlightBookingCubit>()
+                                        .onSpecialRequestSelect(
+                                            flightDetailsKey,
+                                            passengerId,
+                                            ssrOption);
                                   })
                             ]),
                       )
