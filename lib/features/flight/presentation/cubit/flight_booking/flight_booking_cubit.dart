@@ -35,7 +35,6 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
       List<AirResponseData> selectedItineraries, AirSearch airSearch,
       {Map<int, FareDetailsWithType>? selectedFares}) async {
     try {
-      //TODO::reprice
       emit(FlightBookingLoading());
       var mappedData = AirMapperUtility.mapFlightStateToFlightOrderDetails(
           selectedItineraries, airSearch, selectedFares);

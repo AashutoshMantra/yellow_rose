@@ -4,14 +4,16 @@ import 'package:yellow_rose/features/flight/data/models/bagge_ingo.dart';
 import 'package:yellow_rose/features/flight/data/models/fare_detail_with_passenger_type.dart';
 
 class BookingClass {
-    final String bookingClass;
-    final String fareBasis;
-    final FareDetailsPerPassengerType fareDetailsPerPassengerType;
-    final String seatsAvailability;
-    final String fareType;
-    final Map<String, Object>? otherData;
-    final String? segmentKeys;
-    final BaggageInfo? baggageInfo;
+  final String bookingClass;
+  final String fareBasis;
+  final FareDetailsPerPassengerType fareDetailsPerPassengerType;
+  final String seatsAvailability;
+  final String fareType;
+  final Map<String, Object>? otherData;
+  final String? segmentKeys;
+  final BaggageInfo? baggageInfo;
+  final String? source;
+  final String? supplier;
   BookingClass({
     required this.bookingClass,
     required this.fareBasis,
@@ -21,26 +23,35 @@ class BookingClass {
     this.otherData,
     this.segmentKeys,
     this.baggageInfo,
+    this.source,
+    this.supplier,
   });
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
+
     result.addAll({'bookingClass': bookingClass});
     result.addAll({'fareBasis': fareBasis});
-    result.addAll({'fareDetailsPerPassengerType': fareDetailsPerPassengerType.toMap()});
+    result.addAll(
+        {'fareDetailsPerPassengerType': fareDetailsPerPassengerType.toMap()});
     result.addAll({'seatsAvailability': seatsAvailability});
     result.addAll({'fareType': fareType});
-    if(otherData != null){
+    if (otherData != null) {
       result.addAll({'otherData': otherData});
     }
-    if(segmentKeys != null){
+    if (segmentKeys != null) {
       result.addAll({'segmentKeys': segmentKeys});
     }
-    if(baggageInfo != null){
+    if (baggageInfo != null) {
       result.addAll({'baggageInfo': baggageInfo!.toMap()});
     }
-  
+    if (source != null) {
+      result.addAll({'source': source});
+    }
+    if (supplier != null) {
+      result.addAll({'supplier': supplier});
+    }
+
     return result;
   }
 
@@ -48,16 +59,24 @@ class BookingClass {
     return BookingClass(
       bookingClass: map['bookingClass'] ?? '',
       fareBasis: map['fareBasis'] ?? '',
-      fareDetailsPerPassengerType: FareDetailsPerPassengerType.fromMap(map['fareDetailsPerPassengerType']),
+      fareDetailsPerPassengerType: FareDetailsPerPassengerType.fromMap(
+          map['fareDetailsPerPassengerType']),
       seatsAvailability: map['seatsAvailability'] ?? '',
       fareType: map['fareType'] ?? '',
-      otherData:map['otherData']!=null? Map<String, Object>.from(map['otherData']):null,
+      otherData: map['otherData'] != null
+          ? Map<String, Object>.from(map['otherData'])
+          : null,
       segmentKeys: map['segmentKeys'],
-      baggageInfo: map['baggageInfo'] != null ? BaggageInfo.fromMap(map['baggageInfo']) : null,
+      baggageInfo: map['baggageInfo'] != null
+          ? BaggageInfo.fromMap(map['baggageInfo'])
+          : null,
+      source: map['source'],
+      supplier: map['supplier'],
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory BookingClass.fromJson(String source) => BookingClass.fromMap(json.decode(source));
+  factory BookingClass.fromJson(String source) =>
+      BookingClass.fromMap(json.decode(source));
 }
