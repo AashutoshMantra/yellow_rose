@@ -14,6 +14,7 @@ import 'package:yellow_rose/features/flight/presentation/pages/flight_search_scr
 import 'package:yellow_rose/features/home_screen/presentation/cubit/home_screen_cubit.dart';
 import 'package:yellow_rose/features/home_screen/presentation/pages/order_list_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/pages/home_screen.dart';
+import 'package:yellow_rose/features/home_screen/presentation/pages/profile_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/bottom_navigation_bar.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/flight_recent_search.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/show_recent_searches_widget.dart';
@@ -51,7 +52,9 @@ class _DashboardState extends State<Dashboard> {
             appBar: BaseAppBar(
               title: castedState.selectedPage == 0
                   ? "Where to go?"
-                  : "My Bookings",
+                  : castedState.selectedPage == 1
+                      ? "My Bookings"
+                      : "Profile",
               subTitle: "",
               titleStyle: TextStyles.bodyXLargeBoldStyle()
                   .copyWith(color: Colors.white),
@@ -70,7 +73,11 @@ class _DashboardState extends State<Dashboard> {
             body: PageView(
               controller: controller,
               physics: const NeverScrollableScrollPhysics(),
-              children: const [HomeScreen(), OrderListScreen()],
+              children: const [
+                HomeScreen(),
+                OrderListScreen(),
+                ProfileScreen()
+              ],
             ));
       },
     );

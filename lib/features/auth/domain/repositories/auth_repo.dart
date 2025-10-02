@@ -6,5 +6,6 @@ abstract interface class AuthRepository {
   Future signIn(SignInRequest signInRequest);
   bool isLoggedIn();
   UserDetails? getUserProfile();
+  Future<void> signOut();
   Future<List<BillingEntity>> getBillingEntity(String uuid);
 }

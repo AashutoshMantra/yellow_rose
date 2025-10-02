@@ -1,6 +1,7 @@
 import 'dart:developer';
+import 'dart:collection';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
@@ -19,9 +20,22 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
       var airRecentSearch = await _recentSearchRepo.getAirRecentSearch();
       var hotelRecentSearch = await _recentSearchRepo.getHotelRecentSearch();
 
+      // Deduplicate loaded lists using structural equality while preserving order
+      final dedupedAir =
+          LinkedHashSet<AirSearch>.from(airRecentSearch).toList();
+      final dedupedHotel =
+          LinkedHashSet<HotelSearch>.from(hotelRecentSearch).toList();
+
+      // If duplicates were removed, persist the cleaned lists
+      if (dedupedAir.length != airRecentSearch.length) {
+        await _recentSearchRepo.saveAirRecentSearches(dedupedAir);
+      }
+      if (dedupedHotel.length != hotelRecentSearch.length) {
+        await _recentSearchRepo.saveHotelRecentSearches(dedupedHotel);
+      }
+
       emit(HomeScreenLoaded(0,
-          recentAirSearch: airRecentSearch,
-          recentHotelSearch: hotelRecentSearch));
+          recentAirSearch: dedupedAir, recentHotelSearch: dedupedHotel));
     } catch (e, stackTrace) {
       log(stackTrace.toString());
       emit(HomeScreenError(e.toString()));
@@ -31,7 +45,10 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
   void saveAirRecentSearches(AirSearch airSearch) {
     if (state is HomeScreenLoaded) {
       var airRecentSearch = [...(state as HomeScreenLoaded).recentAirSearch];
-      airRecentSearch.add(airSearch);
+      // Deduplicate using structural equality implemented on AirSearch
+      airRecentSearch.removeWhere((e) => e == airSearch);
+      // Insert most recent at front
+      airRecentSearch.insert(0, airSearch);
       _recentSearchRepo.saveAirRecentSearches(airRecentSearch);
       emit(HomeScreenLoaded(0, recentAirSearch: airRecentSearch));
     }
@@ -42,7 +59,9 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
       var hotelRecentSearch = [
         ...(state as HomeScreenLoaded).recentHotelSearch
       ];
-      hotelRecentSearch.add(hotelSearch);
+      // Deduplicate using structural equality implemented on HotelSearch
+      hotelRecentSearch.removeWhere((e) => e == hotelSearch);
+      hotelRecentSearch.insert(0, hotelSearch);
       _recentSearchRepo.saveHotelRecentSearches(hotelRecentSearch);
       emit(HomeScreenLoaded(0, recentHotelSearch: hotelRecentSearch));
     }

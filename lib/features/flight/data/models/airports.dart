@@ -32,77 +32,99 @@ class Airport {
       this.creationTime,
       this.id});
 
-  
-
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    if(name != null){
+
+    if (name != null) {
       result.addAll({'name': name});
     }
-    if(city != null){
+    if (city != null) {
       result.addAll({'city': city});
     }
-    if(country != null){
+    if (country != null) {
       result.addAll({'country': country});
     }
-    if(state != null){
+    if (state != null) {
       result.addAll({'state': state});
     }
-    if(status != null){
+    if (status != null) {
       result.addAll({'status': status});
     }
-    if(iataCode != null){
+    if (iataCode != null) {
       result.addAll({'iataCode': iataCode});
     }
-    if(icaoCode != null){
+    if (icaoCode != null) {
       result.addAll({'icaoCode': icaoCode});
     }
-    if(latitude != null){
+    if (latitude != null) {
       result.addAll({'latitude': latitude});
     }
-    if(longitude != null){
+    if (longitude != null) {
       result.addAll({'longitude': longitude});
     }
-    if(elevation != null){
+    if (elevation != null) {
       result.addAll({'elevation': elevation});
     }
-    if(timeZoneOffset != null){
+    if (timeZoneOffset != null) {
       result.addAll({'timeZoneOffset': timeZoneOffset});
     }
-    if(timeZone != null){
+    if (timeZone != null) {
       result.addAll({'timeZone': timeZone});
     }
-    if(creationTime != null){
+    if (creationTime != null) {
       result.addAll({'creationTime': creationTime});
     }
-    if(id != null){
+    if (id != null) {
       result.addAll({'id': id});
     }
-  
+
     return result;
   }
 
   factory Airport.fromMap(Map<dynamic, dynamic> map) {
     return Airport(
-     name: map['name'],
-    city: map['city'],
-    country:  map['country'],
-     state: map['state'],
-    status:  map['status'],
-    iataCode:  map['iataCode'],
-    icaoCode:  map['icaoCode'],
-    latitude:  map['latitude'],
-    longitude:  map['longitude'],
-    elevation:  map['elevation'],
-    timeZoneOffset: map['timeZoneOffset'],
-    timeZone:  map['timeZone'],
-    creationTime:  map['creationTime'],
-     id: map['id']?.toInt(),
+      name: map['name'],
+      city: map['city'],
+      country: map['country'],
+      state: map['state'],
+      status: map['status'],
+      iataCode: map['iataCode'],
+      icaoCode: map['icaoCode'],
+      latitude: map['latitude'],
+      longitude: map['longitude'],
+      elevation: map['elevation'],
+      timeZoneOffset: map['timeZoneOffset'],
+      timeZone: map['timeZone'],
+      creationTime: map['creationTime'],
+      id: map['id']?.toInt(),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Airport.fromJson(String source) => Airport.fromMap(json.decode(source));
+  factory Airport.fromJson(String source) =>
+      Airport.fromMap(json.decode(source));
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Airport &&
+        other.id == id &&
+        other.iataCode == iataCode &&
+        other.icaoCode == icaoCode &&
+        other.name == name &&
+        other.city == city &&
+        other.country == country;
+  }
+
+  @override
+  int get hashCode {
+    return (id ?? 0).hashCode ^
+        (iataCode ?? '').hashCode ^
+        (icaoCode ?? '').hashCode ^
+        (name ?? '').hashCode ^
+        (city ?? '').hashCode ^
+        (country ?? '').hashCode;
+  }
 }

@@ -1,4 +1,7 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
@@ -101,4 +104,29 @@ class AirSearch {
 
   factory AirSearch.fromJson(String source) =>
       AirSearch.fromMap(json.decode(source));
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is AirSearch &&
+        other.childCount == childCount &&
+        other.adultCount == adultCount &&
+        other.infantCount == infantCount &&
+        listEquals(other.sources, sources) &&
+        other.searchClass == searchClass &&
+        other.preferredCarrier == preferredCarrier &&
+        other.directFlight == directFlight;
+  }
+
+  @override
+  int get hashCode {
+    return childCount.hashCode ^
+        adultCount.hashCode ^
+        infantCount.hashCode ^
+        Object.hashAll(sources) ^
+        (searchClass?.hashCode ?? 0) ^
+        (preferredCarrier?.hashCode ?? 0) ^
+        (directFlight?.hashCode ?? 0);
+  }
 }

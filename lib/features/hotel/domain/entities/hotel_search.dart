@@ -114,8 +114,8 @@ class HotelSearch {
         checkOutDate.hashCode ^
         roomCount.hashCode ^
         adultCount.hashCode ^
-        childAges.hashCode ^
+        Object.hashAll(childAges ?? []) ^
         isInternational.hashCode ^
-        place.hashCode;
+        (place?.hashCode ?? 0);
   }
 }

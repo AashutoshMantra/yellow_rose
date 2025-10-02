@@ -27,8 +27,17 @@ class AuthRepositoryImpl implements AuthRepository {
   UserDetails? getUserProfile() {
     return _authLocalService.getUserProfile();
   }
+
   @override
   Future<List<BillingEntity>> getBillingEntity(String uuid) async {
-   return await _authService.getBillingEntity(uuid);
+    return await _authService.getBillingEntity(uuid);
+  }
+
+  @override
+  Future<void> signOut() async {
+    try {
+      // Clear local storage for profile
+      await airportBox.clear();
+    } catch (_) {}
   }
 }
