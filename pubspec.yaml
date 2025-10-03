@@ -36,12 +36,16 @@ dependencies:
   dotted_line: ^3.2.3
   dropdown_button2: ^2.3.9
   equatable: ^2.0.7
+  firebase_core: ^4.1.1
+  firebase_crashlytics: ^5.0.2
+  firebase_remote_config: ^6.0.2
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
   flutter_google_maps_webservices: ^1.1.1
   flutter_html: ^3.0.0
   flutter_rating_stars: ^1.1.0
+  flutter_upgrade_version: ^1.1.8
   get_it: ^8.0.3
   google_api_headers: ^4.0.0
   hive_flutter: ^1.1.0
@@ -57,6 +61,7 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   syncfusion_flutter_datepicker: ^28.2.5
   top_snackbar_flutter: ^3.2.0
+  upgrader: ^12.1.0
   uuid: ^4.5.1
   yaml: ^3.1.3
 

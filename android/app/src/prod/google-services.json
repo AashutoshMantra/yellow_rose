@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "350124308183",
+    "project_id": "yellow-rose-prod",
+    "storage_bucket": "yellow-rose-prod.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:350124308183:android:8e107d385905148cdfa292",
+        "android_client_info": {
+          "package_name": "com.linuxmantra.travels"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFIZWZRdfeZHgAA6ehbcf0kXR5FRcgIAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

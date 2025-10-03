@@ -1,51 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:yellow_rose/core/common_widgets/date_picker.dart';
 import 'package:yellow_rose/core/common_widgets/popup.dart';
+import 'package:yellow_rose/features/home_screen/presentation/widgets/show_update_available_body.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 
 class WidgetUtil {
-  static Future<T?> showDialog<T>(BuildContext context, Widget body,
-      {double width = double.maxFinite, double? height,
+  static Future<T?> showDialog<T>(
+    BuildContext context,
+    Widget body, {
+    double width = double.maxFinite,
+    double? height,
     bool barrierDismissible = true,
     Color barrierColor = const Color(0x80000000),
   }) {
     return showGeneralDialog(
-      transitionDuration: const Duration(milliseconds: 200),
+      context: context,
       barrierDismissible: barrierDismissible,
       barrierLabel: '',
       barrierColor: barrierColor,
-      context: context,
+      transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (context, animation1, animation2) {
-        return Container();
+        // pageBuilder must return a widget but the actual dialog is built in transitionBuilder
+        return const SizedBox.shrink();
       },
-      useRootNavigator: false,
-      transitionBuilder: (context, a1, a2, widget) {
-        final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = Curves.easeInOut.transform(animation.value);
         return Transform.scale(
-          scale: a1.value,
+          scale: curved,
           child: Opacity(
-            opacity: a1.value,
-            child: Container(
-              child: AlertDialog(
-                insetPadding: const EdgeInsets.all(10),
-                contentPadding: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0.h),
-                ),
-                content: SizedBox(
-                  height: height,
-                  width: width,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [body],
-                  ),
+            opacity: animation.value,
+            child: AlertDialog(
+              insetPadding: const EdgeInsets.all(10),
+              contentPadding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0.h),
+              ),
+              content: SizedBox(
+                height: height,
+                width: width,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [body],
                 ),
               ),
             ),
           ),
+        );
+      },
+      useRootNavigator: false,
+    );
+  }
+
+  static void showUpdateBottomSheet(BuildContext context,
+      {bool shouldForceUpdate = false, String? description}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: !shouldForceUpdate,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(10.0))),
+      builder: (context) {
+        return ShowUpdateAvailableBody(
+          forceUpdate: shouldForceUpdate,
+          description: description,
         );
       },
     );
@@ -170,7 +190,7 @@ class WidgetUtil {
       messageTextStyle: messageTextStyle,
     );
 
-    return showDialog<T>(
+    return WidgetUtil.showDialog<T>(
       context,
       popup,
       width: width,

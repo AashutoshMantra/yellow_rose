@@ -1,8 +1,12 @@
+import 'dart:developer';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_google_maps_webservices/places.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:yellow_rose/core/app_config.dart';
 import 'package:yellow_rose/core/utils/dio_client.dart';
+import 'package:yellow_rose/core/utils/remote_config_service.dart';
 import 'package:yellow_rose/core/utils/shared_pref_repository.dart';
 import 'package:yellow_rose/features/auth/data/datasources/auth_service.dart';
 import 'package:yellow_rose/features/auth/data/datasources/auth_local_service.dart';
@@ -57,11 +61,14 @@ Future setupDependencyInjection() async {
       ));
   getIt.registerLazySingleton<HotelBookUseCase>(() => HotelBookUseCaseImpl());
 
-  // getIt.registerLazySingleton<GoalRemindersUseCase>(
-  //     () => GoalRemindersUseCaseImpl());
-
   var futures = [
+    RemoteConfigService().initialize(),
     SharedPreferencesRepository.init(),
   ];
+  try {
+    await Firebase.initializeApp();
+  } catch (e, s) {
+    log("$e $s");
+  }
   await Future.wait(futures);
 }
