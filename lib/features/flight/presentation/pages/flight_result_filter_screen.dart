@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/bottom_sheet_title_widget.dart';
 import 'package:yellow_rose/core/common_widgets/pill_button.dart';
+import 'package:yellow_rose/core/constants/airline_code.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
@@ -163,7 +164,8 @@ class FlightResultFilterScreen extends StatelessWidget {
                                 children: [
                                   ...airLineCodes.map((airline) {
                                     return PillButton(
-                                      text: airline,
+                                      text: carrierCodeNameMap[airline] ??
+                                          airline,
                                       onClick: () {
                                         context
                                             .read<FlightSearchFilterCubit>()

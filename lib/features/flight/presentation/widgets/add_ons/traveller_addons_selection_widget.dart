@@ -16,8 +16,8 @@ class TravelerAddOnsSelectionWidget extends StatefulWidget {
   final Map<String, Map<String, SsrOption>> selectedSpecialRequests;
   final Map<String, SsrResponse?> ssrs;
   final TabController controller;
-  final Function(String, String, SsrOption) onBaggageSelect;
-  final Function(String, String, SsrOption) onSpecialRequestSelect;
+  final Function(String, String, SsrOption?) onBaggageSelect;
+  final Function(String, String, SsrOption?) onSpecialRequestSelect;
 
   const TravelerAddOnsSelectionWidget({
     super.key,

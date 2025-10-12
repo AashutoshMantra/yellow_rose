@@ -103,6 +103,13 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
           try {
             seatMapResponse = await _airUseCase.getSsr(
                 currLoadedState.orderDetails.orderId!, request);
+            // Deduplicate SSR options by code within each list
+            seatMapResponse = seatMapResponse.copyWith(
+              ssrMeals: _deduplicateSsrByCode(seatMapResponse.ssrMeals),
+              ssrBaggage: _deduplicateSsrByCode(seatMapResponse.ssrBaggage),
+              ssrSpecial: _deduplicateSsrByCode(seatMapResponse.ssrSpecial),
+              miscSSR: _deduplicateSsrByCode(seatMapResponse.miscSSR),
+            );
           } catch (e, s) {
             log("$e $s");
           }
@@ -110,8 +117,6 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
           return MapEntry(key, seatMapResponse);
         });
         var ssrResponses = Map.fromEntries(await Future.wait(futureToLoadSsr));
-
-        List<PassengerDetailsEntity> passengerDetais = [];
 
         emit(currLoadedState.copyWith(
             ssrOptions: ssrResponses, seatMaps: seatMapResponses));
@@ -254,7 +259,7 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
     }
   }
 
-  onMealSelect(String flightKey, String passengerId, SsrOption ssr) {
+  onMealSelect(String flightKey, String passengerId, SsrOption? ssr) {
     if (state is FlightBookingLoaded) {
       var currSelectedMealSsr = Map<String, Map<String, SsrOption>>.from(
           (state as FlightBookingLoaded).selectedSsr);
@@ -265,13 +270,20 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
         currSelectedMealSsr[flightKey] =
             Map.fromEntries(currSelectedMealSsr[flightKey]!.entries);
       }
-      currSelectedMealSsr[flightKey]![passengerId] = ssr;
+
+      // If ssr is null, remove the selection for this passenger
+      if (ssr == null) {
+        currSelectedMealSsr[flightKey]!.remove(passengerId);
+      } else {
+        currSelectedMealSsr[flightKey]![passengerId] = ssr;
+      }
+
       emit((state as FlightBookingLoaded)
           .copyWith(selectedSsr: currSelectedMealSsr));
     }
   }
 
-  onBaggageSelect(String flightKey, String passengerId, SsrOption ssr) {
+  onBaggageSelect(String flightKey, String passengerId, SsrOption? ssr) {
     if (state is FlightBookingLoaded) {
       var currSelectedBaggage = Map<String, Map<String, SsrOption>>.from(
           (state as FlightBookingLoaded).selectedBaggage);
@@ -282,13 +294,19 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
         currSelectedBaggage[flightKey] =
             Map.fromEntries(currSelectedBaggage[flightKey]!.entries);
       }
-      currSelectedBaggage[flightKey]![passengerId] = ssr;
+
+      if (ssr == null) {
+        currSelectedBaggage[flightKey]!.remove(passengerId);
+      } else {
+        currSelectedBaggage[flightKey]![passengerId] = ssr;
+      }
+
       emit((state as FlightBookingLoaded)
           .copyWith(selectedBaggage: currSelectedBaggage));
     }
   }
 
-  onSpecialRequestSelect(String flightKey, String passengerId, SsrOption ssr) {
+  onSpecialRequestSelect(String flightKey, String passengerId, SsrOption? ssr) {
     if (state is FlightBookingLoaded) {
       var currSelectedSpecialRequests =
           Map<String, Map<String, SsrOption>>.from(
@@ -300,7 +318,13 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
         currSelectedSpecialRequests[flightKey] =
             Map.fromEntries(currSelectedSpecialRequests[flightKey]!.entries);
       }
-      currSelectedSpecialRequests[flightKey]![passengerId] = ssr;
+
+      if (ssr == null) {
+        currSelectedSpecialRequests[flightKey]!.remove(passengerId);
+      } else {
+        currSelectedSpecialRequests[flightKey]![passengerId] = ssr;
+      }
+
       emit((state as FlightBookingLoaded)
           .copyWith(selectedSpecialRequests: currSelectedSpecialRequests));
     }
@@ -321,5 +345,19 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
           (state as FlightBookingLoaded).orderDetails.orderId!, mappedRequest);
     }
     throw Exception("FlightBookingState is not loaded");
+  }
+
+  /// Deduplicates a list of SSR options by their code field.
+  /// Keeps the first occurrence of each unique code.
+  List<SsrOption> _deduplicateSsrByCode(List<SsrOption> ssrOptions) {
+    final seenCodes = <String>{};
+    final deduplicated = <SsrOption>[];
+    for (final ssr in ssrOptions) {
+      if (!seenCodes.contains(ssr.code)) {
+        seenCodes.add(ssr.code);
+        deduplicated.add(ssr);
+      }
+    }
+    return deduplicated;
   }
 }

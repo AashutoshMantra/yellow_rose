@@ -14,7 +14,7 @@ class TravelerMealSelectionWidget extends StatefulWidget {
   final Map<String, Map<String, SsrOption>> selectedSsr;
   final Map<String, SsrResponse?> ssrs;
   final TabController controller;
-  final Function(String, String, SsrOption) onMealSelect;
+  final Function(String, String, SsrOption?) onMealSelect;
   const TravelerMealSelectionWidget(
       {super.key,
       required this.passengerDetails,

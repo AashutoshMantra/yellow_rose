@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:yellow_rose/core/common_widgets/cutom_dropdown_field.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
@@ -12,7 +13,7 @@ class SpecialRequestSelectionWidget extends StatelessWidget {
   final List<PassengerDetailsEntity> passengerDetails;
   final Map<String, SsrOption> selectedSpecialRequests;
   final SsrResponse? ssrs;
-  final Function(String, SsrOption) onSpecialRequestSelect;
+  final Function(String, SsrOption?) onSpecialRequestSelect;
 
   const SpecialRequestSelectionWidget(
       {super.key,
@@ -88,15 +89,10 @@ class SpecialRequestSelectionWidget extends StatelessWidget {
                     ],
                     val: selectedSpecialRequests[passenger.id]?.code,
                     onchange: (ssrCode) {
-                      if (ssrCode == null) {
-                        // Handle removal/no selection case if needed
-                        return;
-                      }
-                      var ssr =
-                          ssrs?.ssrSpecial.firstWhere((d) => d.code == ssrCode);
-                      if (ssr != null) {
-                        onSpecialRequestSelect(passenger.id, ssr);
-                      }
+                      var ssr = ssrs?.ssrSpecial
+                          .firstWhereOrNull((d) => d.code == ssrCode);
+
+                      onSpecialRequestSelect(passenger.id, ssr);
                     },
                   ),
                   SizedBox(height: 12.h),

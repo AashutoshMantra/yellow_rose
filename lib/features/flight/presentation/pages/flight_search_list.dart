@@ -8,6 +8,7 @@ import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/default_tab_controller_listner.dart';
 import 'package:yellow_rose/core/common_widgets/loader.dart';
 import 'package:yellow_rose/core/common_widgets/rounded_tab_bar.dart';
+import 'package:yellow_rose/core/constants/airline_code.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
@@ -107,6 +108,7 @@ class FlightSearchListScreen extends StatelessWidget {
             state.airSearchResponse.isNotEmpty) {
           return FloatingActionButton(
             onPressed: () async {
+              final cubit = context.read<FlightSearchListingCubit>();
               var isReturn = state.airSearch!.sources.length == 1 &&
                   state.airSearch!.sources[0].returnDate != null;
               var searhcPair = isReturn
@@ -117,19 +119,25 @@ class FlightSearchListScreen extends StatelessWidget {
                     source: searhcPair.destination,
                     destination: searhcPair.source);
               }
+
+              final airLineCodes = state
+                  .airSearchResponse[state.currentIndex].flights
+                  .expand((flight) => flight.flightDetailsList)
+                  .map((flightDetail) => flightDetail.carrierName)
+                  .toSet()
+                  .toList();
+
               var result = await WidgetUtil.showBottomSheet(
                 context,
                 FlightResultFilterScreen(
                   sourceDestinationDatePair: searhcPair,
-                  airLineCodes: const ["6E"],
+                  airLineCodes: airLineCodes,
                   filterState:
                       state.flightSearchFilterState[state.currentIndex],
                 ),
               );
               if (result != null && result is FlightSearchFilterState) {
-                context
-                    .read<FlightSearchListingCubit>()
-                    .onFlightFilterChange(result);
+                cubit.onFlightFilterChange(result);
               }
             },
             child: const Icon(Icons.filter_alt_outlined),

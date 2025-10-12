@@ -61,14 +61,14 @@ Future setupDependencyInjection() async {
       ));
   getIt.registerLazySingleton<HotelBookUseCase>(() => HotelBookUseCaseImpl());
 
-  var futures = [
-    RemoteConfigService().initialize(),
-    SharedPreferencesRepository.init(),
-  ];
   try {
     await Firebase.initializeApp();
   } catch (e, s) {
     log("$e $s");
   }
+  var futures = [
+    RemoteConfigService().initialize(),
+    SharedPreferencesRepository.init(),
+  ];
   await Future.wait(futures);
 }

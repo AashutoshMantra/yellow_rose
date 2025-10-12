@@ -12,7 +12,7 @@ class MealSelectionWidget extends StatelessWidget {
   final List<PassengerDetailsEntity> passengerDetails;
   final Map<String, SsrOption> selectedSsr;
   final SsrResponse? ssrs;
-  final Function(String, SsrOption) onMealSelect;
+  final Function(String, SsrOption?) onMealSelect;
 
   const MealSelectionWidget(
       {super.key,
@@ -64,19 +64,30 @@ class MealSelectionWidget extends StatelessWidget {
                   ),
                   CustomDropDownField(
                     key: ValueKey(passenger.id),
-                    data1: ssrs?.ssrMeals.map((ssr) {
-                          return DropdownMenuItem<String>(
-                            value: ssr.code,
-                            child:
-                                Text("${ssr.type} (${ssr.description ?? ''})"),
-                          );
-                        }).toList() ??
-                        [],
+                    data1: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text("No Meal"),
+                      ),
+                      ...ssrs?.ssrMeals.map((ssr) {
+                            return DropdownMenuItem<String>(
+                              value: ssr.code,
+                              child: Text(
+                                  "${ssr.type} (${ssr.description ?? ''})"),
+                            );
+                          }).toList() ??
+                          [],
+                    ],
                     val: selectedSsr[passenger.id]?.code,
                     onchange: (ssrCode) {
-                      var ssr =
-                          ssrs?.ssrMeals.firstWhere((d) => d.code == ssrCode);
-                      onMealSelect(passenger.id, ssr!);
+                      if (ssrCode == null) {
+                        // No meal selected, pass null to remove selection
+                        onMealSelect(passenger.id, null);
+                      } else {
+                        var ssr =
+                            ssrs?.ssrMeals.firstWhere((d) => d.code == ssrCode);
+                        onMealSelect(passenger.id, ssr!);
+                      }
                     },
                   )
                 ],

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:yellow_rose/core/common_widgets/cutom_dropdown_field.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
@@ -12,7 +13,7 @@ class BaggageSelectionWidget extends StatelessWidget {
   final List<PassengerDetailsEntity> passengerDetails;
   final Map<String, SsrOption> selectedBaggage;
   final SsrResponse? ssrs;
-  final Function(String, SsrOption) onBaggageSelect;
+  final Function(String, SsrOption?) onBaggageSelect;
 
   const BaggageSelectionWidget(
       {super.key,
@@ -89,15 +90,10 @@ class BaggageSelectionWidget extends StatelessWidget {
                     ],
                     val: selectedBaggage[passenger.id]?.code,
                     onchange: (ssrCode) {
-                      if (ssrCode == null) {
-                        // Handle removal/no selection case if needed
-                        return;
-                      }
-                      var ssr =
-                          ssrs?.ssrBaggage.firstWhere((d) => d.code == ssrCode);
-                      if (ssr != null) {
-                        onBaggageSelect(passenger.id, ssr);
-                      }
+                      var ssr = ssrs?.ssrBaggage
+                          .firstWhereOrNull((d) => d.code == ssrCode);
+
+                      onBaggageSelect(passenger.id, ssr);
                     },
                   ),
                   SizedBox(height: 12.h),
