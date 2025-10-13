@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/fare_details_with_type.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/flight_detail_with_booking_class.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/route_request.dart';
@@ -57,10 +58,10 @@ class AirResponseData {
   factory AirResponseData.fromMap(Map<String, dynamic> map) {
     return AirResponseData(
       schDepartureTime: map['schDepartureTime'] != null
-          ? DateTime.tryParse(map['schDepartureTime'])
+          ? DateTimeParser.tryParseFromMap(map, 'schDepartureTime')
           : null,
       schArrivalTime: map['schArrivalTime'] != null
-          ? DateTime.tryParse(map['schArrivalTime'])
+          ? DateTimeParser.tryParseFromMap(map, 'schArrivalTime')
           : null,
       travelDuration: map['travelDuration']?.toInt(),
       source: map['source'],

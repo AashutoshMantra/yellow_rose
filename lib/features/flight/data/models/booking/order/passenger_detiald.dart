@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 
 import 'package:yellow_rose/features/flight/data/models/booking/order/flight_detail_preference.dart';
@@ -209,7 +210,8 @@ class PassengerDetails {
 
   factory PassengerDetails.fromMap(Map<String, dynamic> map) {
     return PassengerDetails(
-      passengerType:( map['passengerType'] as String?)?.toEnum(PassengerTypeEnum.values),
+      passengerType:
+          (map['passengerType'] as String?)?.toEnum(PassengerTypeEnum.values),
       passengerTitle: map['passengerTitle'],
       firstName: map['firstName'],
       lastName: map['lastName'],
@@ -235,7 +237,7 @@ class PassengerDetails {
           ? UserVisaDetails.fromMap(map['userVisaDetails'])
           : null,
       dob: map['dob'] != null
-          ? DateTime.tryParse(map['dob'])
+          ? DateTimeParser.tryParseFromMap(map, 'dob')
           : null,
       seatMeal: map['seatMeal'] != null
           ? List<Segment>.from(map['seatMeal']?.map((x) => Segment.fromMap(x)))

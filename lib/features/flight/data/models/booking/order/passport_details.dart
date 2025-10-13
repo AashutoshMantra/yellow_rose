@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
+
 class UserPassportDetails {
   final int? id;
 
@@ -48,29 +50,29 @@ class UserPassportDetails {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    if(id != null){
+
+    if (id != null) {
       result.addAll({'id': id});
     }
-    if(passportNumber != null){
+    if (passportNumber != null) {
       result.addAll({'passportNumber': passportNumber});
     }
-    if(passportDOB != null){
+    if (passportDOB != null) {
       result.addAll({'passportDOB': passportDOB!.millisecondsSinceEpoch});
     }
-    if(passportDOI != null){
+    if (passportDOI != null) {
       result.addAll({'passportDOI': passportDOI!.millisecondsSinceEpoch});
     }
-    if(passportDOE != null){
+    if (passportDOE != null) {
       result.addAll({'passportDOE': passportDOE!.millisecondsSinceEpoch});
     }
-    if(passportPOI != null){
+    if (passportPOI != null) {
       result.addAll({'passportPOI': passportPOI});
     }
-    if(passportCountry != null){
+    if (passportCountry != null) {
       result.addAll({'passportCountry': passportCountry});
     }
-  
+
     return result;
   }
 
@@ -78,9 +80,15 @@ class UserPassportDetails {
     return UserPassportDetails(
       id: map['id']?.toInt(),
       passportNumber: map['passportNumber'],
-      passportDOB: map['passportDOB'] != null ? DateTime.tryParse(map['passportDOB']) : null,
-      passportDOI: map['passportDOI'] != null ? DateTime.tryParse(map['passportDOI']) : null,
-      passportDOE: map['passportDOE'] != null ? DateTime.tryParse(map['passportDOE']) : null,
+      passportDOB: map['passportDOB'] != null
+          ? DateTimeParser.tryParseFromMap(map, 'passportDOB')
+          : null,
+      passportDOI: map['passportDOI'] != null
+          ? DateTimeParser.tryParseFromMap(map, 'passportDOI')
+          : null,
+      passportDOE: map['passportDOE'] != null
+          ? DateTimeParser.tryParseFromMap(map, 'passportDOE')
+          : null,
       passportPOI: map['passportPOI'],
       passportCountry: map['passportCountry'],
     );
@@ -88,7 +96,8 @@ class UserPassportDetails {
 
   String toJson() => json.encode(toMap());
 
-  factory UserPassportDetails.fromJson(String source) => UserPassportDetails.fromMap(json.decode(source));
+  factory UserPassportDetails.fromJson(String source) =>
+      UserPassportDetails.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -98,25 +107,25 @@ class UserPassportDetails {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is UserPassportDetails &&
-      other.id == id &&
-      other.passportNumber == passportNumber &&
-      other.passportDOB == passportDOB &&
-      other.passportDOI == passportDOI &&
-      other.passportDOE == passportDOE &&
-      other.passportPOI == passportPOI &&
-      other.passportCountry == passportCountry;
+        other.id == id &&
+        other.passportNumber == passportNumber &&
+        other.passportDOB == passportDOB &&
+        other.passportDOI == passportDOI &&
+        other.passportDOE == passportDOE &&
+        other.passportPOI == passportPOI &&
+        other.passportCountry == passportCountry;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      passportNumber.hashCode ^
-      passportDOB.hashCode ^
-      passportDOI.hashCode ^
-      passportDOE.hashCode ^
-      passportPOI.hashCode ^
-      passportCountry.hashCode;
+        passportNumber.hashCode ^
+        passportDOB.hashCode ^
+        passportDOI.hashCode ^
+        passportDOE.hashCode ^
+        passportPOI.hashCode ^
+        passportCountry.hashCode;
   }
 }

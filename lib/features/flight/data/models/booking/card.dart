@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
+
 class Card {
   String? cvvData;
   String? identification;
@@ -44,32 +46,32 @@ class Card {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    if(cvvData != null){
+
+    if (cvvData != null) {
       result.addAll({'cvvData': cvvData});
     }
-    if(identification != null){
+    if (identification != null) {
       result.addAll({'identification': identification});
     }
-    if(creditCardCode != null){
+    if (creditCardCode != null) {
       result.addAll({'creditCardCode': creditCardCode});
     }
-    if(accountNumber != null){
+    if (accountNumber != null) {
       result.addAll({'accountNumber': accountNumber});
     }
-    if(name != null){
+    if (name != null) {
       result.addAll({'name': name});
     }
-    if(currencyCode != null){
+    if (currencyCode != null) {
       result.addAll({'currencyCode': currencyCode});
     }
-    if(receivedFrom != null){
+    if (receivedFrom != null) {
       result.addAll({'receivedFrom': receivedFrom});
     }
-    if(expiryDate != null){
+    if (expiryDate != null) {
       result.addAll({'expiryDate': expiryDate!.millisecondsSinceEpoch});
     }
-  
+
     return result;
   }
 
@@ -82,7 +84,9 @@ class Card {
       name: map['name'],
       currencyCode: map['currencyCode'],
       receivedFrom: map['receivedFrom'],
-      expiryDate: map['expiryDate'] != null ? DateTime.tryParse(map['expiryDate']) : null,
+      expiryDate: map['expiryDate'] != null
+          ? DateTimeParser.tryParseFromMap(map, 'expiryDate')
+          : null,
     );
   }
 
@@ -98,27 +102,27 @@ class Card {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is Card &&
-      other.cvvData == cvvData &&
-      other.identification == identification &&
-      other.creditCardCode == creditCardCode &&
-      other.accountNumber == accountNumber &&
-      other.name == name &&
-      other.currencyCode == currencyCode &&
-      other.receivedFrom == receivedFrom &&
-      other.expiryDate == expiryDate;
+        other.cvvData == cvvData &&
+        other.identification == identification &&
+        other.creditCardCode == creditCardCode &&
+        other.accountNumber == accountNumber &&
+        other.name == name &&
+        other.currencyCode == currencyCode &&
+        other.receivedFrom == receivedFrom &&
+        other.expiryDate == expiryDate;
   }
 
   @override
   int get hashCode {
     return cvvData.hashCode ^
-      identification.hashCode ^
-      creditCardCode.hashCode ^
-      accountNumber.hashCode ^
-      name.hashCode ^
-      currencyCode.hashCode ^
-      receivedFrom.hashCode ^
-      expiryDate.hashCode;
+        identification.hashCode ^
+        creditCardCode.hashCode ^
+        accountNumber.hashCode ^
+        name.hashCode ^
+        currencyCode.hashCode ^
+        receivedFrom.hashCode ^
+        expiryDate.hashCode;
   }
 }

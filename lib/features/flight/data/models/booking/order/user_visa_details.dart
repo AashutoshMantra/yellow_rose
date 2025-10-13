@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
+
 class UserVisaDetails {
   final int? id;
 
@@ -80,10 +82,10 @@ class UserVisaDetails {
       issuingCountry: map['issuingCountry'],
       type: map['type'],
       issueDate: map['issueDate'] != null
-          ? DateTime.tryParse(map['issueDate'])
+          ? DateTimeParser.tryParseFromMap(map, 'issueDate')
           : null,
       expiryDate: map['expiryDate'] != null
-          ? DateTime.tryParse(map['expiryDate'])
+          ? DateTimeParser.tryParseFromMap(map, 'expiryDate')
           : null,
     );
   }

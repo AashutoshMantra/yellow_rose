@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 
 import 'package:yellow_rose/features/flight/data/models/advance_pricign_segment.dart';
@@ -203,10 +204,10 @@ class UserBookingRequest {
               map['fare']?.map((x) => FareDetailsWithType.fromMap(x)))
           : null,
       schArrivalTime: map['schArrivalTime'] != null
-          ? DateTime.tryParse(map['schArrivalTime'])
+          ? DateTimeParser.tryParseFromMap(map, 'schArrivalTime')
           : null,
       schDepartureTime: map['schDepartureTime'] != null
-          ? DateTime.tryParse(map['schDepartureTime'])
+          ? DateTimeParser.tryParseFromMap(map, 'schDepartureTime')
           : null,
       displaySchDepartureTime: map['displaySchDepartureTime'],
       displaySchArrivalTime: map['displaySchArrivalTime'],

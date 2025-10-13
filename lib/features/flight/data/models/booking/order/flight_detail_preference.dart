@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/passport_details.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/ssr_options.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/user_visa_details.dart';
@@ -267,10 +268,10 @@ class FlightDetailsWithPassengerPreferences {
       flightId: map['flightId'],
       trackId: map['trackId'],
       schDepartureTime: map['schDepartureTime'] != null
-          ? DateTime.tryParse(map['schDepartureTime'])
+          ? DateTimeParser.tryParseFromMap(map, 'schDepartureTime')
           : null,
       schArrivalTime: map['schArrivalTime'] != null
-          ? DateTime.tryParse(map['schArrivalTime'])
+          ? DateTimeParser.tryParseFromMap(map, 'schArrivalTime')
           : null,
       layOver: map['layOver'],
       displaySchDepartureTime: map['displaySchDepartureTime'],

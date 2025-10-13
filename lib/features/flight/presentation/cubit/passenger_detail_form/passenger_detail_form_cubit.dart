@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/flight/domain/entities/gender.dart';
 import 'package:yellow_rose/features/flight/domain/entities/passenger_department_details.dart';
@@ -51,7 +52,7 @@ class PassengerDetailFormCubit extends Cubit<PassengerDetailFormState> {
   }
 
   void onDobChange(String? number) {
-    emit(state.copyWith(dob: DateTime.tryParse(number ?? '')));
+    emit(state.copyWith(dob: DateTimeParser.tryParse(number ?? '')));
   }
 
   PassengerDetailsEntity getPassengerDetails() {

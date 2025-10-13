@@ -1,16 +1,16 @@
 import 'dart:convert';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/features/flight/data/models/erro_code_handler.dart';
 
 class OrderErrorHandler {
+  final ErrorCodeHandler? errorData;
 
-    final ErrorCodeHandler? errorData;
-
-     final DateTime? requestedDate;
-    final String? travelType;
-    final String? requestedClass;
-    final String? fromAirport;
-    final String? toAirport;
+  final DateTime? requestedDate;
+  final String? travelType;
+  final String? requestedClass;
+  final String? fromAirport;
+  final String? toAirport;
   OrderErrorHandler({
     this.errorData,
     this.requestedDate,
@@ -19,7 +19,6 @@ class OrderErrorHandler {
     this.fromAirport,
     this.toAirport,
   });
-
 
   OrderErrorHandler copyWith({
     ErrorCodeHandler? errorData,
@@ -41,33 +40,37 @@ class OrderErrorHandler {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    if(errorData != null){
+
+    if (errorData != null) {
       result.addAll({'errorData': errorData!.toMap()});
     }
-    if(requestedDate != null){
+    if (requestedDate != null) {
       result.addAll({'requestedDate': requestedDate!.millisecondsSinceEpoch});
     }
-    if(travelType != null){
+    if (travelType != null) {
       result.addAll({'travelType': travelType});
     }
-    if(requestedClass != null){
+    if (requestedClass != null) {
       result.addAll({'requestedClass': requestedClass});
     }
-    if(fromAirport != null){
+    if (fromAirport != null) {
       result.addAll({'fromAirport': fromAirport});
     }
-    if(toAirport != null){
+    if (toAirport != null) {
       result.addAll({'toAirport': toAirport});
     }
-  
+
     return result;
   }
 
   factory OrderErrorHandler.fromMap(Map<String, dynamic> map) {
     return OrderErrorHandler(
-      errorData: map['errorData'] != null ? ErrorCodeHandler.fromMap(map['errorData']) : null,
-      requestedDate: map['requestedDate'] != null ? DateTime.tryParse(map['requestedDate']) : null,
+      errorData: map['errorData'] != null
+          ? ErrorCodeHandler.fromMap(map['errorData'])
+          : null,
+      requestedDate: map['requestedDate'] != null
+          ? DateTimeParser.tryParseFromMap(map, 'requestedDate')
+          : null,
       travelType: map['travelType'],
       requestedClass: map['requestedClass'],
       fromAirport: map['fromAirport'],
@@ -77,7 +80,8 @@ class OrderErrorHandler {
 
   String toJson() => json.encode(toMap());
 
-  factory OrderErrorHandler.fromJson(String source) => OrderErrorHandler.fromMap(json.decode(source));
+  factory OrderErrorHandler.fromJson(String source) =>
+      OrderErrorHandler.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -87,23 +91,23 @@ class OrderErrorHandler {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is OrderErrorHandler &&
-      other.errorData == errorData &&
-      other.requestedDate == requestedDate &&
-      other.travelType == travelType &&
-      other.requestedClass == requestedClass &&
-      other.fromAirport == fromAirport &&
-      other.toAirport == toAirport;
+        other.errorData == errorData &&
+        other.requestedDate == requestedDate &&
+        other.travelType == travelType &&
+        other.requestedClass == requestedClass &&
+        other.fromAirport == fromAirport &&
+        other.toAirport == toAirport;
   }
 
   @override
   int get hashCode {
     return errorData.hashCode ^
-      requestedDate.hashCode ^
-      travelType.hashCode ^
-      requestedClass.hashCode ^
-      fromAirport.hashCode ^
-      toAirport.hashCode;
+        requestedDate.hashCode ^
+        travelType.hashCode ^
+        requestedClass.hashCode ^
+        fromAirport.hashCode ^
+        toAirport.hashCode;
   }
 }

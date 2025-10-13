@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/features/hotel/data/models/search/hotel_room_request.dart';
 
@@ -124,8 +125,8 @@ class HotelListSearchRequest {
       userRating: map['userRating']?.toDouble(),
       mealBasis: map['mealBasis'],
       address: map['address'],
-      checkInDate: DateTime.parse(map['checkInDate']),
-      checkOutDate: DateTime.parse(map['checkOutDate']),
+      checkInDate: DateTimeParser.parseFromMap(map, 'checkInDate'),
+      checkOutDate: DateTimeParser.parseFromMap(map, 'checkOutDate'),
       roomCount: map['roomCount']?.toInt() ?? 0,
       rooms: List<HotelRoomRequest>.from(
           map['rooms']?.map((x) => HotelRoomRequest.fromMap(x))),

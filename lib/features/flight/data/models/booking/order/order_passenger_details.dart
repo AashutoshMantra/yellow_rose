@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/passenger_booking_class.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/passport_details.dart';
@@ -433,7 +434,9 @@ class OrdersPassengersDetails {
         csrPNR: map['csrPNR'],
         pnr: map['pnr'],
         pnrStatus: map['pnrStatus'],
-        dob: map['dob'] != null ? DateTime.tryParse(map['dob']) : null,
+        dob: map['dob'] != null
+            ? DateTimeParser.tryParseFromMap(map, 'dob')
+            : null,
         reportingTags: map['reportingTags'] != null
             ? List<RmTags>.from(
                 map['reportingTags']?.map((x) => RmTags.fromMap(x)))
@@ -469,15 +472,17 @@ class OrdersPassengersDetails {
         mealPreferences: map['mealPreferences'],
         rescheduledPassengerRef: map['rescheduledPassengerRef'],
         creationTs: map['creationTs'] != null
-            ? DateTime.tryParse(map['creationTs'])
+            ? DateTimeParser.tryParseFromMap(map, 'creationTs')
             : null,
         firstDepartureTime: map['firstDepartureTime'] != null
-            ? DateTime.tryParse(map['firstDepartureTime'])
+            ? DateTimeParser.tryParseFromMap(map, 'firstDepartureTime')
             : null,
         cancellationTs: map['cancellationTs'] != null
-            ? DateTime.tryParse(map['cancellationTs'])
+            ? DateTimeParser.tryParseFromMap(map, 'cancellationTs')
             : null,
-        modTs: map['modTs'] != null ? DateTime.tryParse(map['modTs']) : null,
+        modTs: map['modTs'] != null
+            ? DateTimeParser.tryParseFromMap(map, 'modTs')
+            : null,
         webCheckin: map['webCheckin'] != null
             ? Map<String, dynamic>.from(map['webCheckin'])
             : null,

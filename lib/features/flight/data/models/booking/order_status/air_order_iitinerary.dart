@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_response_data.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/flight_detail_with_booking_class.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/order_passenger_details.dart';
@@ -387,7 +388,7 @@ class AirOrderItinerary {
       pnrRetrieveErrorResponse: map['pnrRetrieveErrorResponse'],
       lastpnrRetrieveStatus: map['lastpnrRetrieveStatus'],
       lastPnrRetrieveDateTime: map['lastPnrRetrieveDateTime'] != null
-          ? DateTime.tryParse(map['lastPnrRetrieveDateTime'])
+          ? DateTimeParser.tryParseFromMap(map, 'lastPnrRetrieveDateTime')
           : null,
       passiveStatus: map['passiveStatus'],
       docIssuanceStatus: map['docIssuanceStatus'],
@@ -418,18 +419,21 @@ class AirOrderItinerary {
       rescheduleType: map['rescheduleType'],
       repriceStatus: map['repriceStatus'],
       creationTs: map['creationTs'] != null
-          ? DateTime.tryParse(map['creationTs'])
+          ? DateTimeParser.tryParseFromMap(map, 'creationTs')
           : null,
       firstDeparture: map['firstDeparture'] != null
-          ? DateTime.tryParse(map['firstDeparture'])
+          ? DateTimeParser.tryParseFromMap(map, 'firstDeparture')
           : null,
-      modTs: map['modTs'] != null ? DateTime.tryParse(map['modTs']) : null,
+      modTs: map['modTs'] != null
+          ? DateTimeParser.tryParseFromMap(map, 'modTs')
+          : null,
       ticketIssuance: map['ticketIssuance'],
       ticketIssued: map['ticketIssued'],
-      bookingTs:
-          map['bookingTs'] != null ? DateTime.tryParse(map['bookingTs']) : null,
+      bookingTs: map['bookingTs'] != null
+          ? DateTimeParser.tryParseFromMap(map, 'bookingTs')
+          : null,
       bookingRequestTs: map['bookingRequestTs'] != null
-          ? DateTime.tryParse(map['bookingRequestTs'])
+          ? DateTimeParser.tryParseFromMap(map, 'bookingRequestTs')
           : null,
       travelDate: map['travelDate'],
     );

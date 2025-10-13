@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_request.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/booking_channel_enum.dart';
@@ -532,16 +533,19 @@ class OrderStatus {
           ? AirSearchRequest.fromMap(map['searchRequest'])
           : null,
       creationTs: map['creationTs'] != null
-          ? DateTime.tryParse(map['creationTs'])
+          ? DateTimeParser.tryParseFromMap(map, 'creationTs')
           : null,
-      modTs: map['modTs'] != null ? DateTime.tryParse(map['modTs']) : null,
-      bookingTs:
-          map['bookingTs'] != null ? DateTime.tryParse(map['bookingTs']) : null,
+      modTs: map['modTs'] != null
+          ? DateTimeParser.tryParseFromMap(map, 'modTs')
+          : null,
+      bookingTs: map['bookingTs'] != null
+          ? DateTimeParser.tryParseFromMap(map, 'bookingTs')
+          : null,
       bookingRequestTs: map['bookingRequestTs'] != null
-          ? DateTime.tryParse(map['bookingRequestTs'])
+          ? DateTimeParser.tryParseFromMap(map, 'bookingRequestTs')
           : null,
       invoicingTs: map['invoicingTs'] != null
-          ? DateTime.tryParse(map['invoicingTs'])
+          ? DateTimeParser.tryParseFromMap(map, 'invoicingTs')
           : null,
       tripApprovalStatus: map['tripApprovalStatus'],
       emailAllowed: map['emailAllowed'],

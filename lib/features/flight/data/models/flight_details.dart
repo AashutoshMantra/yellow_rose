@@ -1,19 +1,21 @@
 import 'dart:convert';
 
+import 'package:yellow_rose/core/utils/date_time_parser.dart';
+
 class FlightDetails {
-    final String carrierName;
-    final String flightNumber;
-    final String fromAirport;
-    final String toAirport;
-    final String fromTerminal;
-    final String toTerminal;
-    final DateTime schDepartureTime;
-    final DateTime schArrivalTime;
-    final int travelDuration;
-    final Map<String, Object>? otherData;
-    final String? equipmentType;
-    final String? distance;
-    final String? segmentKey;
+  final String carrierName;
+  final String flightNumber;
+  final String fromAirport;
+  final String toAirport;
+  final String fromTerminal;
+  final String toTerminal;
+  final DateTime schDepartureTime;
+  final DateTime schArrivalTime;
+  final int travelDuration;
+  final Map<String, Object>? otherData;
+  final String? equipmentType;
+  final String? distance;
+  final String? segmentKey;
   FlightDetails({
     required this.carrierName,
     required this.flightNumber,
@@ -32,29 +34,30 @@ class FlightDetails {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
+
     result.addAll({'carrierName': carrierName});
     result.addAll({'flightNumber': flightNumber});
     result.addAll({'fromAirport': fromAirport});
     result.addAll({'toAirport': toAirport});
     result.addAll({'fromTerminal': fromTerminal});
     result.addAll({'toTerminal': toTerminal});
-    result.addAll({'schDepartureTime': schDepartureTime.millisecondsSinceEpoch});
+    result
+        .addAll({'schDepartureTime': schDepartureTime.millisecondsSinceEpoch});
     result.addAll({'schArrivalTime': schArrivalTime.millisecondsSinceEpoch});
     result.addAll({'travelDuration': travelDuration});
-    if(otherData != null){
+    if (otherData != null) {
       result.addAll({'otherData': otherData});
     }
-    if(equipmentType != null){
+    if (equipmentType != null) {
       result.addAll({'equipmentType': equipmentType});
     }
-    if(distance != null){
+    if (distance != null) {
       result.addAll({'distance': distance});
     }
-    if(segmentKey != null){
+    if (segmentKey != null) {
       result.addAll({'segmentKey': segmentKey});
     }
-  
+
     return result;
   }
 
@@ -66,10 +69,12 @@ class FlightDetails {
       toAirport: map['toAirport'] ?? '',
       fromTerminal: map['fromTerminal'] ?? '',
       toTerminal: map['toTerminal'] ?? '',
-      schDepartureTime: DateTime.parse(map['schDepartureTime']),
-      schArrivalTime: DateTime.parse(map['schArrivalTime']),
+      schDepartureTime: DateTimeParser.parseFromMap(map, 'schDepartureTime'),
+      schArrivalTime: DateTimeParser.parseFromMap(map, 'schArrivalTime'),
       travelDuration: map['travelDuration']?.toInt() ?? 0,
-      otherData:map['otherData']!=null? Map<String, Object>.from(map['otherData']):null,
+      otherData: map['otherData'] != null
+          ? Map<String, Object>.from(map['otherData'])
+          : null,
       equipmentType: map['equipmentType'],
       distance: map['distance'],
       segmentKey: map['segmentKey'],
@@ -78,5 +83,6 @@ class FlightDetails {
 
   String toJson() => json.encode(toMap());
 
-  factory FlightDetails.fromJson(String source) => FlightDetails.fromMap(json.decode(source));
+  factory FlightDetails.fromJson(String source) =>
+      FlightDetails.fromMap(json.decode(source));
 }
