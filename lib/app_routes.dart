@@ -9,7 +9,6 @@ import 'package:yellow_rose/features/flight/data/models/booking/order_status/ord
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_booking/flight_booking_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_order_modify/flight_order_modify_cubit.dart';
-import 'package:yellow_rose/features/flight/presentation/cubit/flight_search_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_search_listing_cubit/flight_search_listing_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/air_addond_selection_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/booking_detailed_screen.dart';
@@ -32,6 +31,11 @@ import 'package:yellow_rose/features/hotel/presentation/pages/hotel_payment_scre
 import 'package:yellow_rose/features/hotel/presentation/pages/hotel_search_list_scree.dart';
 import 'package:yellow_rose/features/hotel/presentation/pages/hotel_search_screen.dart';
 import 'package:yellow_rose/features/hotel/presentation/pages/hotel_booking_review_screen.dart';
+import 'package:yellow_rose/features/bus/domain/entities/bus_search.dart';
+import 'package:yellow_rose/features/bus/presentation/cubit/search/bus_search_cubit.dart';
+import 'package:yellow_rose/features/bus/presentation/cubit/bus_search_listing/bus_search_listing_cubit.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_search_screen.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_search_list_screen.dart';
 
 String formatScreenName(String input) {
   return input.replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
@@ -266,6 +270,30 @@ class AppRouter {
                         .updateOrderDetailResponse!),
           ),
         );
+
+      // Buses
+
+      case BusSearchScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(
+              name: formatScreenName((BusSearchScreen).toString())),
+          builder: (_) => const BusSearchScreen(),
+        );
+      case BusSearchListScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['busSearch'] != null) {
+          var busSearch = args!["busSearch"] as BusSearch;
+
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((BusSearchListScreen).toString())),
+            builder: (_) => BlocProvider(
+              create: (context) =>
+                  BusSearchListingCubit(busSearch)..searchBuses(busSearch),
+              child: const BusSearchListScreen(),
+            ),
+          );
+        }
 
       default:
     }

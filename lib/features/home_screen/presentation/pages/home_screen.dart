@@ -5,6 +5,7 @@ import 'package:yellow_rose/core/common_widgets/image_icon_button.dart';
 import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_search_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_search_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/cubit/app_update/app_update_cubit.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/show_recent_searches_widget.dart';
@@ -60,6 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     } else if (supportedService == SupportedService.Hotels) {
                       Navigator.of(context)
                           .pushNamed(HotelSearchScreen.routeName);
+                    } else if (supportedService == SupportedService.Buses) {
+                      Navigator.of(context)
+                          .pushNamed(BusSearchScreen.routeName);
                     }
                   },
                   image: AssetImage(

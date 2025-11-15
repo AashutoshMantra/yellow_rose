@@ -4,9 +4,11 @@ import 'package:yellow_rose/app_routes.dart';
 import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/features/bus/domain/entities/bus_search.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_search_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/cubit/home_screen_cubit.dart';
+import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/bus_recent_search.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/flight_recent_search.dart';
 
 class ShowRecentSearchesWidget extends StatelessWidget {
@@ -33,6 +35,8 @@ class ShowRecentSearchesWidget extends StatelessWidget {
       child: Builder(builder: (ctx) {
         if (data is AirSearch) {
           return FlightRecentSearchCard(recentSearch: data);
+        } else if (data is BusSearch) {
+          return BusRecentSearchCard(recentSearch: data);
         }
         return const SizedBox();
       }),

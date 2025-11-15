@@ -13,6 +13,11 @@ import 'package:yellow_rose/features/auth/data/datasources/auth_local_service.da
 import 'package:yellow_rose/features/auth/data/repositories/auth_repo_impl.dart';
 import 'package:yellow_rose/features/auth/domain/repositories/auth_repo.dart';
 import 'package:yellow_rose/features/auth/domain/usecases/auth_use_case.dart';
+import 'package:yellow_rose/features/bus/data/datasources/bus_local_service.dart';
+import 'package:yellow_rose/features/bus/data/datasources/bus_service.dart';
+import 'package:yellow_rose/features/bus/data/repositories/bus_repo_impl.dart';
+import 'package:yellow_rose/features/bus/domain/repositories/bus_repository.dart';
+import 'package:yellow_rose/features/bus/domain/usecases/bus_usecase.dart';
 import 'package:yellow_rose/features/flight/data/datasources/air_local_service.dart';
 import 'package:yellow_rose/features/flight/data/datasources/air_searvice.dart';
 import 'package:yellow_rose/features/flight/data/repositories/air_repository_impl.dart';
@@ -51,6 +56,7 @@ Future setupDependencyInjection() async {
   getIt.registerLazySingleton<AirRepository>(() => AirRepositoryImpl());
   getIt.registerLazySingleton<AirUseCase>(() => AirUseCaseImpl());
 
+  //HOTEL
   getIt.registerLazySingleton<HotelService>(() => HotelServiceImpl());
   getIt.registerLazySingleton<HotelRepository>(() => HotelRepositoryImpl());
   getIt.registerLazySingleton<PlaceDataSource>(() => PlaceDataSourceImpl());
@@ -60,6 +66,12 @@ Future setupDependencyInjection() async {
         apiKey: AppConfig.instance.googleApiKey,
       ));
   getIt.registerLazySingleton<HotelBookUseCase>(() => HotelBookUseCaseImpl());
+
+  //BUS
+  getIt.registerLazySingleton<BusService>(() => BusServiceImpl());
+  getIt.registerLazySingleton<BusLocalService>(() => BusLocalServiceImpl());
+  getIt.registerLazySingleton<BusRepository>(() => BusRepositoryImpl());
+  getIt.registerLazySingleton<BusUseCase>(() => BusUseCaseImpl());
 
   try {
     await Firebase.initializeApp();

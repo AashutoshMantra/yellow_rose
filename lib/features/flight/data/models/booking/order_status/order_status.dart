@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 
 import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
+import 'package:yellow_rose/features/bus/data/models/order/bus_order__create_request.dart';
+import 'package:yellow_rose/features/bus/data/models/order/bus_order_itinerary.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_request.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/booking_channel_enum.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/air_booking_status.dart';
@@ -135,6 +137,15 @@ class OrderStatus {
   final bool? showTicketPricing;
 
   final String? userBookingContext;
+
+  //BUS
+  final BusOrderCreateRequest? busBooking;
+  final String? busSource;
+  final String? busSupplier;
+  final String? busContactNumber;
+  final String? busContactEmail;
+  final List<BusOrderItinerary>? busOrderItineraries;
+
   OrderStatus({
     this.id,
     this.uuid,
@@ -190,6 +201,12 @@ class OrderStatus {
     this.emailAllowed,
     this.showTicketPricing,
     this.userBookingContext,
+    this.busBooking,
+    this.busSource,
+    this.busSupplier,
+    this.busContactNumber,
+    this.busContactEmail,
+    this.busOrderItineraries,
   });
 
   OrderStatus copyWith({
@@ -247,6 +264,12 @@ class OrderStatus {
     bool? emailAllowed,
     bool? showTicketPricing,
     String? userBookingContext,
+    BusOrderCreateRequest? busBooking,
+    String? busSource,
+    String? busSupplier,
+    String? busContactNumber,
+    String? busContactEmail,
+    List<BusOrderItinerary>? busOrderItineraries,
   }) {
     return OrderStatus(
       id: id ?? this.id,
@@ -303,173 +326,195 @@ class OrderStatus {
       emailAllowed: emailAllowed ?? this.emailAllowed,
       showTicketPricing: showTicketPricing ?? this.showTicketPricing,
       userBookingContext: userBookingContext ?? this.userBookingContext,
+      busBooking: busBooking ?? this.busBooking,
+      busSource: busSource ?? this.busSource,
+      busSupplier: busSupplier ?? this.busSupplier,
+      busContactNumber: busContactNumber ?? this.busContactNumber,
+      busContactEmail: busContactEmail ?? this.busContactEmail,
+      busOrderItineraries: busOrderItineraries ?? this.busOrderItineraries,
     );
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-
-    if (id != null) {
+  
+    if(id != null){
       result.addAll({'id': id});
     }
-    if (uuid != null) {
+    if(uuid != null){
       result.addAll({'uuid': uuid});
     }
-    if (requestUuid != null) {
+    if(requestUuid != null){
       result.addAll({'requestUuid': requestUuid});
     }
-    if (hotelBooking != null) {
+    if(hotelBooking != null){
       result.addAll({'hotelBooking': hotelBooking!.toMap()});
     }
-    if (email != null) {
+    if(email != null){
       result.addAll({'email': email});
     }
-    if (hotelSource != null) {
+    if(hotelSource != null){
       result.addAll({'hotelSource': hotelSource});
     }
-    if (bookingPaymentType != null) {
+    if(bookingPaymentType != null){
       result.addAll({'bookingPaymentType': bookingPaymentType});
     }
-    if (hotelSupplier != null) {
+    if(hotelSupplier != null){
       result.addAll({'hotelSupplier': hotelSupplier});
     }
-    if (hotelContactNumber != null) {
+    if(hotelContactNumber != null){
       result.addAll({'hotelContactNumber': hotelContactNumber});
     }
-    if (hotelContactEmail != null) {
+    if(hotelContactEmail != null){
       result.addAll({'hotelContactEmail': hotelContactEmail});
     }
-    if (segmentType != null) {
+    if(segmentType != null){
       result.addAll({'segmentType': segmentType});
     }
-    if (specialRequest != null) {
+    if(specialRequest != null){
       result.addAll({'specialRequest': specialRequest});
     }
-    if (tripId != null) {
+    if(tripId != null){
       result.addAll({'tripId': tripId});
     }
-    if (branch != null) {
+    if(branch != null){
       result.addAll({'branch': branch});
     }
     result.addAll({'whiteLabelId': whiteLabelId});
-    if (cartType != null) {
+    if(cartType != null){
       result.addAll({'cartType': cartType});
     }
     result.addAll({'channel': channel.name});
     if (riskScore != null) {
       result.addAll({'riskScore': riskScore});
     }
-    if (contactNumber != null) {
+    if(contactNumber != null){
       result.addAll({'contactNumber': contactNumber});
     }
-    if (gstNumber != null) {
+    if(gstNumber != null){
       result.addAll({'gstNumber': gstNumber});
     }
-    if (gstEmail != null) {
+    if(gstEmail != null){
       result.addAll({'gstEmail': gstEmail});
     }
-    if (billingEntity != null) {
+    if(billingEntity != null){
       result.addAll({'billingEntity': billingEntity});
     }
     if (status != null) {
       result.addAll({'status': status!.name});
     }
-    if (ipAddress != null) {
+    if(ipAddress != null){
       result.addAll({'ipAddress': ipAddress});
     }
-    if (Latitude != null) {
+    if(Latitude != null){
       result.addAll({'Latitude': Latitude});
     }
-    if (Longitude != null) {
+    if(Longitude != null){
       result.addAll({'Longitude': Longitude});
     }
-    if (pnr != null) {
+    if(pnr != null){
       result.addAll({'pnr': pnr});
     }
-    if (bookingId != null) {
+    if(bookingId != null){
       result.addAll({'bookingId': bookingId});
     }
-    if (cabinClass != null) {
+    if(cabinClass != null){
       result.addAll({'cabinClass': cabinClass});
     }
-    if (orderError != null) {
+    if(orderError != null){
       result.addAll({'orderError': orderError});
     }
-    if (paymentMedium != null) {
+    if(paymentMedium != null){
       result.addAll({'paymentMedium': paymentMedium});
     }
-    if (isAirGrouped != null) {
+    if(isAirGrouped != null){
       result.addAll({'isAirGrouped': isAirGrouped});
     }
-    if (airItineraries != null) {
-      result.addAll(
-          {'airItineraries': airItineraries!.map((x) => x.toMap()).toList()});
+    if(airItineraries != null){
+      result.addAll({'airItineraries': airItineraries!.map((x) => x?.toMap()).toList()});
     }
-    if (invoiceStatus != null) {
+    if(invoiceStatus != null){
       result.addAll({'invoiceStatus': invoiceStatus});
     }
-    if (approvalStatus != null) {
+    if(approvalStatus != null){
       result.addAll({'approvalStatus': approvalStatus});
     }
     if (bookingStatus != null) {
       result.addAll({'bookingStatus': bookingStatus!.name});
     }
-    if (paymentStatus != null) {
+    if(paymentStatus != null){
       result.addAll({'paymentStatus': paymentStatus});
     }
-    if (paymentTryCount != null) {
+    if(paymentTryCount != null){
       result.addAll({'paymentTryCount': paymentTryCount});
     }
-    if (bookingUser != null) {
+    if(bookingUser != null){
       result.addAll({'bookingUser': bookingUser});
     }
-    if (corporate != null) {
+    if(corporate != null){
       result.addAll({'corporate': corporate});
     }
-    if (createdBy != null) {
+    if(createdBy != null){
       result.addAll({'createdBy': createdBy});
     }
-    if (DocNo != null) {
+    if(DocNo != null){
       result.addAll({'DocNo': DocNo});
     }
-    if (CreditDocNo != null) {
+    if(CreditDocNo != null){
       result.addAll({'CreditDocNo': CreditDocNo});
     }
-    if (bookedFor != null) {
+    if(bookedFor != null){
       result.addAll({'bookedFor': bookedFor});
     }
-    if (searchRequest != null) {
+    if(searchRequest != null){
       result.addAll({'searchRequest': searchRequest!.toMap()});
     }
-    if (creationTs != null) {
+    if(creationTs != null){
       result.addAll({'creationTs': creationTs!.millisecondsSinceEpoch});
     }
-    if (modTs != null) {
+    if(modTs != null){
       result.addAll({'modTs': modTs!.millisecondsSinceEpoch});
     }
-    if (bookingTs != null) {
+    if(bookingTs != null){
       result.addAll({'bookingTs': bookingTs!.millisecondsSinceEpoch});
     }
-    if (bookingRequestTs != null) {
-      result.addAll(
-          {'bookingRequestTs': bookingRequestTs!.millisecondsSinceEpoch});
+    if(bookingRequestTs != null){
+      result.addAll({'bookingRequestTs': bookingRequestTs!.millisecondsSinceEpoch});
     }
-    if (invoicingTs != null) {
+    if(invoicingTs != null){
       result.addAll({'invoicingTs': invoicingTs!.millisecondsSinceEpoch});
     }
-    if (tripApprovalStatus != null) {
+    if(tripApprovalStatus != null){
       result.addAll({'tripApprovalStatus': tripApprovalStatus});
     }
-    if (emailAllowed != null) {
+    if(emailAllowed != null){
       result.addAll({'emailAllowed': emailAllowed});
     }
-    if (showTicketPricing != null) {
+    if(showTicketPricing != null){
       result.addAll({'showTicketPricing': showTicketPricing});
     }
-    if (userBookingContext != null) {
+    if(userBookingContext != null){
       result.addAll({'userBookingContext': userBookingContext});
     }
-
+    if(busBooking != null){
+      result.addAll({'busBooking': busBooking!.toMap()});
+    }
+    if(busSource != null){
+      result.addAll({'busSource': busSource});
+    }
+    if(busSupplier != null){
+      result.addAll({'busSupplier': busSupplier});
+    }
+    if(busContactNumber != null){
+      result.addAll({'busContactNumber': busContactNumber});
+    }
+    if(busContactEmail != null){
+      result.addAll({'busContactEmail': busContactEmail});
+    }
+    if(busOrderItineraries != null){
+      result.addAll({'busOrderItineraries': busOrderItineraries!.map((x) => x?.toMap()).toList()});
+    }
+  
     return result;
   }
 
@@ -478,9 +523,7 @@ class OrderStatus {
       id: map['id']?.toInt(),
       uuid: map['uuid'],
       requestUuid: map['requestUuid'],
-      hotelBooking: map['hotelBooking'] != null
-          ? HotelOrderRequest.fromMap(map['hotelBooking'])
-          : null,
+      hotelBooking: map['hotelBooking'] != null ? HotelOrderRequest.fromMap(map['hotelBooking']) : null,
       email: map['email'],
       hotelSource: map['hotelSource'],
       bookingPaymentType: map['bookingPaymentType'],
@@ -529,28 +572,22 @@ class OrderStatus {
       DocNo: map['DocNo'],
       CreditDocNo: map['CreditDocNo'],
       bookedFor: map['bookedFor'],
-      searchRequest: map['searchRequest'] != null
-          ? AirSearchRequest.fromMap(map['searchRequest'])
-          : null,
-      creationTs: map['creationTs'] != null
-          ? DateTimeParser.tryParseFromMap(map, 'creationTs')
-          : null,
-      modTs: map['modTs'] != null
-          ? DateTimeParser.tryParseFromMap(map, 'modTs')
-          : null,
-      bookingTs: map['bookingTs'] != null
-          ? DateTimeParser.tryParseFromMap(map, 'bookingTs')
-          : null,
-      bookingRequestTs: map['bookingRequestTs'] != null
-          ? DateTimeParser.tryParseFromMap(map, 'bookingRequestTs')
-          : null,
-      invoicingTs: map['invoicingTs'] != null
-          ? DateTimeParser.tryParseFromMap(map, 'invoicingTs')
-          : null,
+      searchRequest: map['searchRequest'] != null ? AirSearchRequest.fromMap(map['searchRequest']) : null,
+      creationTs: map['creationTs'] != null ? DateTime.fromMillisecondsSinceEpoch(map['creationTs']) : null,
+      modTs: map['modTs'] != null ? DateTime.fromMillisecondsSinceEpoch(map['modTs']) : null,
+      bookingTs: map['bookingTs'] != null ? DateTime.fromMillisecondsSinceEpoch(map['bookingTs']) : null,
+      bookingRequestTs: map['bookingRequestTs'] != null ? DateTime.fromMillisecondsSinceEpoch(map['bookingRequestTs']) : null,
+      invoicingTs: map['invoicingTs'] != null ? DateTime.fromMillisecondsSinceEpoch(map['invoicingTs']) : null,
       tripApprovalStatus: map['tripApprovalStatus'],
       emailAllowed: map['emailAllowed'],
       showTicketPricing: map['showTicketPricing'],
       userBookingContext: map['userBookingContext'],
+      busBooking: map['busBooking'] != null ? BusOrderCreateRequest.fromMap(map['busBooking']) : null,
+      busSource: map['busSource'],
+      busSupplier: map['busSupplier'],
+      busContactNumber: map['busContactNumber'],
+      busContactEmail: map['busContactEmail'],
+      busOrderItineraries: map['busOrderItineraries'] != null ? List<BusOrderItinerary>.from(map['busOrderItineraries']?.map((x) => BusOrderItinerary.fromMap(x))) : null,
     );
   }
 
@@ -561,125 +598,137 @@ class OrderStatus {
 
   @override
   String toString() {
-    return 'OrderStatus(id: $id, uuid: $uuid, requestUuid: $requestUuid, hotelBooking: $hotelBooking, email: $email, hotelSource: $hotelSource, bookingPaymentType: $bookingPaymentType, hotelSupplier: $hotelSupplier, hotelContactNumber: $hotelContactNumber, hotelContactEmail: $hotelContactEmail, segmentType: $segmentType, specialRequest: $specialRequest, tripId: $tripId, branch: $branch, whiteLabelId: $whiteLabelId, cartType: $cartType, channel: $channel, riskScore: $riskScore, contactNumber: $contactNumber, gstNumber: $gstNumber, gstEmail: $gstEmail, billingEntity: $billingEntity, status: $status, ipAddress: $ipAddress, Latitude: $Latitude, Longitude: $Longitude, pnr: $pnr, bookingId: $bookingId, cabinClass: $cabinClass, orderError: $orderError, paymentMedium: $paymentMedium, isAirGrouped: $isAirGrouped, airItineraries: $airItineraries, invoiceStatus: $invoiceStatus, approvalStatus: $approvalStatus, bookingStatus: $bookingStatus, paymentStatus: $paymentStatus, paymentTryCount: $paymentTryCount, bookingUser: $bookingUser, corporate: $corporate, createdBy: $createdBy, DocNo: $DocNo, CreditDocNo: $CreditDocNo, bookedFor: $bookedFor, searchRequest: $searchRequest, creationTs: $creationTs, modTs: $modTs, bookingTs: $bookingTs, bookingRequestTs: $bookingRequestTs, invoicingTs: $invoicingTs, tripApprovalStatus: $tripApprovalStatus, emailAllowed: $emailAllowed, showTicketPricing: $showTicketPricing, userBookingContext: $userBookingContext)';
+    return 'OrderStatus(id: $id, uuid: $uuid, requestUuid: $requestUuid, hotelBooking: $hotelBooking, email: $email, hotelSource: $hotelSource, bookingPaymentType: $bookingPaymentType, hotelSupplier: $hotelSupplier, hotelContactNumber: $hotelContactNumber, hotelContactEmail: $hotelContactEmail, segmentType: $segmentType, specialRequest: $specialRequest, tripId: $tripId, branch: $branch, whiteLabelId: $whiteLabelId, cartType: $cartType, channel: $channel, riskScore: $riskScore, contactNumber: $contactNumber, gstNumber: $gstNumber, gstEmail: $gstEmail, billingEntity: $billingEntity, status: $status, ipAddress: $ipAddress, Latitude: $Latitude, Longitude: $Longitude, pnr: $pnr, bookingId: $bookingId, cabinClass: $cabinClass, orderError: $orderError, paymentMedium: $paymentMedium, isAirGrouped: $isAirGrouped, airItineraries: $airItineraries, invoiceStatus: $invoiceStatus, approvalStatus: $approvalStatus, bookingStatus: $bookingStatus, paymentStatus: $paymentStatus, paymentTryCount: $paymentTryCount, bookingUser: $bookingUser, corporate: $corporate, createdBy: $createdBy, DocNo: $DocNo, CreditDocNo: $CreditDocNo, bookedFor: $bookedFor, searchRequest: $searchRequest, creationTs: $creationTs, modTs: $modTs, bookingTs: $bookingTs, bookingRequestTs: $bookingRequestTs, invoicingTs: $invoicingTs, tripApprovalStatus: $tripApprovalStatus, emailAllowed: $emailAllowed, showTicketPricing: $showTicketPricing, userBookingContext: $userBookingContext, busBooking: $busBooking, busSource: $busSource, busSupplier: $busSupplier, busContactNumber: $busContactNumber, busContactEmail: $busContactEmail, busOrderItineraries: $busOrderItineraries)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is OrderStatus &&
-        other.id == id &&
-        other.uuid == uuid &&
-        other.requestUuid == requestUuid &&
-        other.hotelBooking == hotelBooking &&
-        other.email == email &&
-        other.hotelSource == hotelSource &&
-        other.bookingPaymentType == bookingPaymentType &&
-        other.hotelSupplier == hotelSupplier &&
-        other.hotelContactNumber == hotelContactNumber &&
-        other.hotelContactEmail == hotelContactEmail &&
-        other.segmentType == segmentType &&
-        other.specialRequest == specialRequest &&
-        other.tripId == tripId &&
-        other.branch == branch &&
-        other.whiteLabelId == whiteLabelId &&
-        other.cartType == cartType &&
-        other.channel == channel &&
-        other.riskScore == riskScore &&
-        other.contactNumber == contactNumber &&
-        other.gstNumber == gstNumber &&
-        other.gstEmail == gstEmail &&
-        other.billingEntity == billingEntity &&
-        other.status == status &&
-        other.ipAddress == ipAddress &&
-        other.Latitude == Latitude &&
-        other.Longitude == Longitude &&
-        other.pnr == pnr &&
-        other.bookingId == bookingId &&
-        other.cabinClass == cabinClass &&
-        other.orderError == orderError &&
-        other.paymentMedium == paymentMedium &&
-        other.isAirGrouped == isAirGrouped &&
-        listEquals(other.airItineraries, airItineraries) &&
-        other.invoiceStatus == invoiceStatus &&
-        other.approvalStatus == approvalStatus &&
-        other.bookingStatus == bookingStatus &&
-        other.paymentStatus == paymentStatus &&
-        other.paymentTryCount == paymentTryCount &&
-        other.bookingUser == bookingUser &&
-        other.corporate == corporate &&
-        other.createdBy == createdBy &&
-        other.DocNo == DocNo &&
-        other.CreditDocNo == CreditDocNo &&
-        other.bookedFor == bookedFor &&
-        other.searchRequest == searchRequest &&
-        other.creationTs == creationTs &&
-        other.modTs == modTs &&
-        other.bookingTs == bookingTs &&
-        other.bookingRequestTs == bookingRequestTs &&
-        other.invoicingTs == invoicingTs &&
-        other.tripApprovalStatus == tripApprovalStatus &&
-        other.emailAllowed == emailAllowed &&
-        other.showTicketPricing == showTicketPricing &&
-        other.userBookingContext == userBookingContext;
+      other.id == id &&
+      other.uuid == uuid &&
+      other.requestUuid == requestUuid &&
+      other.hotelBooking == hotelBooking &&
+      other.email == email &&
+      other.hotelSource == hotelSource &&
+      other.bookingPaymentType == bookingPaymentType &&
+      other.hotelSupplier == hotelSupplier &&
+      other.hotelContactNumber == hotelContactNumber &&
+      other.hotelContactEmail == hotelContactEmail &&
+      other.segmentType == segmentType &&
+      other.specialRequest == specialRequest &&
+      other.tripId == tripId &&
+      other.branch == branch &&
+      other.whiteLabelId == whiteLabelId &&
+      other.cartType == cartType &&
+      other.channel == channel &&
+      other.riskScore == riskScore &&
+      other.contactNumber == contactNumber &&
+      other.gstNumber == gstNumber &&
+      other.gstEmail == gstEmail &&
+      other.billingEntity == billingEntity &&
+      other.status == status &&
+      other.ipAddress == ipAddress &&
+      other.Latitude == Latitude &&
+      other.Longitude == Longitude &&
+      other.pnr == pnr &&
+      other.bookingId == bookingId &&
+      other.cabinClass == cabinClass &&
+      other.orderError == orderError &&
+      other.paymentMedium == paymentMedium &&
+      other.isAirGrouped == isAirGrouped &&
+      listEquals(other.airItineraries, airItineraries) &&
+      other.invoiceStatus == invoiceStatus &&
+      other.approvalStatus == approvalStatus &&
+      other.bookingStatus == bookingStatus &&
+      other.paymentStatus == paymentStatus &&
+      other.paymentTryCount == paymentTryCount &&
+      other.bookingUser == bookingUser &&
+      other.corporate == corporate &&
+      other.createdBy == createdBy &&
+      other.DocNo == DocNo &&
+      other.CreditDocNo == CreditDocNo &&
+      other.bookedFor == bookedFor &&
+      other.searchRequest == searchRequest &&
+      other.creationTs == creationTs &&
+      other.modTs == modTs &&
+      other.bookingTs == bookingTs &&
+      other.bookingRequestTs == bookingRequestTs &&
+      other.invoicingTs == invoicingTs &&
+      other.tripApprovalStatus == tripApprovalStatus &&
+      other.emailAllowed == emailAllowed &&
+      other.showTicketPricing == showTicketPricing &&
+      other.userBookingContext == userBookingContext &&
+      other.busBooking == busBooking &&
+      other.busSource == busSource &&
+      other.busSupplier == busSupplier &&
+      other.busContactNumber == busContactNumber &&
+      other.busContactEmail == busContactEmail &&
+      listEquals(other.busOrderItineraries, busOrderItineraries);
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-        uuid.hashCode ^
-        requestUuid.hashCode ^
-        hotelBooking.hashCode ^
-        email.hashCode ^
-        hotelSource.hashCode ^
-        bookingPaymentType.hashCode ^
-        hotelSupplier.hashCode ^
-        hotelContactNumber.hashCode ^
-        hotelContactEmail.hashCode ^
-        segmentType.hashCode ^
-        specialRequest.hashCode ^
-        tripId.hashCode ^
-        branch.hashCode ^
-        whiteLabelId.hashCode ^
-        cartType.hashCode ^
-        channel.hashCode ^
-        riskScore.hashCode ^
-        contactNumber.hashCode ^
-        gstNumber.hashCode ^
-        gstEmail.hashCode ^
-        billingEntity.hashCode ^
-        status.hashCode ^
-        ipAddress.hashCode ^
-        Latitude.hashCode ^
-        Longitude.hashCode ^
-        pnr.hashCode ^
-        bookingId.hashCode ^
-        cabinClass.hashCode ^
-        orderError.hashCode ^
-        paymentMedium.hashCode ^
-        isAirGrouped.hashCode ^
-        airItineraries.hashCode ^
-        invoiceStatus.hashCode ^
-        approvalStatus.hashCode ^
-        bookingStatus.hashCode ^
-        paymentStatus.hashCode ^
-        paymentTryCount.hashCode ^
-        bookingUser.hashCode ^
-        corporate.hashCode ^
-        createdBy.hashCode ^
-        DocNo.hashCode ^
-        CreditDocNo.hashCode ^
-        bookedFor.hashCode ^
-        searchRequest.hashCode ^
-        creationTs.hashCode ^
-        modTs.hashCode ^
-        bookingTs.hashCode ^
-        bookingRequestTs.hashCode ^
-        invoicingTs.hashCode ^
-        tripApprovalStatus.hashCode ^
-        emailAllowed.hashCode ^
-        showTicketPricing.hashCode ^
-        userBookingContext.hashCode;
+      uuid.hashCode ^
+      requestUuid.hashCode ^
+      hotelBooking.hashCode ^
+      email.hashCode ^
+      hotelSource.hashCode ^
+      bookingPaymentType.hashCode ^
+      hotelSupplier.hashCode ^
+      hotelContactNumber.hashCode ^
+      hotelContactEmail.hashCode ^
+      segmentType.hashCode ^
+      specialRequest.hashCode ^
+      tripId.hashCode ^
+      branch.hashCode ^
+      whiteLabelId.hashCode ^
+      cartType.hashCode ^
+      channel.hashCode ^
+      riskScore.hashCode ^
+      contactNumber.hashCode ^
+      gstNumber.hashCode ^
+      gstEmail.hashCode ^
+      billingEntity.hashCode ^
+      status.hashCode ^
+      ipAddress.hashCode ^
+      Latitude.hashCode ^
+      Longitude.hashCode ^
+      pnr.hashCode ^
+      bookingId.hashCode ^
+      cabinClass.hashCode ^
+      orderError.hashCode ^
+      paymentMedium.hashCode ^
+      isAirGrouped.hashCode ^
+      airItineraries.hashCode ^
+      invoiceStatus.hashCode ^
+      approvalStatus.hashCode ^
+      bookingStatus.hashCode ^
+      paymentStatus.hashCode ^
+      paymentTryCount.hashCode ^
+      bookingUser.hashCode ^
+      corporate.hashCode ^
+      createdBy.hashCode ^
+      DocNo.hashCode ^
+      CreditDocNo.hashCode ^
+      bookedFor.hashCode ^
+      searchRequest.hashCode ^
+      creationTs.hashCode ^
+      modTs.hashCode ^
+      bookingTs.hashCode ^
+      bookingRequestTs.hashCode ^
+      invoicingTs.hashCode ^
+      tripApprovalStatus.hashCode ^
+      emailAllowed.hashCode ^
+      showTicketPricing.hashCode ^
+      userBookingContext.hashCode ^
+      busBooking.hashCode ^
+      busSource.hashCode ^
+      busSupplier.hashCode ^
+      busContactNumber.hashCode ^
+      busContactEmail.hashCode ^
+      busOrderItineraries.hashCode;
   }
 }

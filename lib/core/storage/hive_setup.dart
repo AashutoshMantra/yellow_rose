@@ -5,5 +5,6 @@ class HiveSetup {
     await Hive.initFlutter();
     await Hive.openBox('airports');
     await Hive.openBox('userProfile');
+    await Hive.openBox('bus_cities');
   }
 }
