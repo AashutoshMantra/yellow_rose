@@ -206,4 +206,16 @@ class BusSeats {
         width.hashCode ^
         commercialData.hashCode;
   }
+
+  bool get isSeat {
+    return length == 1 && width == 1;
+  }
+
+  bool get isSleeperHorizontal {
+    return length == 2 && width == 1;
+  }
+
+  bool get isSleeperVertical {
+    return length == 1 && width == 2;
+  }
 }

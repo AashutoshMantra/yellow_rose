@@ -36,6 +36,8 @@ import 'package:yellow_rose/features/bus/presentation/cubit/search/bus_search_cu
 import 'package:yellow_rose/features/bus/presentation/cubit/bus_search_listing/bus_search_listing_cubit.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_search_screen.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_search_list_screen.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_detail/bus_detail_screen.dart';
+import 'package:yellow_rose/features/bus/data/models/search/bus_search_response.dart';
 
 String formatScreenName(String input) {
   return input.replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
@@ -292,6 +294,19 @@ class AppRouter {
                   BusSearchListingCubit(busSearch)..searchBuses(busSearch),
               child: const BusSearchListScreen(),
             ),
+          );
+        }
+      case BusDetailScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['busSearchResponse'] != null) {
+          var busSearchResponse =
+              args!["busSearchResponse"] as BusSearchResponse;
+
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((BusDetailScreen).toString())),
+            builder: (_) =>
+                BusDetailScreen(busSearchResponse: busSearchResponse),
           );
         }
 

@@ -18,19 +18,21 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.actionsCustom,
       this.bottom,
       this.height,
-      this.titleStyle,  this.shouldHaveRadius=true, this.onAppBarClick});
+      this.titleStyle,
+      this.shouldHaveRadius = true,
+      this.onAppBarClick});
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius:   BorderRadius.only(
-        bottomLeft:Radius.circular(shouldHaveRadius?12:0),
-        bottomRight: Radius.circular(shouldHaveRadius?12:0),
+      borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(shouldHaveRadius ? 12 : 0),
+        bottomRight: Radius.circular(shouldHaveRadius ? 12 : 0),
       ),
       child: AppBar(
           toolbarHeight: (height ?? 80.h),
           title: GestureDetector(
-            behavior:HitTestBehavior.opaque ,
+            behavior: HitTestBehavior.opaque,
             onTap: onAppBarClick,
             child: Container(
               width: double.infinity,
@@ -46,10 +48,9 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                     title,
                     style: titleStyle,
                   ),
-                  if (subTitle != null)
-                    SizedBox(
-                      height: 4.h,
-                    ),
+                  SizedBox(
+                    height: 4.h,
+                  ),
                   if (subTitle != null)
                     Text(
                       subTitle!,
@@ -73,7 +74,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
               }
             },
           ),
-          leadingWidth: ModalRoute.of(context)?.canPop ==true ?null:0,
+          leadingWidth: ModalRoute.of(context)?.canPop == true ? null : 0,
           bottom: bottom,
           elevation: 0,
           actions: actionsCustom),

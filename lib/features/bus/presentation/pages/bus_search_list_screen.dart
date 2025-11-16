@@ -16,15 +16,10 @@ import 'package:yellow_rose/features/bus/presentation/cubit/bus_search_listing/b
 import 'package:yellow_rose/features/bus/presentation/pages/bus_search_filter_screen.dart';
 import 'package:yellow_rose/features/bus/presentation/widgets/bus_search_result_card.dart';
 import 'package:yellow_rose/features/bus/presentation/widgets/bus_search_widget.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_detail/bus_detail_screen.dart';
 
 String getBusDetailTitle(BusSearch busSearch) {
   return "${busSearch.source?.cityName} → ${busSearch.destination?.cityName}";
-}
-
-String getBusDetailSubtitle(BusSearch busSearch) {
-  String base = CustomDateUtils.dayMonthYearFormat(busSearch.dateOfJourney!);
-  base += " | 1 Adult"; // TODO: Add passenger count to BusSearch entity
-  return base;
 }
 
 class BusSearchListScreen extends StatelessWidget {
@@ -55,7 +50,6 @@ class BusSearchListScreen extends StatelessWidget {
             return BaseAppBar(
               title: getBusDetailTitle(state.busSearch!),
               onAppBarClick: () => onAppBarClick(context),
-              subTitle: getBusDetailSubtitle(state.busSearch!),
               shouldHaveRadius: false,
               actionsCustom: [
                 Container(
@@ -189,7 +183,12 @@ class BusSearchListScreen extends StatelessWidget {
                           busSearchResponse: bus,
                           isSelected: isSelected,
                           onTap: () {
-                            // context.read<BusSearchListingCubit>().onSelectBus(bus);
+                            Navigator.of(context).pushNamed(
+                              BusDetailScreen.routeName,
+                              arguments: {
+                                'busSearchResponse': bus,
+                              },
+                            );
                           },
                         );
                       },
