@@ -8,6 +8,7 @@ import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/features/bus/data/models/search/bus_search_response.dart';
+import 'package:yellow_rose/features/bus/domain/entities/bus_search.dart';
 import 'package:yellow_rose/features/bus/presentation/cubit/bus_detail/bus_detail_cubit.dart';
 import 'package:yellow_rose/features/bus/presentation/widgets/seat/seat_selection_widget.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_seats.dart';
@@ -33,25 +34,30 @@ class BusDetailScreen extends StatelessWidget {
   static const String routeName = "/busDetailScreen";
 
   final BusSearchResponse busSearchResponse;
+  final BusSearch busSearch;
 
   const BusDetailScreen({
     super.key,
     required this.busSearchResponse,
+    required this.busSearch,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => BusDetailCubit()..loadBusDetails(busSearchResponse),
-      child: _BusDetailScreenContent(busSearchResponse: busSearchResponse),
+      child: _BusDetailScreenContent(
+          busSearchResponse: busSearchResponse, busSearch: busSearch),
     );
   }
 }
 
 class _BusDetailScreenContent extends StatefulWidget {
   final BusSearchResponse busSearchResponse;
+  final BusSearch busSearch;
 
-  const _BusDetailScreenContent({required this.busSearchResponse});
+  const _BusDetailScreenContent(
+      {required this.busSearchResponse, required this.busSearch});
 
   @override
   State<_BusDetailScreenContent> createState() =>
@@ -170,6 +176,7 @@ class _BusDetailScreenContentState extends State<_BusDetailScreenContent> {
                         value: busCubit,
                         child: BusBoardingDroppingScreen(
                           busSearchResponse: widget.busSearchResponse,
+                          busSearch: widget.busSearch,
                         ),
                       ),
                     ),

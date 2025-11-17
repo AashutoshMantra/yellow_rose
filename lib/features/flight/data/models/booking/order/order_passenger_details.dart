@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'package:yellow_rose/core/utils/date_time_parser.dart';
+import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/passenger_booking_class.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/passport_details.dart';
@@ -291,7 +292,8 @@ class OrdersPassengersDetails {
       result.addAll({'pnrStatus': pnrStatus});
     }
     if (dob != null) {
-      result.addAll({'dob': dob!.toIso8601String()});
+      result.addAll(
+          {'dob': CustomDateUtils.dateTimeInIsoFormatWithoutZone(dob!)});
     }
     if (reportingTags != null) {
       result.addAll(
@@ -370,17 +372,26 @@ class OrdersPassengersDetails {
       result.addAll({'rescheduledPassengerRef': rescheduledPassengerRef});
     }
     if (creationTs != null) {
-      result.addAll({'creationTs': creationTs!.toIso8601String()});
+      result.addAll({
+        'creationTs':
+            CustomDateUtils.dateTimeInIsoFormatWithoutZone(creationTs!)
+      });
     }
     if (firstDepartureTime != null) {
-      result.addAll(
-          {'firstDepartureTime': firstDepartureTime!.toIso8601String()});
+      result.addAll({
+        'firstDepartureTime':
+            CustomDateUtils.dateTimeInIsoFormatWithoutZone(firstDepartureTime!)
+      });
     }
     if (cancellationTs != null) {
-      result.addAll({'cancellationTs': cancellationTs!.toIso8601String()});
+      result.addAll({
+        'cancellationTs':
+            CustomDateUtils.dateTimeInIsoFormatWithoutZone(cancellationTs!)
+      });
     }
     if (modTs != null) {
-      result.addAll({'modTs': modTs!.toIso8601String()});
+      result.addAll(
+          {'modTs': CustomDateUtils.dateTimeInIsoFormatWithoutZone(modTs!)});
     }
     if (webCheckin != null) {
       result.addAll({'webCheckin': webCheckin});

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:yellow_rose/core/utils/date_utils.dart';
 
 import 'package:yellow_rose/features/bus/data/models/bus_fare.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_point.dart';
@@ -149,10 +150,16 @@ class BusSearchResponse {
       result.addAll({'callFareBreakUpAPI': callFareBreakUpAPI});
     }
     if (departureTime != null) {
-      result.addAll({'departureTime': departureTime!.millisecondsSinceEpoch});
+      result.addAll({
+        'departureTime':
+            CustomDateUtils.dateTimeInIsoFormatWithoutZone(departureTime!)
+      });
     }
     if (arrivalTime != null) {
-      result.addAll({'arrivalTime': arrivalTime!.millisecondsSinceEpoch});
+      result.addAll({
+        'arrivalTime':
+            CustomDateUtils.dateTimeInIsoFormatWithoutZone(arrivalTime!)
+      });
     }
     if (duration != null) {
       result.addAll({'duration': duration});

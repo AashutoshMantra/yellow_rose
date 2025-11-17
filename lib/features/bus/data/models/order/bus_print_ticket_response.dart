@@ -7,57 +7,57 @@ import 'package:yellow_rose/features/bus/data/models/order/bus_invoice_data.dart
 import 'package:yellow_rose/features/bus/data/models/order/bus_reschedule_polcy.dart';
 
 class BusPrintTicketResponse {
-    final String? bookingFee;
-    final String? busType;
-    final String? cancellationCalculationTimestamp;
-    final String? cancellationMessage;
-    final String? cancellationPolicy;
-    final String? cancellationCharges;
-    final String? cancellationReason;
-    final String? dateOfIssue;
-    final String? dateOfCancellation; // new
-    final String? destinationCity;
-    final String? destinationCityId;
-    final String? doj;
-    final String? dropLocation;
-    final String? dropLocationAddress;
-    final String? dropLocationId;
-    final String? dropLocationLandmark;
-    final String? dropTime;
-    final String? firstBoardingPointTime;
-    final String? hasRTCBreakup;
-    final String? hasSpecialTemplate;
-    final String? pickupLatitude;
-    final String? pickupLongitude;
-    final String? inventoryId;
-    final List<BusInventoryItem> inventoryItems;
-    final String? mTicketEnabled;
-    // final OtherDetails otherDetails;
-    final String? partialCancellationAllowed;
-    final String? pickUpContactNo;
-    final String? pickUpLocationAddress;
-    final String? pickupLocation;
-    final String? pickupLocationId;
-    final String? pickupLocationLandmark;
-    final String? pickupTime;
-    final String? pnr;
-    final String? primeDepartureTime;
-    final String? primoBooking;
-    final BusReschedulingPolicy? reschedulingPolicy;
-    final String? serviceCharge;
-    final String? serviceStartTime;
-    final String? sourceCity;
-    final String? sourceCityId;
-    final String? status;
-    final String? tin;
-    final String? travels;
-    final String? vaccinatedBus;
-    final String? vaccinatedStaff;
+  final String? bookingFee;
+  final String? busType;
+  final String? cancellationCalculationTimestamp;
+  final String? cancellationMessage;
+  final String? cancellationPolicy;
+  final String? cancellationCharges;
+  final String? cancellationReason;
+  final String? dateOfIssue;
+  final String? dateOfCancellation; // new
+  final String? destinationCity;
+  final String? destinationCityId;
+  final String? doj;
+  final String? dropLocation;
+  final String? dropLocationAddress;
+  final String? dropLocationId;
+  final String? dropLocationLandmark;
+  final String? dropTime;
+  final String? firstBoardingPointTime;
+  final String? hasRTCBreakup;
+  final String? hasSpecialTemplate;
+  final String? pickupLatitude;
+  final String? pickupLongitude;
+  final String? inventoryId;
+  final List<BusInventoryItem>? inventoryItems;
+  final String? mTicketEnabled;
+  // final OtherDetails otherDetails;
+  final String? partialCancellationAllowed;
+  final String? pickUpContactNo;
+  final String? pickUpLocationAddress;
+  final String? pickupLocation;
+  final String? pickupLocationId;
+  final String? pickupLocationLandmark;
+  final String? pickupTime;
+  final String? pnr;
+  final String? primeDepartureTime;
+  final String? primoBooking;
+  final BusReschedulingPolicy? reschedulingPolicy;
+  final String? serviceCharge;
+  final String? serviceStartTime;
+  final String? sourceCity;
+  final String? sourceCityId;
+  final String? status;
+  final String? tin;
+  final String? travels;
+  final String? vaccinatedBus;
+  final String? vaccinatedStaff;
 
-    final String? refundAmount;
-    final String? refundServiceTax;
-    final String? serviceTaxOnCancellationCharge;
-    final BusInvoiceData? invoiceData;
+  final String? refundAmount;
+  final String? refundServiceTax;
+  final String? serviceTaxOnCancellationCharge;
+  final BusInvoiceData? invoiceData;
   BusPrintTicketResponse({
     this.bookingFee,
     this.busType,
@@ -82,7 +82,7 @@ class BusPrintTicketResponse {
     this.pickupLatitude,
     this.pickupLongitude,
     this.inventoryId,
-    required this.inventoryItems,
+    this.inventoryItems,
     this.mTicketEnabled,
     this.partialCancellationAllowed,
     this.pickUpContactNo,
@@ -164,7 +164,8 @@ class BusPrintTicketResponse {
     return BusPrintTicketResponse(
       bookingFee: bookingFee ?? this.bookingFee,
       busType: busType ?? this.busType,
-      cancellationCalculationTimestamp: cancellationCalculationTimestamp ?? this.cancellationCalculationTimestamp,
+      cancellationCalculationTimestamp: cancellationCalculationTimestamp ??
+          this.cancellationCalculationTimestamp,
       cancellationMessage: cancellationMessage ?? this.cancellationMessage,
       cancellationPolicy: cancellationPolicy ?? this.cancellationPolicy,
       cancellationCharges: cancellationCharges ?? this.cancellationCharges,
@@ -179,7 +180,8 @@ class BusPrintTicketResponse {
       dropLocationId: dropLocationId ?? this.dropLocationId,
       dropLocationLandmark: dropLocationLandmark ?? this.dropLocationLandmark,
       dropTime: dropTime ?? this.dropTime,
-      firstBoardingPointTime: firstBoardingPointTime ?? this.firstBoardingPointTime,
+      firstBoardingPointTime:
+          firstBoardingPointTime ?? this.firstBoardingPointTime,
       hasRTCBreakup: hasRTCBreakup ?? this.hasRTCBreakup,
       hasSpecialTemplate: hasSpecialTemplate ?? this.hasSpecialTemplate,
       pickupLatitude: pickupLatitude ?? this.pickupLatitude,
@@ -187,12 +189,15 @@ class BusPrintTicketResponse {
       inventoryId: inventoryId ?? this.inventoryId,
       inventoryItems: inventoryItems ?? this.inventoryItems,
       mTicketEnabled: mTicketEnabled ?? this.mTicketEnabled,
-      partialCancellationAllowed: partialCancellationAllowed ?? this.partialCancellationAllowed,
+      partialCancellationAllowed:
+          partialCancellationAllowed ?? this.partialCancellationAllowed,
       pickUpContactNo: pickUpContactNo ?? this.pickUpContactNo,
-      pickUpLocationAddress: pickUpLocationAddress ?? this.pickUpLocationAddress,
+      pickUpLocationAddress:
+          pickUpLocationAddress ?? this.pickUpLocationAddress,
       pickupLocation: pickupLocation ?? this.pickupLocation,
       pickupLocationId: pickupLocationId ?? this.pickupLocationId,
-      pickupLocationLandmark: pickupLocationLandmark ?? this.pickupLocationLandmark,
+      pickupLocationLandmark:
+          pickupLocationLandmark ?? this.pickupLocationLandmark,
       pickupTime: pickupTime ?? this.pickupTime,
       pnr: pnr ?? this.pnr,
       primeDepartureTime: primeDepartureTime ?? this.primeDepartureTime,
@@ -209,160 +214,167 @@ class BusPrintTicketResponse {
       vaccinatedStaff: vaccinatedStaff ?? this.vaccinatedStaff,
       refundAmount: refundAmount ?? this.refundAmount,
       refundServiceTax: refundServiceTax ?? this.refundServiceTax,
-      serviceTaxOnCancellationCharge: serviceTaxOnCancellationCharge ?? this.serviceTaxOnCancellationCharge,
+      serviceTaxOnCancellationCharge:
+          serviceTaxOnCancellationCharge ?? this.serviceTaxOnCancellationCharge,
       invoiceData: invoiceData ?? this.invoiceData,
     );
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    if(bookingFee != null){
+
+    if (bookingFee != null) {
       result.addAll({'bookingFee': bookingFee});
     }
-    if(busType != null){
+    if (busType != null) {
       result.addAll({'busType': busType});
     }
-    if(cancellationCalculationTimestamp != null){
-      result.addAll({'cancellationCalculationTimestamp': cancellationCalculationTimestamp});
+    if (cancellationCalculationTimestamp != null) {
+      result.addAll({
+        'cancellationCalculationTimestamp': cancellationCalculationTimestamp
+      });
     }
-    if(cancellationMessage != null){
+    if (cancellationMessage != null) {
       result.addAll({'cancellationMessage': cancellationMessage});
     }
-    if(cancellationPolicy != null){
+    if (cancellationPolicy != null) {
       result.addAll({'cancellationPolicy': cancellationPolicy});
     }
-    if(cancellationCharges != null){
+    if (cancellationCharges != null) {
       result.addAll({'cancellationCharges': cancellationCharges});
     }
-    if(cancellationReason != null){
+    if (cancellationReason != null) {
       result.addAll({'cancellationReason': cancellationReason});
     }
-    if(dateOfIssue != null){
+    if (dateOfIssue != null) {
       result.addAll({'dateOfIssue': dateOfIssue});
     }
-    if(dateOfCancellation != null){
+    if (dateOfCancellation != null) {
       result.addAll({'dateOfCancellation': dateOfCancellation});
     }
-    if(destinationCity != null){
+    if (destinationCity != null) {
       result.addAll({'destinationCity': destinationCity});
     }
-    if(destinationCityId != null){
+    if (destinationCityId != null) {
       result.addAll({'destinationCityId': destinationCityId});
     }
-    if(doj != null){
+    if (doj != null) {
       result.addAll({'doj': doj});
     }
-    if(dropLocation != null){
+    if (dropLocation != null) {
       result.addAll({'dropLocation': dropLocation});
     }
-    if(dropLocationAddress != null){
+    if (dropLocationAddress != null) {
       result.addAll({'dropLocationAddress': dropLocationAddress});
     }
-    if(dropLocationId != null){
+    if (dropLocationId != null) {
       result.addAll({'dropLocationId': dropLocationId});
     }
-    if(dropLocationLandmark != null){
+    if (dropLocationLandmark != null) {
       result.addAll({'dropLocationLandmark': dropLocationLandmark});
     }
-    if(dropTime != null){
+    if (dropTime != null) {
       result.addAll({'dropTime': dropTime});
     }
-    if(firstBoardingPointTime != null){
+    if (firstBoardingPointTime != null) {
       result.addAll({'firstBoardingPointTime': firstBoardingPointTime});
     }
-    if(hasRTCBreakup != null){
+    if (hasRTCBreakup != null) {
       result.addAll({'hasRTCBreakup': hasRTCBreakup});
     }
-    if(hasSpecialTemplate != null){
+    if (hasSpecialTemplate != null) {
       result.addAll({'hasSpecialTemplate': hasSpecialTemplate});
     }
-    if(pickupLatitude != null){
+    if (pickupLatitude != null) {
       result.addAll({'pickupLatitude': pickupLatitude});
     }
-    if(pickupLongitude != null){
+    if (pickupLongitude != null) {
       result.addAll({'pickupLongitude': pickupLongitude});
     }
-    if(inventoryId != null){
+    if (inventoryId != null) {
       result.addAll({'inventoryId': inventoryId});
     }
-    result.addAll({'inventoryItems': inventoryItems.map((x) => x.toMap()).toList()});
-    if(mTicketEnabled != null){
+    if (inventoryItems != null) {
+      result.addAll(
+          {'inventoryItems': inventoryItems!.map((x) => x.toMap()).toList()});
+    }
+    if (mTicketEnabled != null) {
       result.addAll({'mTicketEnabled': mTicketEnabled});
     }
-    if(partialCancellationAllowed != null){
+    if (partialCancellationAllowed != null) {
       result.addAll({'partialCancellationAllowed': partialCancellationAllowed});
     }
-    if(pickUpContactNo != null){
+    if (pickUpContactNo != null) {
       result.addAll({'pickUpContactNo': pickUpContactNo});
     }
-    if(pickUpLocationAddress != null){
+    if (pickUpLocationAddress != null) {
       result.addAll({'pickUpLocationAddress': pickUpLocationAddress});
     }
-    if(pickupLocation != null){
+    if (pickupLocation != null) {
       result.addAll({'pickupLocation': pickupLocation});
     }
-    if(pickupLocationId != null){
+    if (pickupLocationId != null) {
       result.addAll({'pickupLocationId': pickupLocationId});
     }
-    if(pickupLocationLandmark != null){
+    if (pickupLocationLandmark != null) {
       result.addAll({'pickupLocationLandmark': pickupLocationLandmark});
     }
-    if(pickupTime != null){
+    if (pickupTime != null) {
       result.addAll({'pickupTime': pickupTime});
     }
-    if(pnr != null){
+    if (pnr != null) {
       result.addAll({'pnr': pnr});
     }
-    if(primeDepartureTime != null){
+    if (primeDepartureTime != null) {
       result.addAll({'primeDepartureTime': primeDepartureTime});
     }
-    if(primoBooking != null){
+    if (primoBooking != null) {
       result.addAll({'primoBooking': primoBooking});
     }
-    if(reschedulingPolicy != null){
+    if (reschedulingPolicy != null) {
       result.addAll({'reschedulingPolicy': reschedulingPolicy!.toMap()});
     }
-    if(serviceCharge != null){
+    if (serviceCharge != null) {
       result.addAll({'serviceCharge': serviceCharge});
     }
-    if(serviceStartTime != null){
+    if (serviceStartTime != null) {
       result.addAll({'serviceStartTime': serviceStartTime});
     }
-    if(sourceCity != null){
+    if (sourceCity != null) {
       result.addAll({'sourceCity': sourceCity});
     }
-    if(sourceCityId != null){
+    if (sourceCityId != null) {
       result.addAll({'sourceCityId': sourceCityId});
     }
-    if(status != null){
+    if (status != null) {
       result.addAll({'status': status});
     }
-    if(tin != null){
+    if (tin != null) {
       result.addAll({'tin': tin});
     }
-    if(travels != null){
+    if (travels != null) {
       result.addAll({'travels': travels});
     }
-    if(vaccinatedBus != null){
+    if (vaccinatedBus != null) {
       result.addAll({'vaccinatedBus': vaccinatedBus});
     }
-    if(vaccinatedStaff != null){
+    if (vaccinatedStaff != null) {
       result.addAll({'vaccinatedStaff': vaccinatedStaff});
     }
-    if(refundAmount != null){
+    if (refundAmount != null) {
       result.addAll({'refundAmount': refundAmount});
     }
-    if(refundServiceTax != null){
+    if (refundServiceTax != null) {
       result.addAll({'refundServiceTax': refundServiceTax});
     }
-    if(serviceTaxOnCancellationCharge != null){
-      result.addAll({'serviceTaxOnCancellationCharge': serviceTaxOnCancellationCharge});
+    if (serviceTaxOnCancellationCharge != null) {
+      result.addAll(
+          {'serviceTaxOnCancellationCharge': serviceTaxOnCancellationCharge});
     }
-    if(invoiceData != null){
+    if (invoiceData != null) {
       result.addAll({'invoiceData': invoiceData!.toMap()});
     }
-  
+
     return result;
   }
 
@@ -391,7 +403,10 @@ class BusPrintTicketResponse {
       pickupLatitude: map['pickupLatitude'],
       pickupLongitude: map['pickupLongitude'],
       inventoryId: map['inventoryId'],
-      inventoryItems: List<BusInventoryItem>.from(map['inventoryItems']?.map((x) => BusInventoryItem.fromMap(x))),
+      inventoryItems: map['inventoryItems'] != null
+          ? List<BusInventoryItem>.from(
+              map['inventoryItems']?.map((x) => BusInventoryItem.fromMap(x)))
+          : null,
       mTicketEnabled: map['mTicketEnabled'],
       partialCancellationAllowed: map['partialCancellationAllowed'],
       pickUpContactNo: map['pickUpContactNo'],
@@ -403,7 +418,9 @@ class BusPrintTicketResponse {
       pnr: map['pnr'],
       primeDepartureTime: map['primeDepartureTime'],
       primoBooking: map['primoBooking'],
-      reschedulingPolicy: map['reschedulingPolicy'] != null ? BusReschedulingPolicy.fromMap(map['reschedulingPolicy']) : null,
+      reschedulingPolicy: map['reschedulingPolicy'] != null
+          ? BusReschedulingPolicy.fromMap(map['reschedulingPolicy'])
+          : null,
       serviceCharge: map['serviceCharge'],
       serviceStartTime: map['serviceStartTime'],
       sourceCity: map['sourceCity'],
@@ -416,13 +433,16 @@ class BusPrintTicketResponse {
       refundAmount: map['refundAmount'],
       refundServiceTax: map['refundServiceTax'],
       serviceTaxOnCancellationCharge: map['serviceTaxOnCancellationCharge'],
-      invoiceData: map['invoiceData'] != null ? BusInvoiceData.fromMap(map['invoiceData']) : null,
+      invoiceData: map['invoiceData'] != null
+          ? BusInvoiceData.fromMap(map['invoiceData'])
+          : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory BusPrintTicketResponse.fromJson(String source) => BusPrintTicketResponse.fromMap(json.decode(source));
+  factory BusPrintTicketResponse.fromJson(String source) =>
+      BusPrintTicketResponse.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -432,109 +452,111 @@ class BusPrintTicketResponse {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is BusPrintTicketResponse &&
-      other.bookingFee == bookingFee &&
-      other.busType == busType &&
-      other.cancellationCalculationTimestamp == cancellationCalculationTimestamp &&
-      other.cancellationMessage == cancellationMessage &&
-      other.cancellationPolicy == cancellationPolicy &&
-      other.cancellationCharges == cancellationCharges &&
-      other.cancellationReason == cancellationReason &&
-      other.dateOfIssue == dateOfIssue &&
-      other.dateOfCancellation == dateOfCancellation &&
-      other.destinationCity == destinationCity &&
-      other.destinationCityId == destinationCityId &&
-      other.doj == doj &&
-      other.dropLocation == dropLocation &&
-      other.dropLocationAddress == dropLocationAddress &&
-      other.dropLocationId == dropLocationId &&
-      other.dropLocationLandmark == dropLocationLandmark &&
-      other.dropTime == dropTime &&
-      other.firstBoardingPointTime == firstBoardingPointTime &&
-      other.hasRTCBreakup == hasRTCBreakup &&
-      other.hasSpecialTemplate == hasSpecialTemplate &&
-      other.pickupLatitude == pickupLatitude &&
-      other.pickupLongitude == pickupLongitude &&
-      other.inventoryId == inventoryId &&
-      listEquals(other.inventoryItems, inventoryItems) &&
-      other.mTicketEnabled == mTicketEnabled &&
-      other.partialCancellationAllowed == partialCancellationAllowed &&
-      other.pickUpContactNo == pickUpContactNo &&
-      other.pickUpLocationAddress == pickUpLocationAddress &&
-      other.pickupLocation == pickupLocation &&
-      other.pickupLocationId == pickupLocationId &&
-      other.pickupLocationLandmark == pickupLocationLandmark &&
-      other.pickupTime == pickupTime &&
-      other.pnr == pnr &&
-      other.primeDepartureTime == primeDepartureTime &&
-      other.primoBooking == primoBooking &&
-      other.reschedulingPolicy == reschedulingPolicy &&
-      other.serviceCharge == serviceCharge &&
-      other.serviceStartTime == serviceStartTime &&
-      other.sourceCity == sourceCity &&
-      other.sourceCityId == sourceCityId &&
-      other.status == status &&
-      other.tin == tin &&
-      other.travels == travels &&
-      other.vaccinatedBus == vaccinatedBus &&
-      other.vaccinatedStaff == vaccinatedStaff &&
-      other.refundAmount == refundAmount &&
-      other.refundServiceTax == refundServiceTax &&
-      other.serviceTaxOnCancellationCharge == serviceTaxOnCancellationCharge &&
-      other.invoiceData == invoiceData;
+        other.bookingFee == bookingFee &&
+        other.busType == busType &&
+        other.cancellationCalculationTimestamp ==
+            cancellationCalculationTimestamp &&
+        other.cancellationMessage == cancellationMessage &&
+        other.cancellationPolicy == cancellationPolicy &&
+        other.cancellationCharges == cancellationCharges &&
+        other.cancellationReason == cancellationReason &&
+        other.dateOfIssue == dateOfIssue &&
+        other.dateOfCancellation == dateOfCancellation &&
+        other.destinationCity == destinationCity &&
+        other.destinationCityId == destinationCityId &&
+        other.doj == doj &&
+        other.dropLocation == dropLocation &&
+        other.dropLocationAddress == dropLocationAddress &&
+        other.dropLocationId == dropLocationId &&
+        other.dropLocationLandmark == dropLocationLandmark &&
+        other.dropTime == dropTime &&
+        other.firstBoardingPointTime == firstBoardingPointTime &&
+        other.hasRTCBreakup == hasRTCBreakup &&
+        other.hasSpecialTemplate == hasSpecialTemplate &&
+        other.pickupLatitude == pickupLatitude &&
+        other.pickupLongitude == pickupLongitude &&
+        other.inventoryId == inventoryId &&
+        listEquals(other.inventoryItems, inventoryItems) &&
+        other.mTicketEnabled == mTicketEnabled &&
+        other.partialCancellationAllowed == partialCancellationAllowed &&
+        other.pickUpContactNo == pickUpContactNo &&
+        other.pickUpLocationAddress == pickUpLocationAddress &&
+        other.pickupLocation == pickupLocation &&
+        other.pickupLocationId == pickupLocationId &&
+        other.pickupLocationLandmark == pickupLocationLandmark &&
+        other.pickupTime == pickupTime &&
+        other.pnr == pnr &&
+        other.primeDepartureTime == primeDepartureTime &&
+        other.primoBooking == primoBooking &&
+        other.reschedulingPolicy == reschedulingPolicy &&
+        other.serviceCharge == serviceCharge &&
+        other.serviceStartTime == serviceStartTime &&
+        other.sourceCity == sourceCity &&
+        other.sourceCityId == sourceCityId &&
+        other.status == status &&
+        other.tin == tin &&
+        other.travels == travels &&
+        other.vaccinatedBus == vaccinatedBus &&
+        other.vaccinatedStaff == vaccinatedStaff &&
+        other.refundAmount == refundAmount &&
+        other.refundServiceTax == refundServiceTax &&
+        other.serviceTaxOnCancellationCharge ==
+            serviceTaxOnCancellationCharge &&
+        other.invoiceData == invoiceData;
   }
 
   @override
   int get hashCode {
     return bookingFee.hashCode ^
-      busType.hashCode ^
-      cancellationCalculationTimestamp.hashCode ^
-      cancellationMessage.hashCode ^
-      cancellationPolicy.hashCode ^
-      cancellationCharges.hashCode ^
-      cancellationReason.hashCode ^
-      dateOfIssue.hashCode ^
-      dateOfCancellation.hashCode ^
-      destinationCity.hashCode ^
-      destinationCityId.hashCode ^
-      doj.hashCode ^
-      dropLocation.hashCode ^
-      dropLocationAddress.hashCode ^
-      dropLocationId.hashCode ^
-      dropLocationLandmark.hashCode ^
-      dropTime.hashCode ^
-      firstBoardingPointTime.hashCode ^
-      hasRTCBreakup.hashCode ^
-      hasSpecialTemplate.hashCode ^
-      pickupLatitude.hashCode ^
-      pickupLongitude.hashCode ^
-      inventoryId.hashCode ^
-      inventoryItems.hashCode ^
-      mTicketEnabled.hashCode ^
-      partialCancellationAllowed.hashCode ^
-      pickUpContactNo.hashCode ^
-      pickUpLocationAddress.hashCode ^
-      pickupLocation.hashCode ^
-      pickupLocationId.hashCode ^
-      pickupLocationLandmark.hashCode ^
-      pickupTime.hashCode ^
-      pnr.hashCode ^
-      primeDepartureTime.hashCode ^
-      primoBooking.hashCode ^
-      reschedulingPolicy.hashCode ^
-      serviceCharge.hashCode ^
-      serviceStartTime.hashCode ^
-      sourceCity.hashCode ^
-      sourceCityId.hashCode ^
-      status.hashCode ^
-      tin.hashCode ^
-      travels.hashCode ^
-      vaccinatedBus.hashCode ^
-      vaccinatedStaff.hashCode ^
-      refundAmount.hashCode ^
-      refundServiceTax.hashCode ^
-      serviceTaxOnCancellationCharge.hashCode ^
-      invoiceData.hashCode;
+        busType.hashCode ^
+        cancellationCalculationTimestamp.hashCode ^
+        cancellationMessage.hashCode ^
+        cancellationPolicy.hashCode ^
+        cancellationCharges.hashCode ^
+        cancellationReason.hashCode ^
+        dateOfIssue.hashCode ^
+        dateOfCancellation.hashCode ^
+        destinationCity.hashCode ^
+        destinationCityId.hashCode ^
+        doj.hashCode ^
+        dropLocation.hashCode ^
+        dropLocationAddress.hashCode ^
+        dropLocationId.hashCode ^
+        dropLocationLandmark.hashCode ^
+        dropTime.hashCode ^
+        firstBoardingPointTime.hashCode ^
+        hasRTCBreakup.hashCode ^
+        hasSpecialTemplate.hashCode ^
+        pickupLatitude.hashCode ^
+        pickupLongitude.hashCode ^
+        inventoryId.hashCode ^
+        inventoryItems.hashCode ^
+        mTicketEnabled.hashCode ^
+        partialCancellationAllowed.hashCode ^
+        pickUpContactNo.hashCode ^
+        pickUpLocationAddress.hashCode ^
+        pickupLocation.hashCode ^
+        pickupLocationId.hashCode ^
+        pickupLocationLandmark.hashCode ^
+        pickupTime.hashCode ^
+        pnr.hashCode ^
+        primeDepartureTime.hashCode ^
+        primoBooking.hashCode ^
+        reschedulingPolicy.hashCode ^
+        serviceCharge.hashCode ^
+        serviceStartTime.hashCode ^
+        sourceCity.hashCode ^
+        sourceCityId.hashCode ^
+        status.hashCode ^
+        tin.hashCode ^
+        travels.hashCode ^
+        vaccinatedBus.hashCode ^
+        vaccinatedStaff.hashCode ^
+        refundAmount.hashCode ^
+        refundServiceTax.hashCode ^
+        serviceTaxOnCancellationCharge.hashCode ^
+        invoiceData.hashCode;
   }
 }

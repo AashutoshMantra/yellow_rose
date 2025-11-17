@@ -41,9 +41,10 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  SizedBox(
-                    height: 20.h,
-                  ),
+                  if (height != null)
+                    SizedBox(
+                      height: 20.h,
+                    ),
                   Text(
                     title,
                     style: titleStyle,

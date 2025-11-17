@@ -44,15 +44,15 @@ class BusBookingRequest {
   final String? rmApprovalUpload;
   final double? fare;
   final String? ladiesSeat;
-  final List<UserBusBookingRequest> busBooking;
-  final List<BusSeats> seats;
-  final List<PassengerDetails> passengerDetails;
+  final List<UserBusBookingRequest>? busBooking;
+  final List<BusSeats>? seats;
+  final List<PassengerDetails>? passengerDetails;
   // final List<TravellerDetail> travellerDetails;
   final String? dobMandatory;
   final bool? repriceStatus;
   final String? customerCardDetails;
   final String? passThroughCardDetails;
-  final Map<String, Object> otherData;
+  final Map<String, Object>? otherData;
   BusBookingRequest({
     this.source,
     this.sourceId,
@@ -91,14 +91,14 @@ class BusBookingRequest {
     this.rmApprovalUpload,
     this.fare,
     this.ladiesSeat,
-    required this.busBooking,
-    required this.seats,
-    required this.passengerDetails,
+    this.busBooking,
+    this.seats,
+    this.passengerDetails,
     this.dobMandatory,
     this.repriceStatus,
     this.customerCardDetails,
     this.passThroughCardDetails,
-    required this.otherData,
+    this.otherData,
   });
   final bool? holdBooking = true;
 
@@ -193,142 +193,151 @@ class BusBookingRequest {
       dobMandatory: dobMandatory ?? this.dobMandatory,
       repriceStatus: repriceStatus ?? this.repriceStatus,
       customerCardDetails: customerCardDetails ?? this.customerCardDetails,
-      passThroughCardDetails: passThroughCardDetails ?? this.passThroughCardDetails,
+      passThroughCardDetails:
+          passThroughCardDetails ?? this.passThroughCardDetails,
       otherData: otherData ?? this.otherData,
     );
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    if(source != null){
+
+    if (source != null) {
       result.addAll({'source': source});
     }
-    if(sourceId != null){
+    if (sourceId != null) {
       result.addAll({'sourceId': sourceId});
     }
-    if(destination != null){
+    if (destination != null) {
       result.addAll({'destination': destination});
     }
-    if(destinationId != null){
+    if (destinationId != null) {
       result.addAll({'destinationId': destinationId});
     }
-    if(dateOfJourney != null){
+    if (dateOfJourney != null) {
       result.addAll({'dateOfJourney': dateOfJourney});
     }
-    if(requestId != null){
+    if (requestId != null) {
       result.addAll({'requestId': requestId});
     }
-    if(paxCount != null){
+    if (paxCount != null) {
       result.addAll({'paxCount': paxCount});
     }
-    if(adultCount != null){
+    if (adultCount != null) {
       result.addAll({'adultCount': adultCount});
     }
-    if(childCount != null){
+    if (childCount != null) {
       result.addAll({'childCount': childCount});
     }
-    if(infantCount != null){
+    if (infantCount != null) {
       result.addAll({'infantCount': infantCount});
     }
-    if(travelType != null){
+    if (travelType != null) {
       result.addAll({'travelType': travelType});
     }
-    if(journeyType != null){
+    if (journeyType != null) {
       result.addAll({'journeyType': journeyType});
     }
-    if(dealCode != null){
+    if (dealCode != null) {
       result.addAll({'dealCode': dealCode});
     }
-    if(contactNumber != null){
+    if (contactNumber != null) {
       result.addAll({'contactNumber': contactNumber});
     }
-    if(email != null){
+    if (email != null) {
       result.addAll({'email': email});
     }
-    if(gstEmail != null){
+    if (gstEmail != null) {
       result.addAll({'gstEmail': gstEmail});
     }
-    if(gstNumber != null){
+    if (gstNumber != null) {
       result.addAll({'gstNumber': gstNumber});
     }
-    if(branch != null){
+    if (branch != null) {
       result.addAll({'branch': branch});
     }
-    if(bookedBy != null){
+    if (bookedBy != null) {
       result.addAll({'bookedBy': bookedBy});
     }
-    if(bookingUser != null){
+    if (bookingUser != null) {
       result.addAll({'bookingUser': bookingUser});
     }
-    if(whiteLabelId != null){
+    if (whiteLabelId != null) {
       result.addAll({'whiteLabelId': whiteLabelId});
     }
-    if(billingEntity != null){
+    if (billingEntity != null) {
       result.addAll({'billingEntity': billingEntity});
     }
-    if(cardNo != null){
+    if (cardNo != null) {
       result.addAll({'cardNo': cardNo});
     }
-    if(channel != null){
+    if (channel != null) {
       result.addAll({'channel': channel});
     }
-    if(payment != null){
+    if (payment != null) {
       result.addAll({'payment': payment});
     }
-    if(paymentMedium != null){
+    if (paymentMedium != null) {
       result.addAll({'paymentMedium': paymentMedium});
     }
-    if(orderId != null){
+    if (orderId != null) {
       result.addAll({'orderId': orderId});
     }
-    if(tripUid != null){
+    if (tripUid != null) {
       result.addAll({'tripUid': tripUid});
     }
-    if(cartId != null){
+    if (cartId != null) {
       result.addAll({'cartId': cartId});
     }
-    if(cardDetails != null){
+    if (cardDetails != null) {
       result.addAll({'cardDetails': cardDetails});
     }
-    if(userUid != null){
+    if (userUid != null) {
       result.addAll({'userUid': userUid});
     }
-    if(bookedFor != null){
+    if (bookedFor != null) {
       result.addAll({'bookedFor': bookedFor});
     }
-    if(requestUuid != null){
+    if (requestUuid != null) {
       result.addAll({'requestUuid': requestUuid});
     }
-    if(seatName != null){
+    if (seatName != null) {
       result.addAll({'seatName': seatName});
     }
-    if(rmApprovalUpload != null){
+    if (rmApprovalUpload != null) {
       result.addAll({'rmApprovalUpload': rmApprovalUpload});
     }
-    if(fare != null){
+    if (fare != null) {
       result.addAll({'fare': fare});
     }
-    if(ladiesSeat != null){
+    if (ladiesSeat != null) {
       result.addAll({'ladiesSeat': ladiesSeat});
     }
-    result.addAll({'busBooking': busBooking.map((x) => x.toMap()).toList()});
-    result.addAll({'seats': seats.map((x) => x.toMap()).toList()});
-    result.addAll({'passengerDetails': passengerDetails.map((x) => x.toMap()).toList()});
-    if(dobMandatory != null){
+    if (busBooking != null) {
+      result.addAll({'busBooking': busBooking!.map((x) => x.toMap()).toList()});
+    }
+    if (seats != null) {
+      result.addAll({'seats': seats!.map((x) => x.toMap()).toList()});
+    }
+    if (passengerDetails != null) {
+      result.addAll({
+        'passengerDetails': passengerDetails!.map((x) => x.toMap()).toList()
+      });
+    }
+    if (dobMandatory != null) {
       result.addAll({'dobMandatory': dobMandatory});
     }
-    if(repriceStatus != null){
+    if (repriceStatus != null) {
       result.addAll({'repriceStatus': repriceStatus});
     }
-    if(customerCardDetails != null){
+    if (customerCardDetails != null) {
       result.addAll({'customerCardDetails': customerCardDetails});
     }
-    if(passThroughCardDetails != null){
+    if (passThroughCardDetails != null) {
       result.addAll({'passThroughCardDetails': passThroughCardDetails});
     }
     result.addAll({'otherData': otherData});
-  
+
     return result;
   }
 
@@ -371,9 +380,11 @@ class BusBookingRequest {
       rmApprovalUpload: map['rmApprovalUpload'],
       fare: map['fare']?.toDouble(),
       ladiesSeat: map['ladiesSeat'],
-      busBooking: List<UserBusBookingRequest>.from(map['busBooking']?.map((x) => UserBusBookingRequest.fromMap(x))),
+      busBooking: List<UserBusBookingRequest>.from(
+          map['busBooking']?.map((x) => UserBusBookingRequest.fromMap(x))),
       seats: List<BusSeats>.from(map['seats']?.map((x) => BusSeats.fromMap(x))),
-      passengerDetails: List<PassengerDetails>.from(map['passengerDetails']?.map((x) => PassengerDetails.fromMap(x))),
+      passengerDetails: List<PassengerDetails>.from(
+          map['passengerDetails']?.map((x) => PassengerDetails.fromMap(x))),
       dobMandatory: map['dobMandatory'],
       repriceStatus: map['repriceStatus'],
       customerCardDetails: map['customerCardDetails'],
@@ -384,7 +395,8 @@ class BusBookingRequest {
 
   String toJson() => json.encode(toMap());
 
-  factory BusBookingRequest.fromJson(String source) => BusBookingRequest.fromMap(json.decode(source));
+  factory BusBookingRequest.fromJson(String source) =>
+      BusBookingRequest.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -394,101 +406,101 @@ class BusBookingRequest {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is BusBookingRequest &&
-      other.source == source &&
-      other.sourceId == sourceId &&
-      other.destination == destination &&
-      other.destinationId == destinationId &&
-      other.dateOfJourney == dateOfJourney &&
-      other.requestId == requestId &&
-      other.paxCount == paxCount &&
-      other.adultCount == adultCount &&
-      other.childCount == childCount &&
-      other.infantCount == infantCount &&
-      other.travelType == travelType &&
-      other.journeyType == journeyType &&
-      other.dealCode == dealCode &&
-      other.contactNumber == contactNumber &&
-      other.email == email &&
-      other.gstEmail == gstEmail &&
-      other.gstNumber == gstNumber &&
-      other.branch == branch &&
-      other.bookedBy == bookedBy &&
-      other.bookingUser == bookingUser &&
-      other.whiteLabelId == whiteLabelId &&
-      other.billingEntity == billingEntity &&
-      other.cardNo == cardNo &&
-      other.channel == channel &&
-      other.payment == payment &&
-      other.paymentMedium == paymentMedium &&
-      other.orderId == orderId &&
-      other.tripUid == tripUid &&
-      other.cartId == cartId &&
-      other.cardDetails == cardDetails &&
-      other.userUid == userUid &&
-      other.bookedFor == bookedFor &&
-      other.requestUuid == requestUuid &&
-      other.seatName == seatName &&
-      other.rmApprovalUpload == rmApprovalUpload &&
-      other.fare == fare &&
-      other.ladiesSeat == ladiesSeat &&
-      listEquals(other.busBooking, busBooking) &&
-      listEquals(other.seats, seats) &&
-      listEquals(other.passengerDetails, passengerDetails) &&
-      other.dobMandatory == dobMandatory &&
-      other.repriceStatus == repriceStatus &&
-      other.customerCardDetails == customerCardDetails &&
-      other.passThroughCardDetails == passThroughCardDetails &&
-      mapEquals(other.otherData, otherData);
+        other.source == source &&
+        other.sourceId == sourceId &&
+        other.destination == destination &&
+        other.destinationId == destinationId &&
+        other.dateOfJourney == dateOfJourney &&
+        other.requestId == requestId &&
+        other.paxCount == paxCount &&
+        other.adultCount == adultCount &&
+        other.childCount == childCount &&
+        other.infantCount == infantCount &&
+        other.travelType == travelType &&
+        other.journeyType == journeyType &&
+        other.dealCode == dealCode &&
+        other.contactNumber == contactNumber &&
+        other.email == email &&
+        other.gstEmail == gstEmail &&
+        other.gstNumber == gstNumber &&
+        other.branch == branch &&
+        other.bookedBy == bookedBy &&
+        other.bookingUser == bookingUser &&
+        other.whiteLabelId == whiteLabelId &&
+        other.billingEntity == billingEntity &&
+        other.cardNo == cardNo &&
+        other.channel == channel &&
+        other.payment == payment &&
+        other.paymentMedium == paymentMedium &&
+        other.orderId == orderId &&
+        other.tripUid == tripUid &&
+        other.cartId == cartId &&
+        other.cardDetails == cardDetails &&
+        other.userUid == userUid &&
+        other.bookedFor == bookedFor &&
+        other.requestUuid == requestUuid &&
+        other.seatName == seatName &&
+        other.rmApprovalUpload == rmApprovalUpload &&
+        other.fare == fare &&
+        other.ladiesSeat == ladiesSeat &&
+        listEquals(other.busBooking, busBooking) &&
+        listEquals(other.seats, seats) &&
+        listEquals(other.passengerDetails, passengerDetails) &&
+        other.dobMandatory == dobMandatory &&
+        other.repriceStatus == repriceStatus &&
+        other.customerCardDetails == customerCardDetails &&
+        other.passThroughCardDetails == passThroughCardDetails &&
+        mapEquals(other.otherData, otherData);
   }
 
   @override
   int get hashCode {
     return source.hashCode ^
-      sourceId.hashCode ^
-      destination.hashCode ^
-      destinationId.hashCode ^
-      dateOfJourney.hashCode ^
-      requestId.hashCode ^
-      paxCount.hashCode ^
-      adultCount.hashCode ^
-      childCount.hashCode ^
-      infantCount.hashCode ^
-      travelType.hashCode ^
-      journeyType.hashCode ^
-      dealCode.hashCode ^
-      contactNumber.hashCode ^
-      email.hashCode ^
-      gstEmail.hashCode ^
-      gstNumber.hashCode ^
-      branch.hashCode ^
-      bookedBy.hashCode ^
-      bookingUser.hashCode ^
-      whiteLabelId.hashCode ^
-      billingEntity.hashCode ^
-      cardNo.hashCode ^
-      channel.hashCode ^
-      payment.hashCode ^
-      paymentMedium.hashCode ^
-      orderId.hashCode ^
-      tripUid.hashCode ^
-      cartId.hashCode ^
-      cardDetails.hashCode ^
-      userUid.hashCode ^
-      bookedFor.hashCode ^
-      requestUuid.hashCode ^
-      seatName.hashCode ^
-      rmApprovalUpload.hashCode ^
-      fare.hashCode ^
-      ladiesSeat.hashCode ^
-      busBooking.hashCode ^
-      seats.hashCode ^
-      passengerDetails.hashCode ^
-      dobMandatory.hashCode ^
-      repriceStatus.hashCode ^
-      customerCardDetails.hashCode ^
-      passThroughCardDetails.hashCode ^
-      otherData.hashCode;
+        sourceId.hashCode ^
+        destination.hashCode ^
+        destinationId.hashCode ^
+        dateOfJourney.hashCode ^
+        requestId.hashCode ^
+        paxCount.hashCode ^
+        adultCount.hashCode ^
+        childCount.hashCode ^
+        infantCount.hashCode ^
+        travelType.hashCode ^
+        journeyType.hashCode ^
+        dealCode.hashCode ^
+        contactNumber.hashCode ^
+        email.hashCode ^
+        gstEmail.hashCode ^
+        gstNumber.hashCode ^
+        branch.hashCode ^
+        bookedBy.hashCode ^
+        bookingUser.hashCode ^
+        whiteLabelId.hashCode ^
+        billingEntity.hashCode ^
+        cardNo.hashCode ^
+        channel.hashCode ^
+        payment.hashCode ^
+        paymentMedium.hashCode ^
+        orderId.hashCode ^
+        tripUid.hashCode ^
+        cartId.hashCode ^
+        cardDetails.hashCode ^
+        userUid.hashCode ^
+        bookedFor.hashCode ^
+        requestUuid.hashCode ^
+        seatName.hashCode ^
+        rmApprovalUpload.hashCode ^
+        fare.hashCode ^
+        ladiesSeat.hashCode ^
+        busBooking.hashCode ^
+        seats.hashCode ^
+        passengerDetails.hashCode ^
+        dobMandatory.hashCode ^
+        repriceStatus.hashCode ^
+        customerCardDetails.hashCode ^
+        passThroughCardDetails.hashCode ^
+        otherData.hashCode;
   }
 }

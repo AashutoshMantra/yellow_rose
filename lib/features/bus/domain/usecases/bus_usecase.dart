@@ -2,6 +2,7 @@ import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_detail_request.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_detail_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/block_bus_ticket.dart';
+import 'package:yellow_rose/features/bus/data/models/order/bos_block_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order__create_request.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_book_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_res_detail.dart';
@@ -21,7 +22,7 @@ abstract interface class BusUseCase {
   Future<BusOrderResponse> createOrder(BusOrderCreateRequest request);
   Future<BusOrderResponse> updateOrder(
       String orderId, BusOrderCreateRequest request);
-  Future<BusBlockTicketRequest> blockTicket(
+  Future<BusBlockTicketResponse> blockTicket(
       String orderId, BusBlockTicketRequest request);
   Future<BusOrderBookResponse> bookOrder(String orderId, String tinNumber);
 
@@ -65,7 +66,7 @@ class BusUseCaseImpl implements BusUseCase {
   }
 
   @override
-  Future<BusBlockTicketRequest> blockTicket(
+  Future<BusBlockTicketResponse> blockTicket(
       String orderId, BusBlockTicketRequest request) async {
     return await _busRepository.blockTicket(orderId, request);
   }

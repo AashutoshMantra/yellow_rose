@@ -187,6 +187,10 @@ class BusSearchListScreen extends StatelessWidget {
                               BusDetailScreen.routeName,
                               arguments: {
                                 'busSearchResponse': bus,
+                                'busSearch': context
+                                    .read<BusSearchListingCubit>()
+                                    .state
+                                    .busSearch,
                               },
                             );
                           },

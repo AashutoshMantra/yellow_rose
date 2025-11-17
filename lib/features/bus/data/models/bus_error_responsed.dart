@@ -26,17 +26,17 @@ class BusErrorResponse {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    if(status != null){
+
+    if (status != null) {
       result.addAll({'status': status});
     }
-    if(message != null){
+    if (message != null) {
       result.addAll({'message': message});
     }
-    if(errors != null){
+    if (errors != null) {
       result.addAll({'errors': errors});
     }
-  
+
     return result;
   }
 
@@ -44,25 +44,29 @@ class BusErrorResponse {
     return BusErrorResponse(
       status: map['status']?.toInt(),
       message: map['message'],
-      errors: Map<String, dynamic>.from(map['errors']),
+      errors: map['errors'] != null
+          ? Map<String, dynamic>.from(map['errors'])
+          : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory BusErrorResponse.fromJson(String source) => BusErrorResponse.fromMap(json.decode(source));
+  factory BusErrorResponse.fromJson(String source) =>
+      BusErrorResponse.fromMap(json.decode(source));
 
   @override
-  String toString() => 'BusErrorResponse(status: $status, message: $message, errors: $errors)';
+  String toString() =>
+      'BusErrorResponse(status: $status, message: $message, errors: $errors)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is BusErrorResponse &&
-      other.status == status &&
-      other.message == message &&
-      mapEquals(other.errors, errors);
+        other.status == status &&
+        other.message == message &&
+        mapEquals(other.errors, errors);
   }
 
   @override

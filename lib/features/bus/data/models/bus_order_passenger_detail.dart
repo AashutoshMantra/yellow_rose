@@ -201,101 +201,101 @@ class BusOrderPassengerDetails {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    if(id != null){
+
+    if (id != null) {
       result.addAll({'id': id});
     }
-    if(orderUuid != null){
+    if (orderUuid != null) {
       result.addAll({'orderUuid': orderUuid});
     }
-    if(itineraryUuid != null){
+    if (itineraryUuid != null) {
       result.addAll({'itineraryUuid': itineraryUuid});
     }
-    if(username != null){
+    if (username != null) {
       result.addAll({'username': username});
     }
-    if(specialRequest != null){
+    if (specialRequest != null) {
       result.addAll({'specialRequest': specialRequest});
     }
-    if(profileType != null){
+    if (profileType != null) {
       result.addAll({'profileType': profileType});
     }
-    if(phoneNumber != null){
+    if (phoneNumber != null) {
       result.addAll({'phoneNumber': phoneNumber});
     }
-    if(email != null){
+    if (email != null) {
       result.addAll({'email': email});
     }
-    if(profileId != null){
+    if (profileId != null) {
       result.addAll({'profileId': profileId});
     }
-    if(passengerUserUid != null){
+    if (passengerUserUid != null) {
       result.addAll({'passengerUserUid': passengerUserUid});
     }
-    if(empId != null){
+    if (empId != null) {
       result.addAll({'empId': empId});
     }
-    if(address != null){
+    if (address != null) {
       result.addAll({'address': address});
     }
-    if(idNumber != null){
+    if (idNumber != null) {
       result.addAll({'idNumber': idNumber});
     }
-    if(idType != null){
+    if (idType != null) {
       result.addAll({'idType': idType});
     }
-    if(mobile != null){
+    if (mobile != null) {
       result.addAll({'mobile': mobile});
     }
-    if(age != null){
+    if (age != null) {
       result.addAll({'age': age});
     }
-    if(gender != null){
+    if (gender != null) {
       result.addAll({'gender': gender});
     }
-    if(primary != null){
+    if (primary != null) {
       result.addAll({'primary': primary});
     }
-    if(busBookingStatus != null){
+    if (busBookingStatus != null) {
       result.addAll({'busBookingStatus': busBookingStatus});
     }
-    if(ticketNumber != null){
+    if (ticketNumber != null) {
       result.addAll({'ticketNumber': ticketNumber});
     }
-    if(title != null){
+    if (title != null) {
       result.addAll({'title': title});
     }
-    if(firstName != null){
+    if (firstName != null) {
       result.addAll({'firstName': firstName});
     }
-    if(lastName != null){
+    if (lastName != null) {
       result.addAll({'lastName': lastName});
     }
-    if(seatNumber != null){
+    if (seatNumber != null) {
       result.addAll({'seatNumber': seatNumber});
     }
-    if(passengerType != null){
+    if (passengerType != null) {
       result.addAll({'passengerType': passengerType!.name});
     }
-    if(creationTs != null){
+    if (creationTs != null) {
       result.addAll({'creationTs': creationTs});
     }
-    if(firstDepartureTime != null){
+    if (firstDepartureTime != null) {
       result.addAll({'firstDepartureTime': firstDepartureTime});
     }
     result.addAll({'cancellationTs': cancellationTs});
     result.addAll({'modTs': modTs});
     result.addAll({'dob': dob});
-    if(errorDetails != null){
+    if (errorDetails != null) {
       result.addAll({'errorDetails': errorDetails});
     }
-    if(commissionData != null){
+    if (commissionData != null) {
       result.addAll({'commissionData': commissionData});
     }
-    if(customerPayment != null){
+    if (customerPayment != null) {
       result.addAll({'customerPayment': customerPayment!.toMap()});
     }
-  
+
     return result;
   }
 
@@ -325,21 +325,30 @@ class BusOrderPassengerDetails {
       firstName: map['firstName'],
       lastName: map['lastName'],
       seatNumber: map['seatNumber'],
-      passengerType: map['passengerType'] != null ?(map['passengerType'] as String?)?.toEnum(PassengerTypeEnum.values)   : null,
+      passengerType: map['passengerType'] != null
+          ? (map['passengerType'] as String?)?.toEnum(PassengerTypeEnum.values)
+          : null,
       creationTs: map['creationTs'],
       firstDepartureTime: map['firstDepartureTime'],
       cancellationTs: map['cancellationTs'] ?? '',
       modTs: map['modTs'] ?? '',
       dob: map['dob'] ?? '',
-      errorDetails: Map<String, dynamic>.from(map['errorDetails']),
-      commissionData: Map<String, dynamic>.from(map['commissionData']),
-      customerPayment: map['customerPayment'] != null ? CustomerPayment.fromMap(map['customerPayment']) : null,
+      errorDetails: map['errorDetails'] != null
+          ? Map<String, dynamic>.from(map['errorDetails'])
+          : null,
+      commissionData: map['commissionData'] != null
+          ? Map<String, dynamic>.from(map['commissionData'])
+          : null,
+      customerPayment: map['customerPayment'] != null
+          ? CustomerPayment.fromMap(map['customerPayment'])
+          : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory BusOrderPassengerDetails.fromJson(String source) => BusOrderPassengerDetails.fromMap(json.decode(source));
+  factory BusOrderPassengerDetails.fromJson(String source) =>
+      BusOrderPassengerDetails.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -349,77 +358,77 @@ class BusOrderPassengerDetails {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is BusOrderPassengerDetails &&
-      other.id == id &&
-      other.orderUuid == orderUuid &&
-      other.itineraryUuid == itineraryUuid &&
-      other.username == username &&
-      other.specialRequest == specialRequest &&
-      other.profileType == profileType &&
-      other.phoneNumber == phoneNumber &&
-      other.email == email &&
-      other.profileId == profileId &&
-      other.passengerUserUid == passengerUserUid &&
-      other.empId == empId &&
-      other.address == address &&
-      other.idNumber == idNumber &&
-      other.idType == idType &&
-      other.mobile == mobile &&
-      other.age == age &&
-      other.gender == gender &&
-      other.primary == primary &&
-      other.busBookingStatus == busBookingStatus &&
-      other.ticketNumber == ticketNumber &&
-      other.title == title &&
-      other.firstName == firstName &&
-      other.lastName == lastName &&
-      other.seatNumber == seatNumber &&
-      other.passengerType == passengerType &&
-      other.creationTs == creationTs &&
-      other.firstDepartureTime == firstDepartureTime &&
-      other.cancellationTs == cancellationTs &&
-      other.modTs == modTs &&
-      other.dob == dob &&
-      mapEquals(other.errorDetails, errorDetails) &&
-      mapEquals(other.commissionData, commissionData) &&
-      other.customerPayment == customerPayment;
+        other.id == id &&
+        other.orderUuid == orderUuid &&
+        other.itineraryUuid == itineraryUuid &&
+        other.username == username &&
+        other.specialRequest == specialRequest &&
+        other.profileType == profileType &&
+        other.phoneNumber == phoneNumber &&
+        other.email == email &&
+        other.profileId == profileId &&
+        other.passengerUserUid == passengerUserUid &&
+        other.empId == empId &&
+        other.address == address &&
+        other.idNumber == idNumber &&
+        other.idType == idType &&
+        other.mobile == mobile &&
+        other.age == age &&
+        other.gender == gender &&
+        other.primary == primary &&
+        other.busBookingStatus == busBookingStatus &&
+        other.ticketNumber == ticketNumber &&
+        other.title == title &&
+        other.firstName == firstName &&
+        other.lastName == lastName &&
+        other.seatNumber == seatNumber &&
+        other.passengerType == passengerType &&
+        other.creationTs == creationTs &&
+        other.firstDepartureTime == firstDepartureTime &&
+        other.cancellationTs == cancellationTs &&
+        other.modTs == modTs &&
+        other.dob == dob &&
+        mapEquals(other.errorDetails, errorDetails) &&
+        mapEquals(other.commissionData, commissionData) &&
+        other.customerPayment == customerPayment;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      orderUuid.hashCode ^
-      itineraryUuid.hashCode ^
-      username.hashCode ^
-      specialRequest.hashCode ^
-      profileType.hashCode ^
-      phoneNumber.hashCode ^
-      email.hashCode ^
-      profileId.hashCode ^
-      passengerUserUid.hashCode ^
-      empId.hashCode ^
-      address.hashCode ^
-      idNumber.hashCode ^
-      idType.hashCode ^
-      mobile.hashCode ^
-      age.hashCode ^
-      gender.hashCode ^
-      primary.hashCode ^
-      busBookingStatus.hashCode ^
-      ticketNumber.hashCode ^
-      title.hashCode ^
-      firstName.hashCode ^
-      lastName.hashCode ^
-      seatNumber.hashCode ^
-      passengerType.hashCode ^
-      creationTs.hashCode ^
-      firstDepartureTime.hashCode ^
-      cancellationTs.hashCode ^
-      modTs.hashCode ^
-      dob.hashCode ^
-      errorDetails.hashCode ^
-      commissionData.hashCode ^
-      customerPayment.hashCode;
+        orderUuid.hashCode ^
+        itineraryUuid.hashCode ^
+        username.hashCode ^
+        specialRequest.hashCode ^
+        profileType.hashCode ^
+        phoneNumber.hashCode ^
+        email.hashCode ^
+        profileId.hashCode ^
+        passengerUserUid.hashCode ^
+        empId.hashCode ^
+        address.hashCode ^
+        idNumber.hashCode ^
+        idType.hashCode ^
+        mobile.hashCode ^
+        age.hashCode ^
+        gender.hashCode ^
+        primary.hashCode ^
+        busBookingStatus.hashCode ^
+        ticketNumber.hashCode ^
+        title.hashCode ^
+        firstName.hashCode ^
+        lastName.hashCode ^
+        seatNumber.hashCode ^
+        passengerType.hashCode ^
+        creationTs.hashCode ^
+        firstDepartureTime.hashCode ^
+        cancellationTs.hashCode ^
+        modTs.hashCode ^
+        dob.hashCode ^
+        errorDetails.hashCode ^
+        commissionData.hashCode ^
+        customerPayment.hashCode;
   }
 }

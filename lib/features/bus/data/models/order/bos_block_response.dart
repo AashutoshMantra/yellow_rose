@@ -5,14 +5,14 @@ import 'package:flutter/foundation.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_inventory_item.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_udpated_fare_response.dart';
 
-class BusBlockTicketRequest {
+class BusBlockTicketResponse {
   String? blockKey;
   String? status;
   int? validity;
   List<BusInventoryItem> inventoryItems;
   BusUpdatedFareRes? updateFareForSpecialOperator;
   String? error;
-  BusBlockTicketRequest({
+  BusBlockTicketResponse({
     this.blockKey,
     this.status,
     this.validity,
@@ -21,7 +21,7 @@ class BusBlockTicketRequest {
     this.error,
   });
 
-  BusBlockTicketRequest copyWith({
+  BusBlockTicketResponse copyWith({
     String? blockKey,
     String? status,
     int? validity,
@@ -29,7 +29,7 @@ class BusBlockTicketRequest {
     BusUpdatedFareRes? updateFareForSpecialOperator,
     String? error,
   }) {
-    return BusBlockTicketRequest(
+    return BusBlockTicketResponse(
       blockKey: blockKey ?? this.blockKey,
       status: status ?? this.status,
       validity: validity ?? this.validity,
@@ -66,13 +66,15 @@ class BusBlockTicketRequest {
     return result;
   }
 
-  factory BusBlockTicketRequest.fromMap(Map<String, dynamic> map) {
-    return BusBlockTicketRequest(
+  factory BusBlockTicketResponse.fromMap(Map<String, dynamic> map) {
+    return BusBlockTicketResponse(
       blockKey: map['blockKey'],
       status: map['status'],
       validity: map['validity']?.toInt(),
-      inventoryItems: List<BusInventoryItem>.from(
-          map['inventoryItems']?.map((x) => BusInventoryItem.fromMap(x))),
+      inventoryItems: map['inventoryItems'] != null
+          ? List<BusInventoryItem>.from(
+              map['inventoryItems']?.map((x) => BusInventoryItem.fromMap(x)))
+          : [],
       updateFareForSpecialOperator: map['updateFareForSpecialOperator'] != null
           ? BusUpdatedFareRes.fromMap(map['updateFareForSpecialOperator'])
           : null,
@@ -82,8 +84,8 @@ class BusBlockTicketRequest {
 
   String toJson() => json.encode(toMap());
 
-  factory BusBlockTicketRequest.fromJson(String source) =>
-      BusBlockTicketRequest.fromMap(json.decode(source));
+  factory BusBlockTicketResponse.fromJson(String source) =>
+      BusBlockTicketResponse.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -94,7 +96,7 @@ class BusBlockTicketRequest {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is BusBlockTicketRequest &&
+    return other is BusBlockTicketResponse &&
         other.blockKey == blockKey &&
         other.status == status &&
         other.validity == validity &&

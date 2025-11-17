@@ -3,18 +3,17 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/base_appbar.dart';
-import 'package:yellow_rose/core/common_widgets/loader.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
+import 'package:yellow_rose/core/common_widgets/gst_info_card.dart';
+import 'package:yellow_rose/core/common_widgets/loader.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
-import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_payment.dart';
 import 'package:yellow_rose/features/flight/domain/entities/passenger_details_entity.dart';
-import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/order_status_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/order/payment_method_list.dart';
 import 'package:yellow_rose/features/hotel/presentation/cubit/hotel_book_cubit/hotel_book_cubit.dart';
@@ -31,26 +30,8 @@ class HotelPaymentScreen extends StatefulWidget {
 }
 
 class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
-  bool _gstDetailsExpanded = false;
   final _hotelUseCase = getIt<HotelBookUseCase>();
   bool _loading = false;
-
-  Widget getTitleSubtitleWidget(String title, String subtitle) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: TextStyles.bodyMediumSemiBoldStyle()),
-          const SizedBox(height: 4),
-          Text(subtitle,
-              style: TextStyles.bodySmallMediumStyle().copyWith(
-                color: AppColors.primaryTextSwatch[500],
-              )),
-        ],
-      ),
-    );
-  }
 
   Widget getPriceDetaileWidget(String title, String subtitle,
       {Color? titleColor}) {
@@ -70,42 +51,6 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
         ],
       ),
     );
-  }
-
-  List<Widget> getGstDetailsWidget(BillingEntity? billingEntity) {
-    return [
-      if (_gstDetailsExpanded &&
-          billingEntity != null &&
-          billingEntity.entityGST != null &&
-          billingEntity.entityGST!.isNotEmpty)
-        getTitleSubtitleWidget(
-          "GST Number",
-          billingEntity.entityGST!,
-        ),
-      if (_gstDetailsExpanded &&
-          billingEntity!.gstName != null &&
-          billingEntity.gstName!.isNotEmpty)
-        getTitleSubtitleWidget(
-          "GST Name",
-          billingEntity.gstName!,
-        ),
-      if (_gstDetailsExpanded &&
-          billingEntity != null &&
-          billingEntity.email != null &&
-          billingEntity.email!.isNotEmpty)
-        getTitleSubtitleWidget(
-          "GST Email",
-          billingEntity.email!,
-        ),
-      if (_gstDetailsExpanded &&
-          billingEntity != null &&
-          billingEntity.phone != null &&
-          billingEntity.phone!.isNotEmpty)
-        getTitleSubtitleWidget(
-          "GST Phone No.",
-          billingEntity.phone!,
-        ),
-    ];
   }
 
   Widget getGuestWidget(PassengerDetailsEntity p) {
@@ -174,7 +119,7 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
                       });
                       var paymentUpdateRequest = UpdatePaymentRequest(
                           paymentMedium: paymentMedium.mediumName!);
-                      var response = await _hotelUseCase.updateOrderPayment(
+                      await _hotelUseCase.updateOrderPayment(
                           widget.orderUpdateResponse.orderNumber!,
                           paymentUpdateRequest);
 
@@ -337,42 +282,11 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
 
                       // GST / Billing
                       if (billingEntity != null &&
-                          billingEntity.gstName != null &&
-                          billingEntity.gstName!.isNotEmpty &&
-                          billingEntity.entityGST != null &&
-                          billingEntity.entityGST!.isNotEmpty)
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _gstDetailsExpanded = !_gstDetailsExpanded;
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryGreen,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            width: MediaQuery.of(context).size.width * .6,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Text("GST Information",
-                                      style: TextStyles.bodySmallBoldStyle()
-                                          .copyWith(color: Colors.white)),
-                                  const Spacer(),
-                                  Icon(
-                                    _gstDetailsExpanded
-                                        ? Icons.keyboard_arrow_up_rounded
-                                        : Icons.keyboard_arrow_down_rounded,
-                                    color: Colors.white,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
+                          billingEntity.entityGST?.isNotEmpty == true)
+                        Padding(
+                          padding: EdgeInsets.only(top: 12.h),
+                          child: GstInfoCard(billingEntity: billingEntity),
                         ),
-                      ...getGstDetailsWidget(billingEntity),
 
                       SizedBox(height: 16.h),
                       Text("Payment Details",

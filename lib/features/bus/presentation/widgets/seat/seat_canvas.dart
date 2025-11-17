@@ -38,7 +38,7 @@ class SeatCanvas extends StatelessWidget {
       // compute cellSize based on columns in the final layout
       final cellSize =
           (constraints.maxWidth / cols).clamp(minCellSize, maxCellSize);
-      final canvasW = cols * cellSize;
+      final canvasW = (cols * cellSize).clamp(100.w, double.infinity);
       final canvasH = rows * cellSize;
 
       // Deck header

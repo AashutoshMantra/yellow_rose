@@ -8,14 +8,14 @@ import 'package:yellow_rose/features/flight/data/models/booking/order_status/ord
 import 'package:yellow_rose/features/hotel/domain/usecases/hotel_mapper_utiity.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+String formatBookingDate(DateTime? d) {
+  if (d == null) return '-';
+  return CustomDateUtils.givenFormat(d, 'dd MMM yyyy');
+}
+
 class HotelOrderDetailCard extends StatelessWidget {
   final OrderStatus orderStatus;
   const HotelOrderDetailCard({super.key, required this.orderStatus});
-
-  String _formatDate(DateTime? d) {
-    if (d == null) return '-';
-    return CustomDateUtils.givenFormat(d, 'dd MMM yyyy');
-  }
 
   int _computeNights(DateTime? a, DateTime? b) {
     try {
@@ -95,7 +95,7 @@ class HotelOrderDetailCard extends StatelessWidget {
                       ),
                       SizedBox(height: 4.h),
                       Text(
-                        'Booking: ${_formatDate(bookingDate)}',
+                        'Booking: ${formatBookingDate(bookingDate)}',
                         style: TextStyles.bodySmallSemiBoldStyle()
                             .copyWith(color: AppColors.primaryTextSwatch[600]),
                       ),
@@ -166,7 +166,7 @@ class HotelOrderDetailCard extends StatelessWidget {
                       ),
                       SizedBox(height: 8.h),
                       Text(
-                        '${_formatDate(checkIn)}  •  ${_formatDate(checkOut)}',
+                        '${formatBookingDate(checkIn)}  •  ${formatBookingDate(checkOut)}',
                         style: TextStyles.bodySmallMediumStyle()
                             .copyWith(color: AppColors.primaryTextSwatch[400]),
                       ),

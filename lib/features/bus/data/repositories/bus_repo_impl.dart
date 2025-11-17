@@ -4,6 +4,7 @@ import 'package:yellow_rose/features/bus/data/datasources/bus_service.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_detail_request.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_detail_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/block_bus_ticket.dart';
+import 'package:yellow_rose/features/bus/data/models/order/bos_block_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order__create_request.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_book_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_res_detail.dart';
@@ -64,7 +65,7 @@ class BusRepositoryImpl implements BusRepository {
   }
 
   @override
-  Future<BusBlockTicketRequest> blockTicket(
+  Future<BusBlockTicketResponse> blockTicket(
       String orderId, BusBlockTicketRequest request) async {
     return await _busService.blockTicket(orderId, request);
   }

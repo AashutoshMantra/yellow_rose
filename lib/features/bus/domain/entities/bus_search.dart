@@ -39,7 +39,10 @@ class BusSearch {
       result.addAll({'destination': destination!.toMap()});
     }
     if (dateOfJourney != null) {
-      result.addAll({'dateOfJourney': dateOfJourney!.millisecondsSinceEpoch});
+      result.addAll({
+        'dateOfJourney':
+            CustomDateUtils.dateTimeInIsoFormatWithoutZone(dateOfJourney!)
+      });
     }
 
     return result;
@@ -53,7 +56,7 @@ class BusSearch {
           ? BusCityResponse.fromMap(map['destination'])
           : null,
       dateOfJourney: map['dateOfJourney'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['dateOfJourney'])
+          ? DateTime.tryParse(map['dateOfJourney'])
           : null,
     );
   }

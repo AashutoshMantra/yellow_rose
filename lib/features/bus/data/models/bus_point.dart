@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:yellow_rose/core/utils/date_utils.dart';
+
 class BusPoint {
   final String? dpId;
   final String? bpId;
@@ -51,7 +53,8 @@ class BusPoint {
       result.addAll({'location': location});
     }
     if (time != null) {
-      result.addAll({'time': time!.millisecondsSinceEpoch});
+      result.addAll(
+          {'time': CustomDateUtils.dateTimeInIsoFormatWithoutZone(time!)});
     }
     if (address != null) {
       result.addAll({'address': address});
@@ -71,12 +74,11 @@ class BusPoint {
       dpId: map['dpId'],
       bpId: map['bpId'],
       location: map['location'],
-      time: map['time'] != null
-          ? DateTime.tryParse(map['time'])
-          : null,
+      time: map['time'] != null ? DateTime.tryParse(map['time']) : null,
       address: map['address'],
       contactNumber: map['contactNumber'],
-      prime: map['prime'],
+      // parse as string as well
+      prime: map['prime']?.toString(),
     );
   }
 

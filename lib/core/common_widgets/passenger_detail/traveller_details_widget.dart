@@ -14,6 +14,7 @@ class TravelerDetailsWidget extends StatelessWidget {
   final int maxAdult;
   final int maxChild;
   final int maxInfant;
+  final bool showAge;
   final List<PassengerDetailsEntity> passengerDetails;
   Map<PassengerType, List<PassengerDetailsEntity>> passengerTypeGrouped;
   final Function(PassengerDetailsEntity passenger) onAddUpdate;
@@ -23,7 +24,8 @@ class TravelerDetailsWidget extends StatelessWidget {
       this.maxChild = 0,
       this.maxInfant = 0,
       required this.passengerDetails,
-      required this.onAddUpdate})
+      required this.onAddUpdate,
+      this.showAge = true})
       : passengerTypeGrouped =
             passengerDetails.groupListsBy((d) => d.passengerType);
 
@@ -67,6 +69,7 @@ class TravelerDetailsWidget extends StatelessWidget {
                       passengerTypeGrouped[PassengerType.values[idx]];
                   if (getMaxCount(PassengerType.values[idx]) > 0) {
                     return TravelerDetailWidget(
+                        showAge: showAge,
                         maxCount: getMaxCount(PassengerType.values[idx]),
                         passengerType: PassengerType.values[idx],
                         passengerDetails: passengerDetails ?? [],
@@ -87,6 +90,7 @@ class TravelerDetailWidget extends StatelessWidget {
   final int maxCount;
   final List<PassengerDetailsEntity> passengerDetails;
   final PassengerType passengerType;
+  final bool showAge;
   final Function(PassengerDetailsEntity passenger) onAddUpdate;
 
   const TravelerDetailWidget({
@@ -94,6 +98,7 @@ class TravelerDetailWidget extends StatelessWidget {
     required this.maxCount,
     required this.passengerDetails,
     required this.passengerType,
+    this.showAge = true,
     required this.onAddUpdate,
   });
   @override
@@ -109,7 +114,7 @@ class TravelerDetailWidget extends StatelessWidget {
               color: AppColors.primaryGreen,
             ),
             title: Text(
-              "${passengerType.description.toTitleCase()} (${passengerType.ageString})",
+              "${passengerType.description.toTitleCase()} ${showAge ? "(${passengerType.ageString})" : ""}",
               style: TextStyles.bodyLargeSemiBoldStyle(),
             ),
             trailing: Text("${passengerDetails.length}/$maxCount added",

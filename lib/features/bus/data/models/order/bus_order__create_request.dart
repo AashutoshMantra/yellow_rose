@@ -34,7 +34,7 @@ class BusOrderCreateRequest {
   final String? userUid;
   final String? cartId;
   final String? branch;
-  final int whiteLabelId;
+  final int? whiteLabelId;
   final String? tripUid;
   final String? customerCardDetails;
   final String? passThroughCardDetails;
@@ -68,7 +68,7 @@ class BusOrderCreateRequest {
     this.userUid,
     this.cartId,
     this.branch,
-    required this.whiteLabelId,
+    this.whiteLabelId,
     this.tripUid,
     this.customerCardDetails,
     this.passThroughCardDetails,

@@ -6,6 +6,7 @@ import 'package:yellow_rose/core/common_widgets/loader.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
+import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/order_status.dart';
@@ -31,6 +32,7 @@ class _OrderListScreenState extends State<OrderListScreen>
   final List<SupportedService> _services = [
     SupportedService.Flights,
     SupportedService.Hotels,
+    SupportedService.Buses,
   ];
 
   // Generic storage keyed by service so adding more products is easy
@@ -91,6 +93,7 @@ class _OrderListScreenState extends State<OrderListScreen>
   void _refreshAllData() {
     _fetchForProduct(SupportedService.Flights);
     _fetchForProduct(SupportedService.Hotels);
+    _fetchForProduct(SupportedService.Buses);
   }
 
   @override
@@ -109,6 +112,8 @@ class _OrderListScreenState extends State<OrderListScreen>
         return 'AIR';
       case SupportedService.Hotels:
         return 'HOTEL';
+      case SupportedService.Buses:
+        return 'BUS';
       default:
         return 'AIR';
     }
@@ -140,7 +145,7 @@ class _OrderListScreenState extends State<OrderListScreen>
         child: Pill(
           backgroundColor: isSelected ? Colors.white : AppColors.primary,
           child: Text(
-            service == SupportedService.Flights ? 'Flight' : 'Hotel',
+            service.name.toTitleCase(),
             style: TextStyles.bodyMediumSemiBoldStyle()
                 .copyWith(color: isSelected ? AppColors.primary : Colors.white),
           ),

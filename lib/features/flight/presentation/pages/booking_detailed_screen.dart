@@ -2,27 +2,23 @@ import 'dart:developer';
 
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
-import 'package:yellow_rose/app_routes.dart';
 import 'package:yellow_rose/core/common_widgets/base_appbar.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
+import 'package:yellow_rose/core/common_widgets/gst_info_card.dart';
 import 'package:yellow_rose/core/common_widgets/loader.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
-import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_payment.dart';
-import 'package:yellow_rose/features/flight/data/models/booking/ssor_options.dart';
 import 'package:yellow_rose/features/flight/domain/entities/passenger_details_entity.dart';
-import 'package:yellow_rose/features/flight/domain/entities/seat_map/selected_seat.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_booking/flight_booking_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_booking_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/order_status_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/order/payment_method_list.dart';
-import 'package:yellow_rose/features/home_screen/presentation/pages/dashboard.dart';
 
 class BookingDetailedScreen extends StatefulWidget {
   static const String routeName = "/bookingDetailedScreen";
@@ -38,7 +34,6 @@ class BookingDetailedScreen extends StatefulWidget {
 }
 
 class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
-  bool _gstDetailsExpanded = false;
   final _airUseCase = getIt<AirUseCase>();
   bool _loading = false;
   final ScrollController _scrollController = ScrollController();
@@ -113,48 +108,12 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
     );
   }
 
-  List<Widget> getGstDetailsWidget(BillingEntity? billingEntity) {
-    return [
-      if (_gstDetailsExpanded &&
-          billingEntity != null &&
-          billingEntity.entityGST != null &&
-          billingEntity.entityGST!.isNotEmpty)
-        getTitleSubtitleWidget(
-          "GST Number",
-          billingEntity.entityGST!,
-        ),
-      if (_gstDetailsExpanded &&
-          billingEntity!.gstName != null &&
-          billingEntity.gstName!.isNotEmpty)
-        getTitleSubtitleWidget(
-          "GST Name",
-          billingEntity.gstName!,
-        ),
-      if (_gstDetailsExpanded &&
-          billingEntity != null &&
-          billingEntity.email != null &&
-          billingEntity.email!.isNotEmpty)
-        getTitleSubtitleWidget(
-          "GST Email",
-          billingEntity.email!,
-        ),
-      if (_gstDetailsExpanded &&
-          billingEntity != null &&
-          billingEntity.phone != null &&
-          billingEntity.phone!.isNotEmpty)
-        getTitleSubtitleWidget(
-          "GST Phone No.",
-          billingEntity.phone!,
-        ),
-    ];
-  }
-
   Widget getPassengerDetailsWidget(PassengerDetailsEntity passengerDetails) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '${passengerDetails.name} ${passengerDetails.lastName ?? ''} (${passengerDetails.gender.name[0]})',
+          '${passengerDetails.name} ${passengerDetails.lastName} (${passengerDetails.gender.name[0]})',
           style: TextStyles.bodySmallStyle()
               .copyWith(color: AppColors.primaryTextSwatch[600]),
         ),
@@ -162,7 +121,7 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
           height: 4.h,
         ),
         Text(
-          '${passengerDetails.email} | ${passengerDetails.phoneNumber ?? ''}',
+          '${passengerDetails.email} | ${passengerDetails.phoneNumber}',
           style: TextStyles.bodySmallStyle()
               .copyWith(color: AppColors.primaryTextSwatch[600]),
         ),
@@ -880,42 +839,12 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
                     height: 24.h,
                   ),
                   if (billingEntity != null &&
-                      billingEntity.gstName != null &&
-                      billingEntity.gstName!.isNotEmpty &&
-                      billingEntity.entityGST != null &&
-                      billingEntity.entityGST!.isNotEmpty)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _gstDetailsExpanded = !_gstDetailsExpanded;
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryGreen,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        width: MediaQuery.of(context).size.width * .6,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              Text("GST Information",
-                                  style: TextStyles.bodySmallBoldStyle()
-                                      .copyWith(color: Colors.white)),
-                              const Spacer(),
-                              Icon(
-                                _gstDetailsExpanded
-                                    ? Icons.keyboard_arrow_up_rounded
-                                    : Icons.keyboard_arrow_down_rounded,
-                                color: Colors.white,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
+                      (billingEntity.gstName?.isNotEmpty ?? false) &&
+                      (billingEntity.entityGST?.isNotEmpty ?? false))
+                    Padding(
+                      padding: EdgeInsets.only(top: 8.h),
+                      child: GstInfoCard(billingEntity: billingEntity),
                     ),
-                  ...getGstDetailsWidget(billingEntity),
                   SizedBox(height: 24.h),
                   _buildPricingSection(),
                   SizedBox(height: 100.h), // Extra space for bottom nav

@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+
 import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
-
+import 'package:yellow_rose/features/bus/data/models/bus_details/bus_seats.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/flight_detail_preference.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/gst_booking_detaild.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/passport_details.dart';
@@ -15,6 +16,8 @@ import 'package:yellow_rose/features/flight/data/models/rmtags.dart';
 class PassengerDetails {
   final PassengerTypeEnum? passengerType;
   final String? passengerTitle;
+  final String? title;
+
   final String? firstName;
   final String? lastName;
   final String? username;
@@ -39,6 +42,10 @@ class PassengerDetails {
   final String? passengerKey;
   final List<FlightDetailsWithPassengerPreferences>?
       flightDetailsWithPassengerPreferences;
+
+  final String? seatNumber;
+  final String? age;
+
   PassengerDetails({
     this.passengerType,
     this.passengerTitle,
@@ -64,7 +71,9 @@ class PassengerDetails {
     this.reportingTags,
     this.passengerKey,
     this.flightDetailsWithPassengerPreferences,
-  });
+    this.seatNumber,
+  })  : title = passengerTitle,
+        age = dob != null ? DateTimeParser.calculateAge(dob)?.toString() : "20";
 
   PassengerDetails copyWith({
     PassengerTypeEnum? passengerType,
@@ -92,6 +101,7 @@ class PassengerDetails {
     String? passengerKey,
     List<FlightDetailsWithPassengerPreferences>?
         flightDetailsWithPassengerPreferences,
+    String? seatNumber,
   }) {
     return PassengerDetails(
       passengerType: passengerType ?? this.passengerType,
@@ -120,6 +130,7 @@ class PassengerDetails {
       flightDetailsWithPassengerPreferences:
           flightDetailsWithPassengerPreferences ??
               this.flightDetailsWithPassengerPreferences,
+      seatNumber: seatNumber ?? this.seatNumber,
     );
   }
 
@@ -204,6 +215,15 @@ class PassengerDetails {
                 .toList()
       });
     }
+    if (seatNumber != null) {
+      result.addAll({'seatNumber': seatNumber});
+    }
+    if (age != null) {
+      result.addAll({'age': age});
+    }
+    if (title != null) {
+      result.addAll({'title': title});
+    }
 
     return result;
   }
@@ -253,6 +273,7 @@ class PassengerDetails {
                   map['flightDetailsWithPassengerPreferences']?.map(
                       (x) => FlightDetailsWithPassengerPreferences.fromMap(x)))
               : null,
+      seatNumber: map['seatNumber'],
     );
   }
 
@@ -263,7 +284,7 @@ class PassengerDetails {
 
   @override
   String toString() {
-    return 'PassengerDetails(passengerType: $passengerType, passengerTitle: $passengerTitle, firstName: $firstName, lastName: $lastName, username: $username, mobile: $mobile, email: $email, empId: $empId, gender: $gender, ticketNumber: $ticketNumber, universalPnr: $universalPnr, providerPnr: $providerPnr, profileType: $profileType, csrPNR: $csrPNR, pnr: $pnr, specialRequest: $specialRequest, gstBookingDetails: $gstBookingDetails, userPassportDetails: $userPassportDetails, userVisaDetails: $userVisaDetails, dob: $dob, seatMeal: $seatMeal, reportingTags: $reportingTags, passengerKey: $passengerKey, flightDetailsWithPassengerPreferences: $flightDetailsWithPassengerPreferences)';
+    return 'PassengerDetails(passengerType: $passengerType, passengerTitle: $passengerTitle, firstName: $firstName, lastName: $lastName, username: $username, mobile: $mobile, email: $email, empId: $empId, gender: $gender, ticketNumber: $ticketNumber, universalPnr: $universalPnr, providerPnr: $providerPnr, profileType: $profileType, csrPNR: $csrPNR, pnr: $pnr, specialRequest: $specialRequest, gstBookingDetails: $gstBookingDetails, userPassportDetails: $userPassportDetails, userVisaDetails: $userVisaDetails, dob: $dob, seatMeal: $seatMeal, reportingTags: $reportingTags, passengerKey: $passengerKey, flightDetailsWithPassengerPreferences: $flightDetailsWithPassengerPreferences, seatNumber: $seatNumber)';
   }
 
   @override
@@ -295,7 +316,8 @@ class PassengerDetails {
         listEquals(other.reportingTags, reportingTags) &&
         other.passengerKey == passengerKey &&
         listEquals(other.flightDetailsWithPassengerPreferences,
-            flightDetailsWithPassengerPreferences);
+            flightDetailsWithPassengerPreferences) &&
+        other.seatNumber == seatNumber;
   }
 
   @override
@@ -323,6 +345,7 @@ class PassengerDetails {
         seatMeal.hashCode ^
         reportingTags.hashCode ^
         passengerKey.hashCode ^
-        flightDetailsWithPassengerPreferences.hashCode;
+        flightDetailsWithPassengerPreferences.hashCode ^
+        seatNumber.hashCode;
   }
 }

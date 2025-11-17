@@ -5,15 +5,19 @@ import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/features/bus/data/models/search/bus_search_response.dart';
+import 'package:yellow_rose/features/bus/domain/entities/bus_search.dart';
 import 'package:yellow_rose/features/bus/presentation/cubit/bus_detail/bus_detail_cubit.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_book/bus_book_form_screen.dart';
 import 'package:yellow_rose/features/bus/presentation/widgets/point_card.dart';
 
 class BusBoardingDroppingScreen extends StatefulWidget {
   final BusSearchResponse busSearchResponse;
+  final BusSearch busSearch;
 
   const BusBoardingDroppingScreen({
     super.key,
     required this.busSearchResponse,
+    required this.busSearch,
   });
 
   @override
@@ -82,11 +86,29 @@ class _BusBoardingDroppingScreenState extends State<BusBoardingDroppingScreen>
               children: [
                 _BoardingPointTab(
                   busSearchResponse: widget.busSearchResponse,
+                  busSearch: widget.busSearch,
                   onPointSelected: () => _tabController.animateTo(1),
                 ),
                 _DroppingPointTab(
                   busSearchResponse: widget.busSearchResponse,
-                  onPointSelected: () => Navigator.of(context).pop(),
+                  busSearch: widget.busSearch,
+                  onPointSelected: () {
+                    // Navigate to booking form - the cubit will be created in the route
+                    final busDetailCubit = context.read<BusDetailCubit>();
+                    final state = busDetailCubit.state as BusDetailLoaded;
+
+                    Navigator.of(context).pushNamed(
+                      BusBookFormScreen.routeName,
+                      arguments: {
+                        'busSearchResponse': widget.busSearchResponse,
+                        'busSearch': widget.busSearch,
+                        'busDetailResponse': state.busDetailResponse,
+                        'selectedSeats': state.selectedSeats,
+                        'selectedBoardingPoint': state.selectedBoardingPoint,
+                        'selectedDroppingPoint': state.selectedDroppingPoint,
+                      },
+                    );
+                  },
                 ),
               ],
             ),
@@ -99,10 +121,12 @@ class _BusBoardingDroppingScreenState extends State<BusBoardingDroppingScreen>
 
 class _BoardingPointTab extends StatelessWidget {
   final BusSearchResponse busSearchResponse;
+  final BusSearch busSearch;
   final VoidCallback onPointSelected;
 
   const _BoardingPointTab({
     required this.busSearchResponse,
+    required this.busSearch,
     required this.onPointSelected,
   });
 
@@ -148,10 +172,12 @@ class _BoardingPointTab extends StatelessWidget {
 
 class _DroppingPointTab extends StatelessWidget {
   final BusSearchResponse busSearchResponse;
+  final BusSearch busSearch;
   final VoidCallback onPointSelected;
 
   const _DroppingPointTab({
     required this.busSearchResponse,
+    required this.busSearch,
     required this.onPointSelected,
   });
 

@@ -63,6 +63,17 @@ class CustomDateUtils {
       _listDateFormatGlucose.format(d);
   static String dayMonthFormat(DateTime d) => _dayMonthFormat.format(d.toUtc());
 
+  static String dateTimeInIsoFormatWithoutZone(DateTime dt) {
+    final date = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(dt);
+    final offset = dt.timeZoneOffset;
+
+    final hours = offset.inHours.abs().toString().padLeft(2, '0');
+    final minutes = (offset.inMinutes.abs() % 60).toString().padLeft(2, '0');
+    final sign = offset.isNegative ? '-' : '+';
+
+    return "$date$sign$hours:$minutes";
+  }
+
   static DateTime addMonths(DateTime date, int months) {
     int year = date.year + (date.month + months) ~/ 12;
     int month = (date.month + months) % 12;

@@ -77,4 +77,14 @@ class DateTimeParser {
       return null;
     }
   }
+
+  static int? calculateAge(DateTime dateTime) {
+    final today = DateTime.now();
+    int age = today.year - dateTime.year;
+    if (today.month < dateTime.month ||
+        (today.month == dateTime.month && today.day < dateTime.day)) {
+      age--;
+    }
+    return age;
+  }
 }

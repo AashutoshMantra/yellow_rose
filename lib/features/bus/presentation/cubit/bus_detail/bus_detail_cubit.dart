@@ -109,14 +109,14 @@ class BusDetailCubit extends Cubit<BusDetailState> {
   void clearBoardingPoint() {
     if (state is BusDetailLoaded) {
       final currentState = state as BusDetailLoaded;
-      emit(currentState.copyWith(selectedBoardingPoint: null));
+      emit(currentState.copyWith(selectedBoardingPoint: const Nullable(null)));
     }
   }
 
   void clearDroppingPoint() {
     if (state is BusDetailLoaded) {
       final currentState = state as BusDetailLoaded;
-      emit(currentState.copyWith(selectedDroppingPoint: null));
+      emit(currentState.copyWith(selectedDroppingPoint: const Nullable(null)));
     }
   }
 }

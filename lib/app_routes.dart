@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/features/auth/presentation/pages/sign_in_screen.dart';
+import 'package:yellow_rose/features/bus/data/models/order/bos_block_response.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_response_data.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/fare_details_with_type.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
@@ -37,7 +38,12 @@ import 'package:yellow_rose/features/bus/presentation/cubit/bus_search_listing/b
 import 'package:yellow_rose/features/bus/presentation/pages/bus_search_screen.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_search_list_screen.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_detail/bus_detail_screen.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_book/bus_book_form_screen.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_book/bus_booking_review_screen.dart';
 import 'package:yellow_rose/features/bus/data/models/search/bus_search_response.dart';
+import 'package:yellow_rose/features/bus/data/models/bus_details/bus_detail_response.dart';
+import 'package:yellow_rose/features/bus/data/models/bus_point.dart';
+import 'package:yellow_rose/features/bus/presentation/cubit/bus_book/bus_book_cubit.dart';
 
 String formatScreenName(String input) {
   return input.replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
@@ -298,17 +304,66 @@ class AppRouter {
         }
       case BusDetailScreen.routeName:
         var args = settings.arguments as Map?;
-        if (args?['busSearchResponse'] != null) {
+        if (args?['busSearchResponse'] != null && args?['busSearch'] != null) {
           var busSearchResponse =
               args!["busSearchResponse"] as BusSearchResponse;
+          var busSearch = args["busSearch"] as BusSearch;
 
           return MaterialPageRoute(
             settings: RouteSettings(
                 name: formatScreenName((BusDetailScreen).toString())),
-            builder: (_) =>
-                BusDetailScreen(busSearchResponse: busSearchResponse),
+            builder: (_) => BusDetailScreen(
+                busSearchResponse: busSearchResponse, busSearch: busSearch),
           );
         }
+      case BusBookFormScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['busSearchResponse'] != null &&
+            args?['busSearch'] != null &&
+            args?['busDetailResponse'] != null &&
+            args?['selectedSeats'] != null &&
+            args?['selectedBoardingPoint'] != null &&
+            args?['selectedDroppingPoint'] != null) {
+          var busSearchResponse =
+              args!["busSearchResponse"] as BusSearchResponse;
+          var busSearch = args["busSearch"] as BusSearch;
+          var busDetailResponse =
+              args["busDetailResponse"] as BusDetailResponse;
+          var selectedSeats = args["selectedSeats"] as Set<String>;
+          var selectedBoardingPoint = args["selectedBoardingPoint"] as BusPoint;
+          var selectedDroppingPoint = args["selectedDroppingPoint"] as BusPoint;
+
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((BusBookFormScreen).toString())),
+            builder: (_) => BlocProvider(
+              create: (context) => BusBookCubit()
+                ..createOrderAndUpdate(
+                  busSearch,
+                  busDetailResponse,
+                  busSearchResponse,
+                  selectedSeats,
+                  selectedBoardingPoint,
+                  selectedDroppingPoint,
+                ),
+              child: BusBookFormScreen(
+                busSearchResponse: busSearchResponse,
+              ),
+            ),
+          );
+        }
+      case BusBookingReviewScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?["cubit"] == null) break;
+
+        return MaterialPageRoute(
+          settings: RouteSettings(
+              name: formatScreenName((BusBookingReviewScreen).toString())),
+          builder: (_) => BlocProvider.value(
+            value: args!["cubit"] as BusBookCubit,
+            child: BusBookingReviewScreen(busBlockResponse: args?["blockResponse"] as BusBlockTicketResponse),
+          ),
+        );
 
       default:
     }

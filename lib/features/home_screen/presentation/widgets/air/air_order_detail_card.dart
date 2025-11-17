@@ -8,6 +8,7 @@ import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/air_order_iitinerary.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/order_status.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_ticket_screen.dart';
+import 'package:yellow_rose/features/home_screen/presentation/widgets/hotel/hotel_order_detail_card.dart';
 
 class AirOrderDetailCard extends StatelessWidget {
   final OrderStatus orderStatus;
@@ -38,6 +39,8 @@ class AirOrderDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bookingDate = orderStatus.bookingTs ?? orderStatus.creationTs;
+
     return Container(
       decoration: BoxDecoration(
           color: Colors.white,
@@ -51,18 +54,28 @@ class AirOrderDetailCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      text: "Cart ID: ",
-                      style: TextStyles.bodySmallMediumStyle()
-                          .copyWith(color: AppColors.primaryTextSwatch[600]),
-                      children: [
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text.rich(
                         TextSpan(
-                          text: orderStatus.uuid ?? '',
-                          style: TextStyles.bodySmallBoldStyle(),
+                          text: "Cart ID: ",
+                          style: TextStyles.bodySmallMediumStyle().copyWith(
+                              color: AppColors.primaryTextSwatch[600]),
+                          children: [
+                            TextSpan(
+                              text: orderStatus.uuid ?? '',
+                              style: TextStyles.bodySmallBoldStyle(),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Text(
+                        'Booking: ${formatBookingDate(bookingDate)}',
+                        style: TextStyles.bodySmallSemiBoldStyle()
+                            .copyWith(color: AppColors.primaryTextSwatch[600]),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(

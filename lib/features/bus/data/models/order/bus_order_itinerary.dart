@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:yellow_rose/core/utils/date_utils.dart';
 
 import 'package:yellow_rose/features/bus/data/models/bus_order_passenger_detail.dart';
 import 'package:yellow_rose/features/bus/data/models/order/user_bus_booking_request.dart';
@@ -211,23 +212,34 @@ class BusOrderItinerary {
       result.addAll({'commissionData': commissionData!.toMap()});
     }
     if (creationTs != null) {
-      result.addAll({'creationTs': creationTs!.millisecondsSinceEpoch});
+      result.addAll({
+        'creationTs':
+            CustomDateUtils.dateTimeInIsoFormatWithoutZone(creationTs!)
+      });
     }
     if (firstDeparture != null) {
-      result.addAll({'firstDeparture': firstDeparture!.millisecondsSinceEpoch});
+      result.addAll({
+        'firstDeparture':
+            CustomDateUtils.dateTimeInIsoFormatWithoutZone(firstDeparture!)
+      });
     }
     if (modTs != null) {
-      result.addAll({'modTs': modTs!.millisecondsSinceEpoch});
+      result.addAll(
+          {'modTs': CustomDateUtils.dateTimeInIsoFormatWithoutZone(modTs!)});
     }
     if (ticketIssued != null) {
       result.addAll({'ticketIssued': ticketIssued});
     }
     if (bookingTs != null) {
-      result.addAll({'bookingTs': bookingTs!.millisecondsSinceEpoch});
+      result.addAll({
+        'bookingTs': CustomDateUtils.dateTimeInIsoFormatWithoutZone(bookingTs!)
+      });
     }
     if (bookingRequestTs != null) {
-      result.addAll(
-          {'bookingRequestTs': bookingRequestTs!.millisecondsSinceEpoch});
+      result.addAll({
+        'bookingRequestTs':
+            CustomDateUtils.dateTimeInIsoFormatWithoutZone(bookingRequestTs!)
+      });
     }
     if (travelDate != null) {
       result.addAll({'travelDate': travelDate});
@@ -259,26 +271,25 @@ class BusOrderItinerary {
       busDetails: map['busDetails'] != null
           ? UserBusBookingRequest.fromMap(map['busDetails'])
           : null,
-      errorDetails: Map<String, dynamic>.from(map['errorDetails']),
+      errorDetails: map['errorDetails'] != null
+          ? Map<String, dynamic>.from(map['errorDetails'])
+          : null,
       customerPayment: CustomerPayment.fromMap(map['customerPayment']),
       commissionData: map['commissionData'] != null
           ? RedbusCommercial.fromMap(map['commissionData'])
           : null,
       creationTs: map['creationTs'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['creationTs'])
+          ? DateTime.tryParse(map['creationTs'])
           : null,
       firstDeparture: map['firstDeparture'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['firstDeparture'])
+          ? DateTime.tryParse(map['firstDeparture'])
           : null,
-      modTs: map['modTs'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['modTs'])
-          : null,
+      modTs: map['modTs'] != null ? DateTime.tryParse(map['modTs']) : null,
       ticketIssued: map['ticketIssued'],
-      bookingTs: map['bookingTs'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['bookingTs'])
-          : null,
+      bookingTs:
+          map['bookingTs'] != null ? DateTime.tryParse(map['bookingTs']) : null,
       bookingRequestTs: map['bookingRequestTs'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['bookingRequestTs'])
+          ? DateTime.tryParse(map['bookingRequestTs'])
           : null,
       travelDate: map['travelDate'],
     );
