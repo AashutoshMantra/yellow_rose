@@ -14,6 +14,7 @@ import 'package:yellow_rose/features/flight/data/models/booking/order_status/ord
 import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/air/air_order_detail_card.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/hotel/hotel_order_detail_card.dart';
+import 'package:yellow_rose/features/home_screen/presentation/widgets/bus/bus_order_detail_card.dart';
 import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/core/common_widgets/pill.dart';
 
@@ -38,6 +39,9 @@ class _OrderListScreenState extends State<OrderListScreen>
   // Generic storage keyed by service so adding more products is easy
   final Map<SupportedService, List<OrderStatus>> _bookings = {};
   final Map<SupportedService, bool> _loading = {};
+  final Map<SupportedService, int> _pages = {};
+  final Map<SupportedService, bool> _hasMore = {};
+  final Map<SupportedService, ScrollController> _scrollControllers = {};
 
   // Page controller to animate between product pages
   final PageController _pageController = PageController();
@@ -45,30 +49,44 @@ class _OrderListScreenState extends State<OrderListScreen>
   // Selected index
   int _selectedIndex = 0;
 
-  Future<void> _fetchForProduct(SupportedService product) async {
-    // mark loader for this product
+  Future<void> _fetchForProduct(
+    SupportedService product, {
+    bool refresh = false,
+  }) async {
+    if (_loading[product] == true) return;
     setState(() => _loading[product] = true);
 
+    final int nextPage = refresh ? 0 : (_pages[product] ?? 0);
+    const int pageSize = 50;
     try {
-      log('Fetching orders for product: ${product.name}');
-      final req = OrderStatusListRequest(product: _productCodeFor(product));
+      log('Fetching orders for product: \\${product.name}, page: \\$nextPage');
+      final req = OrderStatusListRequest(
+        product: _productCodeFor(product),
+        strPage: nextPage,
+        size: pageSize,
+      );
       final orders = await _airUseCase.getOrders(req);
-
-      log('Fetched ${orders.length} orders for ${product.name}');
-
+      log('Fetched \\${orders.length} orders for \\${product.name}');
       if (mounted) {
         setState(() {
-          _bookings[product] = orders;
+          if (refresh || (_bookings[product]?.isEmpty ?? true)) {
+            _bookings[product] = orders;
+          } else {
+            _bookings[product] = [...?_bookings[product], ...orders];
+          }
+          _pages[product] = nextPage + 1;
+          _hasMore[product] = orders.length == pageSize;
         });
-      } else {
-        log('Widget not mounted after fetching ${product.name}');
       }
     } catch (e, s) {
-      log('Error fetching orders for ${product.name}: $e');
-      log('$s');
+      log('Error fetching orders for \\${product.name}: \\$e');
+      log('\\$s');
       if (mounted) {
         setState(() {
-          _bookings[product] = [];
+          if (refresh) {
+            _bookings[product] = [];
+          }
+          _hasMore[product] = false;
         });
         WidgetUtil.showSnackBar('Error fetching booking details', context);
       }
@@ -85,15 +103,31 @@ class _OrderListScreenState extends State<OrderListScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // default load both product lists concurrently so users can switch instantly
+    for (final service in _services) {
+      _scrollControllers[service] = ScrollController();
+      _scrollControllers[service]!.addListener(() => _onScroll(service));
+    }
     _refreshAllData();
+  }
+
+  void _onScroll(SupportedService service) {
+    final controller = _scrollControllers[service];
+    if (controller == null ||
+        _loading[service] == true ||
+        !(_hasMore[service] ?? true)) return;
+    if (controller.position.pixels >=
+        controller.position.maxScrollExtent - 200) {
+      _fetchForProduct(service);
+    }
   }
 
   /// Refresh data for all services
   void _refreshAllData() {
-    _fetchForProduct(SupportedService.Flights);
-    _fetchForProduct(SupportedService.Hotels);
-    _fetchForProduct(SupportedService.Buses);
+    for (final service in _services) {
+      _pages[service] = 0;
+      _hasMore[service] = true;
+      _fetchForProduct(service, refresh: true);
+    }
   }
 
   @override
@@ -158,6 +192,9 @@ class _OrderListScreenState extends State<OrderListScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
+    for (final controller in _scrollControllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -211,6 +248,8 @@ class _OrderListScreenState extends State<OrderListScreen>
                         ..._services.map((service) {
                           final loading = _loading[service] ?? true;
                           final bookings = _bookings[service] ?? [];
+                          final hasMore = _hasMore[service] ?? true;
+                          final controller = _scrollControllers[service];
 
                           Widget emptyWidget(String label) => Center(
                                   child: Text(
@@ -218,16 +257,26 @@ class _OrderListScreenState extends State<OrderListScreen>
                                 style: TextStyles.h4Style(),
                               ));
 
-                          if (loading)
+                          if (loading && bookings.isEmpty) {
                             return const Center(
                                 child: Loader(color: Colors.transparent));
+                          }
+
+                          Widget loaderBottom = hasMore && bookings.isNotEmpty
+                              ? Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                                  child:
+                                      const Loader(color: Colors.transparent),
+                                )
+                              : const SizedBox.shrink();
 
                           if (service == SupportedService.Flights) {
                             if (bookings.isEmpty) {
                               return RefreshIndicator(
                                 onRefresh: () async =>
-                                    _fetchForProduct(service),
+                                    _fetchForProduct(service, refresh: true),
                                 child: ListView(
+                                  controller: controller,
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),
                                   children: [
@@ -238,13 +287,17 @@ class _OrderListScreenState extends State<OrderListScreen>
                               );
                             }
                             return RefreshIndicator(
-                              onRefresh: () async => _fetchForProduct(service),
+                              onRefresh: () async =>
+                                  _fetchForProduct(service, refresh: true),
                               child: ListView.separated(
+                                controller: controller,
                                 physics: const AlwaysScrollableScrollPhysics(),
                                 padding:
                                     EdgeInsets.only(top: 8.h, bottom: 24.h),
-                                itemCount: bookings.length,
+                                itemCount: bookings.length + 1,
                                 itemBuilder: (ctx, idx) {
+                                  if (idx == bookings.length)
+                                    return loaderBottom;
                                   return AirOrderDetailCard(
                                       orderStatus: bookings[idx]);
                                 },
@@ -258,8 +311,9 @@ class _OrderListScreenState extends State<OrderListScreen>
                             if (bookings.isEmpty) {
                               return RefreshIndicator(
                                 onRefresh: () async =>
-                                    _fetchForProduct(service),
+                                    _fetchForProduct(service, refresh: true),
                                 child: ListView(
+                                  controller: controller,
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),
                                   children: [
@@ -270,14 +324,55 @@ class _OrderListScreenState extends State<OrderListScreen>
                               );
                             }
                             return RefreshIndicator(
-                              onRefresh: () async => _fetchForProduct(service),
+                              onRefresh: () async =>
+                                  _fetchForProduct(service, refresh: true),
                               child: ListView.separated(
+                                controller: controller,
                                 physics: const AlwaysScrollableScrollPhysics(),
                                 padding:
                                     EdgeInsets.only(top: 8.h, bottom: 24.h),
-                                itemCount: bookings.length,
+                                itemCount: bookings.length + 1,
                                 itemBuilder: (ctx, idx) {
+                                  if (idx == bookings.length)
+                                    return loaderBottom;
                                   return HotelOrderDetailCard(
+                                      orderStatus: bookings[idx]);
+                                },
+                                separatorBuilder: (_, __) =>
+                                    SizedBox(height: 16.h),
+                              ),
+                            );
+                          }
+
+                          if (service == SupportedService.Buses) {
+                            if (bookings.isEmpty) {
+                              return RefreshIndicator(
+                                onRefresh: () async =>
+                                    _fetchForProduct(service, refresh: true),
+                                child: ListView(
+                                  controller: controller,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  children: [
+                                    SizedBox(height: 200.h),
+                                    emptyWidget('Bus'),
+                                  ],
+                                ),
+                              );
+                            }
+                            return RefreshIndicator(
+                              onRefresh: () async =>
+                                  _fetchForProduct(service, refresh: true),
+                              child: ListView.separated(
+                                controller: controller,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding:
+                                    EdgeInsets.only(top: 8.h, bottom: 24.h),
+                                itemCount: bookings.length + 1,
+                                itemBuilder: (ctx, idx) {
+                                  if (idx == bookings.length)
+                                    return loaderBottom;
+                                  return BusOrderDetailCard(
                                       orderStatus: bookings[idx]);
                                 },
                                 separatorBuilder: (_, __) =>

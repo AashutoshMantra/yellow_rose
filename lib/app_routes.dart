@@ -44,6 +44,8 @@ import 'package:yellow_rose/features/bus/data/models/search/bus_search_response.
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_detail_response.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_point.dart';
 import 'package:yellow_rose/features/bus/presentation/cubit/bus_book/bus_book_cubit.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_ticket_detail_screen.dart';
+import 'package:yellow_rose/features/hotel/presentation/pages/hotel_booking_detail_screen.dart';
 
 String formatScreenName(String input) {
   return input.replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
@@ -279,6 +281,18 @@ class AppRouter {
           ),
         );
 
+      case HotelBookingDetailScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['orderStatus'] != null) {
+          final orderStatus = args!['orderStatus'] as OrderStatus;
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((HotelBookingDetailScreen).toString())),
+            builder: (_) => HotelBookingDetailScreen(orderStatus: orderStatus),
+          );
+        }
+        break;
+
       // Buses
 
       case BusSearchScreen.routeName:
@@ -361,9 +375,23 @@ class AppRouter {
               name: formatScreenName((BusBookingReviewScreen).toString())),
           builder: (_) => BlocProvider.value(
             value: args!["cubit"] as BusBookCubit,
-            child: BusBookingReviewScreen(busBlockResponse: args?["blockResponse"] as BusBlockTicketResponse),
+            child: BusBookingReviewScreen(
+                busBlockResponse:
+                    args["blockResponse"] as BusBlockTicketResponse),
           ),
         );
+
+      case BusTicketDetailScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['orderStatus'] != null) {
+          final orderStatus = args!['orderStatus'] as OrderStatus;
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((BusTicketDetailScreen).toString())),
+            builder: (_) => BusTicketDetailScreen(orderStatus: orderStatus),
+          );
+        }
+        break;
 
       default:
     }

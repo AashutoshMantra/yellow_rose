@@ -1,14 +1,16 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
-import 'package:yellow_rose/core/common_widgets/pill.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/features/flight/data/models/booking/order/order_passenger_details.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/air_order_iitinerary.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/order_status.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_ticket_screen.dart';
-import 'package:yellow_rose/features/home_screen/presentation/widgets/hotel/hotel_order_detail_card.dart';
+import 'package:yellow_rose/features/home_screen/presentation/widgets/common/order_card_header.dart';
+import 'package:yellow_rose/features/home_screen/presentation/widgets/common/order_fare_summary.dart';
 
 class AirOrderDetailCard extends StatelessWidget {
   final OrderStatus orderStatus;
@@ -26,9 +28,7 @@ class AirOrderDetailCard extends StatelessWidget {
         ),
         Text(
           CustomDateUtils.givenFormat(
-              itinarary.flightDetails!.flightDetailsList.first
-                      .schDepartureTime ??
-                  DateTime.now(),
+              itinarary.flightDetails!.flightDetailsList.first.schDepartureTime,
               "dd MMM yyyy"),
           style: TextStyles.bodySmallSemiBoldStyle()
               .copyWith(color: AppColors.primaryTextSwatch[600]),
@@ -40,6 +40,8 @@ class AirOrderDetailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bookingDate = orderStatus.bookingTs ?? orderStatus.creationTs;
+    final currencyLabel = _resolveCurrency(orderStatus);
+    final fare = _resolveFare(orderStatus);
 
     return Container(
       decoration: BoxDecoration(
@@ -48,49 +50,11 @@ class AirOrderDetailCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(18)),
       child: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 8.h),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          text: "Cart ID: ",
-                          style: TextStyles.bodySmallMediumStyle().copyWith(
-                              color: AppColors.primaryTextSwatch[600]),
-                          children: [
-                            TextSpan(
-                              text: orderStatus.uuid ?? '',
-                              style: TextStyles.bodySmallBoldStyle(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        'Booking: ${formatBookingDate(bookingDate)}',
-                        style: TextStyles.bodySmallSemiBoldStyle()
-                            .copyWith(color: AppColors.primaryTextSwatch[600]),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 10.w,
-                ),
-                Pill(
-                  backgroundColor: orderStatus.status?.color,
-                  child: Text(
-                    orderStatus.status?.displayText ?? '',
-                    style: TextStyles.bodyMediumSemiBoldStyle()
-                        .copyWith(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
+          OrderCardHeader(
+            cartId: orderStatus.uuid,
+            bookingDate: bookingDate,
+            statusText: orderStatus.status?.displayText,
+            statusColor: orderStatus.status?.color,
           ),
           Divider(
             height: 10.h,
@@ -119,6 +83,13 @@ class AirOrderDetailCard extends StatelessWidget {
                 SizedBox(
                   height: 20.h,
                 ),
+                if (fare != null)
+                  OrderFareSummary(
+                    title: 'Total paid',
+                    amountText: formatOrderAmount(fare, currencyLabel),
+                    subtitle: '${currencyLabel.toUpperCase()} • Taxes included',
+                  ),
+                SizedBox(height: 16.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -145,5 +116,35 @@ class AirOrderDetailCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _resolveCurrency(OrderStatus status) {
+    final fare = status.airItineraries?.firstOrNull?.flightDetails?.fare;
+    final miscellaneousCurrency =
+        fare?.firstOrNull?.miscellaneousData?['currency']?.toString().trim();
+    if (miscellaneousCurrency != null && miscellaneousCurrency.isNotEmpty) {
+      return miscellaneousCurrency;
+    }
+    return 'INR';
+  }
+
+  double? _resolveFare(OrderStatus status) {
+    final primary = status.airItineraries?.firstOrNull;
+    if (primary == null) return null;
+
+    final fareEntries = primary.flightDetails?.fare;
+    if (fareEntries != null && fareEntries.isNotEmpty) {
+      final cost = fareEntries.first.totalCost;
+      if (cost > 0) return cost;
+    }
+
+    double aggregate = 0;
+    for (final OrdersPassengersDetails pax in primary.orderPassengerDetails) {
+      final bookingClasses = pax.fareDetails?.passengerBookingClasses;
+      if (bookingClasses == null || bookingClasses.isEmpty) continue;
+      final fareDetails = bookingClasses.first.fareDetailsPerPassengerType;
+      aggregate += fareDetails.baseFare + fareDetails.finalTax;
+    }
+    return aggregate == 0 ? null : aggregate;
   }
 }

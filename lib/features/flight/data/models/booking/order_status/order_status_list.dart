@@ -24,7 +24,7 @@ class OrderStatusListRequest {
       this.toDate = "",
       List<String>? status,
       this.orderId = "",
-      this.size = 10,
+      this.size = 50,
       this.strPage = 0,
       this.pnr = "",
       this.product = "AIR",

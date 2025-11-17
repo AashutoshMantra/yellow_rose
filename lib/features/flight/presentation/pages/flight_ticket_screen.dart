@@ -1,23 +1,14 @@
-import 'dart:developer';
-import 'dart:io';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:yellow_rose/core/app_config.dart';
 import 'package:yellow_rose/core/common_widgets/base_appbar.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/loader.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
-import 'package:yellow_rose/core/utils/dio_client.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
-import 'package:yellow_rose/dependncy_injection.dart';
+import 'package:yellow_rose/core/utils/order_invoice_downloader.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/order_status.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/order/ticket_details/air_ticekt_widget.dart';
-import 'package:yellow_rose/features/home_screen/presentation/widgets/air/air_order_detail_card.dart';
 
 class FlightTicketScreen extends StatefulWidget {
   static const String routeName = "/eTicektScreen";
@@ -31,29 +22,27 @@ class FlightTicketScreen extends StatefulWidget {
 
 class _FlightTicketScreenState extends State<FlightTicketScreen> {
   bool _loading = false;
-  final _dioClient = getIt<DioClient>();
   void _downloadTicket() async {
+    final orderId = widget.orderStatus.uuid;
+    if (orderId == null) {
+      WidgetUtil.showSnackBar('Order id missing', context);
+      return;
+    }
     setState(() {
       _loading = true;
     });
     try {
-      final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/downloaded.pdf');
-      var result = await _dioClient.get(
-          '${AppConfig.instance.apiBaseUrl}/order/invoice/v1?orderId=${widget.orderStatus.uuid}&invoiceLabel=O',
-          options: Options(responseType: ResponseType.bytes));
-      await file.writeAsBytes(result.data);
-      OpenFile.open(file.path);
-    } catch (e, s) {
-      log("$e $s");
-      WidgetUtil.showSnackBar(
-        "Error downloading ticket",
-        context,
+      await OrderInvoiceDownloader.download(
+        context: context,
+        orderId: orderId,
       );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
     }
-    setState(() {
-      _loading = false;
-    });
   }
 
   @override

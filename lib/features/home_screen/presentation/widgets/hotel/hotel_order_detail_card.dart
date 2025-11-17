@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:yellow_rose/core/common_widgets/pill.dart';
+import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/order_status.dart';
 import 'package:yellow_rose/features/hotel/domain/usecases/hotel_mapper_utiity.dart';
+import 'package:yellow_rose/features/hotel/presentation/pages/hotel_booking_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:yellow_rose/features/home_screen/presentation/widgets/common/order_card_header.dart';
+import 'package:yellow_rose/features/home_screen/presentation/widgets/common/order_fare_summary.dart';
 
 String formatBookingDate(DateTime? d) {
   if (d == null) return '-';
@@ -51,6 +54,9 @@ class HotelOrderDetailCard extends StatelessWidget {
     final nights = _computeNights(checkIn, checkOut);
     final guests = _guestCount();
     final bookingDate = orderStatus.bookingTs ?? orderStatus.creationTs;
+    final currencyLabel =
+        orderStatus.hotelBooking?.hotelBookingRequest?.currency ?? 'INR';
+    final totalPaid = orderStatus.hotelBooking?.payment?.amount;
 
     final imageUrl = hotelDetail != null
         ? (hotelDetail.mmtMedia != null && hotelDetail.mmtMedia!.isNotEmpty
@@ -71,48 +77,11 @@ class HotelOrderDetailCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 8.h),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          text: 'Cart ID: ',
-                          style: TextStyles.bodySmallMediumStyle().copyWith(
-                              color: AppColors.primaryTextSwatch[600]),
-                          children: [
-                            TextSpan(
-                              text: orderStatus.uuid ?? '',
-                              style: TextStyles.bodySmallBoldStyle(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        'Booking: ${formatBookingDate(bookingDate)}',
-                        style: TextStyles.bodySmallSemiBoldStyle()
-                            .copyWith(color: AppColors.primaryTextSwatch[600]),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 10.w),
-                Pill(
-                  backgroundColor: orderStatus.status?.color,
-                  child: Text(
-                    orderStatus.status?.displayText ?? '',
-                    style: TextStyles.bodyMediumSemiBoldStyle()
-                        .copyWith(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
+          OrderCardHeader(
+            cartId: orderStatus.uuid,
+            bookingDate: bookingDate,
+            statusText: orderStatus.status?.displayText,
+            statusColor: orderStatus.status?.color,
           ),
           Divider(height: 10.h, color: AppColors.primarySwatch[200]),
           Padding(
@@ -204,6 +173,27 @@ class HotelOrderDetailCard extends StatelessWidget {
                   ],
                 ),
               ],
+            ),
+          ),
+          if (totalPaid != null)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 12.h),
+              child: OrderFareSummary(
+                title: 'Total paid',
+                amountText: formatOrderAmount(totalPaid, currencyLabel),
+                subtitle: '${currencyLabel.toUpperCase()} • Taxes included',
+              ),
+            ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 18.h),
+            child: CustomButton(
+              text: 'View booking',
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  HotelBookingDetailScreen.routeName,
+                  arguments: {'orderStatus': orderStatus},
+                );
+              },
             ),
           ),
         ],
