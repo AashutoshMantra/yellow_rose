@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/base_appbar.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
-import 'package:yellow_rose/core/utils/order_invoice_downloader.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_order_passenger_detail.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_itinerary.dart';
 import 'package:yellow_rose/features/bus/data/models/order/user_bus_booking_request.dart';
+import 'package:yellow_rose/features/bus/presentation/cubit/bus_order_modify/bus_order_modify_cubit.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_order_modify_screen.dart';
 import 'package:yellow_rose/features/bus/presentation/widgets/bus_journey_timeline.dart';
 import 'package:yellow_rose/features/bus/presentation/widgets/bus_section_card.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/order_status.dart';
@@ -59,7 +61,8 @@ class BusTicketDetailScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        itinerary.bookingStatus ?? 'Status unavailable',
+                        itinerary.bookingStatus?.displayText ??
+                            'Status unavailable',
                         style: TextStyles.bodySmallSemiBoldStyle()
                             .copyWith(color: AppColors.primaryTextSwatch[500]),
                       ),
@@ -100,26 +103,35 @@ class BusTicketDetailScreen extends StatelessWidget {
                       subtitle: '${currency.toUpperCase()} • Taxes included',
                     ),
                   ),
+                SizedBox(height: 16.h),
+                // Modify Booking Button
+                if (_canModifyBooking(itinerary))
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => BlocProvider(
+                              create: (context) => BusOrderModifyCubit(
+                                busOrderItinerary: itinerary,
+                                orderStatus: orderStatus,
+                                orderId: orderStatus.uuid ?? '',
+                              ),
+                              child: BusOrderModifyScreen(
+                                busOrderItinerary: itinerary,
+                                orderStatus: orderStatus,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      text: "Modify Booking",
+                    ),
+                  ),
               ],
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget? _buildDownloadButton(BuildContext context) {
-    final orderId = orderStatus.uuid;
-    if (orderId == null || orderStatus.status?.isTicketDownloadable() != true) {
-      return null;
-    }
-    return Container(
-      margin: EdgeInsets.only(left: 24.w, right: 24.w, bottom: 32.h, top: 8.h),
-      child: CustomButton(
-        text: 'Download ticket',
-        onPressed: () => OrderInvoiceDownloader.download(
-          context: context,
-          orderId: orderId,
         ),
       ),
     );
@@ -165,6 +177,16 @@ class BusTicketDetailScreen extends StatelessWidget {
   String _formatTime(DateTime? dateTime) {
     if (dateTime == null) return '--';
     return CustomDateUtils.timeInAmPm(dateTime);
+  }
+
+  bool _canModifyBooking(BusOrderItinerary itinerary) {
+    final hasActivePassengers = itinerary.busOrderPassengerDetails?.any((p) =>
+            p.busBookingStatus != null && !p.busBookingStatus!.isCancelled) ??
+        false;
+
+    final canModify = itinerary.bookingStatus?.canModify ?? false;
+
+    return hasActivePassengers && canModify && orderStatus.uuid != null;
   }
 }
 
@@ -230,67 +252,39 @@ class _PassengerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final seatLabels = passengers
-        .map((p) => p.seatNumber?.trim())
-        .whereType<String>()
-        .where((seat) => seat.isNotEmpty)
-        .toList()
-      ..sort();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (seatLabels.isNotEmpty) ...[
-          Wrap(
-            spacing: 8.w,
-            runSpacing: 8.h,
-            children: seatLabels
-                .map((label) => Chip(
-                      label: Text('Seat $label'),
-                      backgroundColor: AppColors.primarySwatch[50],
-                    ))
-                .toList(),
-          ),
-          SizedBox(height: 12.h),
-        ],
         ...passengers.asMap().entries.map((entry) {
           final passenger = entry.value;
+          final isCancelled = passenger.busBookingStatus?.isCancelled ?? false;
           return Padding(
             padding: EdgeInsets.only(
                 bottom: entry.key == passengers.length - 1 ? 0 : 12.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _passengerName(passenger),
-                  style: TextStyles.bodyMediumSemiBoldStyle(),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  _passengerMeta(passenger),
-                  style: TextStyles.bodySmallMediumStyle()
-                      .copyWith(color: AppColors.primaryTextSwatch[600]),
-                ),
-                if ((passenger.ticketNumber ?? '').isNotEmpty)
-                  Text(
-                    'Ticket ${passenger.ticketNumber}',
-                    style: TextStyles.bodySmallMediumStyle()
-                        .copyWith(color: AppColors.primaryTextSwatch[500]),
-                  ),
-                if (entry.key != passengers.length - 1)
-                  Padding(
-                    padding: EdgeInsets.only(top: 12.h),
-                    child: Divider(
-                        height: 1, color: AppColors.primaryTextSwatch[100]),
-                  ),
-              ],
+            child: _PassengerCard(
+              passenger: passenger,
+              passengerIndex: entry.key,
+              isCancelled: isCancelled,
             ),
           );
         })
       ],
     );
   }
+}
 
-  String _passengerName(BusOrderPassengerDetails passenger) {
+class _PassengerCard extends StatelessWidget {
+  final BusOrderPassengerDetails passenger;
+  final int passengerIndex;
+  final bool isCancelled;
+
+  const _PassengerCard({
+    required this.passenger,
+    required this.passengerIndex,
+    required this.isCancelled,
+  });
+
+  String _passengerName() {
     return [passenger.title, passenger.firstName, passenger.lastName]
         .whereType<String>()
         .map((part) => part.trim())
@@ -299,13 +293,78 @@ class _PassengerList extends StatelessWidget {
         .trim();
   }
 
-  String _passengerMeta(BusOrderPassengerDetails passenger) {
-    final parts = <String>[];
-    if ((passenger.gender ?? '').isNotEmpty) parts.add(passenger.gender!);
-    if ((passenger.seatNumber ?? '').isNotEmpty) {
-      parts.add('Seat ${passenger.seatNumber}');
-    }
-    return parts.isEmpty ? 'Details unavailable' : parts.join(' • ');
+  Widget _getTitleSubtitle(String title, String subtitle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          title,
+          style: TextStyles.bodySmallSemiBoldStyle()
+              .copyWith(color: AppColors.primaryTextSwatch[500]),
+        ),
+        SizedBox(height: 2.h),
+        Text(subtitle, style: TextStyles.bodyMediumBoldStyle()),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.h),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: AppColors.primaryTextSwatch[200]!,
+          ),
+          borderRadius: BorderRadius.circular(12.h),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding:
+                  EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 8.0.h),
+              color: isCancelled ? AppColors.error : AppColors.primaryGreen,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Passenger ${passengerIndex + 1}",
+                    style: TextStyles.bodySmallMediumStyle()
+                        .copyWith(color: Colors.white),
+                  ),
+                  if (isCancelled)
+                    Text(
+                      "Cancelled",
+                      style: TextStyles.bodySmallMediumStyle()
+                          .copyWith(color: Colors.white),
+                    ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 8.h),
+              child: GridView(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, childAspectRatio: 2),
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                children: [
+                  _getTitleSubtitle("Name", _passengerName()),
+                  if ((passenger.seatNumber ?? '').isNotEmpty)
+                    _getTitleSubtitle("Seat Number", passenger.seatNumber!),
+                  if ((passenger.gender ?? '').isNotEmpty)
+                    _getTitleSubtitle("Gender", passenger.gender!),
+                  if ((passenger.ticketNumber ?? '').isNotEmpty)
+                    _getTitleSubtitle("Ticket Number", passenger.ticketNumber!),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

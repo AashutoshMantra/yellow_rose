@@ -4,6 +4,8 @@ import 'package:yellow_rose/features/bus/data/models/order/block_bus_ticket.dart
 import 'package:yellow_rose/features/bus/data/models/order/bos_block_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order__create_request.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_book_response.dart';
+import 'package:yellow_rose/features/bus/data/models/order/bus_order_cancellation.dart';
+import 'package:yellow_rose/features/bus/data/models/order/bus_order_cancellation_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_res_detail.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_response.dart';
 import 'package:yellow_rose/features/bus/data/models/search/base_search_respose_req_pair.dart';
@@ -23,4 +25,6 @@ abstract interface class BusRepository {
   Future<BusOrderBookResponse> bookOrder(String orderId, String tinNumber);
 
   Future<BusOrderResDetails> getOrderDetails(String orderId);
+  Future<BusOrderCancellationResponse> cancelOrder(
+      BusSeatCancellation busCancellationRequest);
 }

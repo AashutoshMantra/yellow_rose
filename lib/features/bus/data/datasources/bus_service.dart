@@ -10,6 +10,8 @@ import 'package:yellow_rose/features/bus/data/models/order/block_bus_ticket.dart
 import 'package:yellow_rose/features/bus/data/models/order/bos_block_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order__create_request.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_book_response.dart';
+import 'package:yellow_rose/features/bus/data/models/order/bus_order_cancellation.dart';
+import 'package:yellow_rose/features/bus/data/models/order/bus_order_cancellation_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_res_detail.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_response.dart';
 import 'package:yellow_rose/features/bus/data/models/search/base_search_respose_req_pair.dart';
@@ -30,6 +32,8 @@ abstract interface class BusService {
   Future<BusOrderBookResponse> bookOrder(String orderId, String tinNumber);
 
   Future<BusOrderResDetails> getOrderDetails(String orderId);
+  Future<BusOrderCancellationResponse> cancelOrder(
+      BusSeatCancellation busCancellationRequest);
 }
 
 class BusServiceImpl implements BusService {
@@ -110,5 +114,16 @@ class BusServiceImpl implements BusService {
     );
 
     return BusOrderResDetails.fromMap(response.data);
+  }
+
+  @override
+  Future<BusOrderCancellationResponse> cancelOrder(
+      BusSeatCancellation busCancellationRequest) async {
+    var response = await _dioClient.post(
+      "${AppConfig.instance.apiBaseUrl}/order/bus/cancellation/ticket/v1",
+      data: busCancellationRequest.toMap(),
+    );
+
+    return BusOrderCancellationResponse.fromMap(response.data[0]);
   }
 }

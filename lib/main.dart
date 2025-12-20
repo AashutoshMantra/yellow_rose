@@ -36,9 +36,10 @@ void main() async {
   runApp(const MyApp());
 }
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -59,6 +60,7 @@ class MyApp extends StatelessWidget {
 
           return MaterialApp(
             title: 'Gilpin Travels',
+            navigatorObservers: [routeObserver],
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightThemeData(context),
             home: BlocBuilder<AuthCubit, AuthState>(

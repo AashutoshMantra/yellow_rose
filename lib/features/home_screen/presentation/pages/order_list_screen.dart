@@ -17,6 +17,7 @@ import 'package:yellow_rose/features/home_screen/presentation/widgets/hotel/hote
 import 'package:yellow_rose/features/home_screen/presentation/widgets/bus/bus_order_detail_card.dart';
 import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/core/common_widgets/pill.dart';
+import 'package:yellow_rose/main.dart';
 
 class OrderListScreen extends StatefulWidget {
   const OrderListScreen({super.key});
@@ -26,7 +27,7 @@ class OrderListScreen extends StatefulWidget {
 }
 
 class _OrderListScreenState extends State<OrderListScreen>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, RouteAware {
   final _airUseCase = getIt<AirUseCase>();
 
   // Services shown on this screen. To add a new product, add it here.
@@ -140,6 +141,15 @@ class _OrderListScreenState extends State<OrderListScreen>
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(
+      this,
+      ModalRoute.of(context)! as PageRoute,
+    );
+  }
+
   String _productCodeFor(SupportedService s) {
     switch (s) {
       case SupportedService.Flights:
@@ -195,7 +205,14 @@ class _OrderListScreenState extends State<OrderListScreen>
     for (final controller in _scrollControllers.values) {
       controller.dispose();
     }
+    routeObserver.unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    print('Screen resumed after pop');
+    _refreshAllData();
   }
 
   @override

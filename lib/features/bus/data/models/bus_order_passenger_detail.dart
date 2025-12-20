@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
-
+import 'package:yellow_rose/features/bus/domain/enums/bus_booking_status.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/customer_payment.dart';
 import 'package:yellow_rose/features/flight/data/models/passenger_type_enum.dart';
 
@@ -42,7 +42,7 @@ class BusOrderPassengerDetails {
 
   final String? primary;
 
-  final String? busBookingStatus;
+  final BusBookingStatus? busBookingStatus;
 
   final String? ticketNumber;
 
@@ -146,7 +146,7 @@ class BusOrderPassengerDetails {
     int? age,
     String? gender,
     String? primary,
-    String? busBookingStatus,
+    BusBookingStatus? busBookingStatus,
     String? ticketNumber,
     String? title,
     String? firstName,
@@ -257,7 +257,7 @@ class BusOrderPassengerDetails {
       result.addAll({'primary': primary});
     }
     if (busBookingStatus != null) {
-      result.addAll({'busBookingStatus': busBookingStatus});
+      result.addAll({'busBookingStatus': busBookingStatus!.code});
     }
     if (ticketNumber != null) {
       result.addAll({'ticketNumber': ticketNumber});
@@ -319,7 +319,7 @@ class BusOrderPassengerDetails {
       age: map['age']?.toInt(),
       gender: map['gender'],
       primary: map['primary'],
-      busBookingStatus: map['busBookingStatus'],
+      busBookingStatus: BusBookingStatus.fromShortCode(map['busBookingStatus']),
       ticketNumber: map['ticketNumber'],
       title: map['title'],
       firstName: map['firstName'],

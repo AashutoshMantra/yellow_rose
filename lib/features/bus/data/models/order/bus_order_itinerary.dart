@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
-
 import 'package:yellow_rose/features/bus/data/models/bus_order_passenger_detail.dart';
 import 'package:yellow_rose/features/bus/data/models/order/user_bus_booking_request.dart';
 import 'package:yellow_rose/features/bus/data/models/search/red_bus_comercial.dart';
+import 'package:yellow_rose/features/bus/domain/enums/bus_booking_status.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/customer_payment.dart';
 
 class BusOrderItinerary {
@@ -25,7 +25,7 @@ class BusOrderItinerary {
 
   final String? bookingId;
 
-  final String? bookingStatus;
+  final BusBookingStatus? bookingStatus;
 
   final String? type;
 
@@ -100,7 +100,7 @@ class BusOrderItinerary {
     String? busNumber,
     String? itineraryType,
     String? bookingId,
-    String? bookingStatus,
+    BusBookingStatus? bookingStatus,
     String? type,
     String? sector,
     String? corporate,
@@ -178,7 +178,7 @@ class BusOrderItinerary {
       result.addAll({'bookingId': bookingId});
     }
     if (bookingStatus != null) {
-      result.addAll({'bookingStatus': bookingStatus});
+      result.addAll({'bookingStatus': bookingStatus!.shortCode});
     }
     if (type != null) {
       result.addAll({'type': type});
@@ -258,7 +258,7 @@ class BusOrderItinerary {
       busNumber: map['busNumber'],
       itineraryType: map['itineraryType'],
       bookingId: map['bookingId'],
-      bookingStatus: map['bookingStatus'],
+      bookingStatus: BusBookingStatus.fromShortCode(map['bookingStatus']),
       type: map['type'],
       sector: map['sector'],
       corporate: map['corporate'],

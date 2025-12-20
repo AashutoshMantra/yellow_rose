@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/features/auth/presentation/pages/sign_in_screen.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bos_block_response.dart';
+import 'package:yellow_rose/features/bus/data/models/order/bus_order_itinerary.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_response_data.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/fare_details_with_type.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
@@ -33,13 +34,14 @@ import 'package:yellow_rose/features/hotel/presentation/pages/hotel_search_list_
 import 'package:yellow_rose/features/hotel/presentation/pages/hotel_search_screen.dart';
 import 'package:yellow_rose/features/hotel/presentation/pages/hotel_booking_review_screen.dart';
 import 'package:yellow_rose/features/bus/domain/entities/bus_search.dart';
-import 'package:yellow_rose/features/bus/presentation/cubit/search/bus_search_cubit.dart';
 import 'package:yellow_rose/features/bus/presentation/cubit/bus_search_listing/bus_search_listing_cubit.dart';
+import 'package:yellow_rose/features/bus/presentation/cubit/bus_order_modify/bus_order_modify_cubit.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_search_screen.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_search_list_screen.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_detail/bus_detail_screen.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_book/bus_book_form_screen.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_book/bus_booking_review_screen.dart';
+import 'package:yellow_rose/features/bus/presentation/pages/bus_order_modify_screen.dart';
 import 'package:yellow_rose/features/bus/data/models/search/bus_search_response.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_detail_response.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_point.dart';
@@ -177,6 +179,29 @@ class AppRouter {
                   orderId: orderId),
               child: FlightOrderModifyScreen(
                 airOrderItinerary: airOrderItinerary,
+                orderStatus: orderStatus,
+              ),
+            ),
+          );
+        }
+
+      case BusOrderModifyScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['busOrderItinerary'] != null) {
+          var busOrderItinerary =
+              args!["busOrderItinerary"] as BusOrderItinerary;
+          var orderId = args["orderId"] as String;
+          var orderStatus = args["orderStatus"] as OrderStatus;
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((BusOrderModifyScreen).toString())),
+            builder: (_) => BlocProvider(
+              create: (context) => BusOrderModifyCubit(
+                  busOrderItinerary: busOrderItinerary,
+                  orderStatus: orderStatus,
+                  orderId: orderId),
+              child: BusOrderModifyScreen(
+                busOrderItinerary: busOrderItinerary,
                 orderStatus: orderStatus,
               ),
             ),

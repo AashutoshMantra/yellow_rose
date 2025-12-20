@@ -5,7 +5,7 @@ import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 
-enum OrderStatusEnum { success, error, warning, flight_cancel }
+enum OrderStatusEnum { success, error, warning, flight_cancel, bus_cancel }
 
 class OrderStatusScreen extends StatelessWidget {
   final OrderStatusEnum orderStatus;
@@ -29,6 +29,10 @@ class OrderStatusScreen extends StatelessWidget {
       OrderStatusEnum.flight_cancel => (
           "Your Flight Has Been Cancelled!",
           "You can check your canceled flight details by clicking the button below."
+        ),
+      OrderStatusEnum.bus_cancel => (
+          "Your Bus Booking Has Been Cancelled!",
+          "You can check your canceled bus booking details by clicking the button below."
         ),
     };
     return Scaffold(
