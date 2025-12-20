@@ -125,8 +125,8 @@ class HotelListSearchRequest {
       userRating: map['userRating']?.toDouble(),
       mealBasis: map['mealBasis'],
       address: map['address'],
-      checkInDate: DateTimeParser.parseFromMap(map, 'checkInDate'),
-      checkOutDate: DateTimeParser.parseFromMap(map, 'checkOutDate'),
+      checkInDate: DateTimeParser.parseFromMap(map, 'checkInDate')!,
+      checkOutDate: DateTimeParser.parseFromMap(map, 'checkOutDate')!,
       roomCount: map['roomCount']?.toInt() ?? 0,
       rooms: List<HotelRoomRequest>.from(
           map['rooms']?.map((x) => HotelRoomRequest.fromMap(x))),

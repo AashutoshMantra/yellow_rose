@@ -69,8 +69,8 @@ class FlightDetails {
       toAirport: map['toAirport'] ?? '',
       fromTerminal: map['fromTerminal'] ?? '',
       toTerminal: map['toTerminal'] ?? '',
-      schDepartureTime: DateTimeParser.parseFromMap(map, 'schDepartureTime'),
-      schArrivalTime: DateTimeParser.parseFromMap(map, 'schArrivalTime'),
+      schDepartureTime: DateTimeParser.parseFromMap(map, 'schDepartureTime')!,
+      schArrivalTime: DateTimeParser.parseFromMap(map, 'schArrivalTime')!,
       travelDuration: map['travelDuration']?.toInt() ?? 0,
       otherData: map['otherData'] != null
           ? Map<String, Object>.from(map['otherData'])

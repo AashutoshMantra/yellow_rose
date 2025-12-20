@@ -59,6 +59,7 @@ class MyApp extends StatelessWidget {
 
           return MaterialApp(
             title: 'Gilpin Travels',
+            debugShowCheckedModeBanner: false,
             theme: AppTheme.lightThemeData(context),
             home: BlocBuilder<AuthCubit, AuthState>(
               builder: (context, state) {

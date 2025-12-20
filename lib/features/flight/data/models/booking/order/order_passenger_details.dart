@@ -458,10 +458,14 @@ class OrdersPassengersDetails {
             (map['passengerType'] as String?)?.toEnum(PassengerTypeEnum.values),
         passengerKey: map['passengerKey'],
         userPassportDetails: map['userPassportDetails'] != null
-            ? UserPassportDetails.fromMap(map['userPassportDetails'])
+            ? UserPassportDetails.fromMap(map['userPassportDetails'] is String
+                ? json.decode(map['userPassportDetails'])
+                : map['userPassportDetails'])
             : null,
         userVisaDetails: map['userVisaDetails'] != null
-            ? UserVisaDetails.fromMap(map['userVisaDetails'])
+            ? UserVisaDetails.fromMap(map['userVisaDetails'] is String
+                ? json.decode(map['userVisaDetails'])
+                : map['userVisaDetails'])
             : null,
         id: map['id'],
         orderUuid: map['orderUuid'],
@@ -506,21 +510,11 @@ class OrdersPassengersDetails {
         commissionData: map['commissionData'] != null
             ? Map<String, dynamic>.from(map['commissionData'])
             : null,
-        markUpData: map['markUpData'] != null
-            ? Map<String, dynamic>.from(map['markUpData'])
-            : null,
-        taxComponent: map['taxComponent'] != null
-            ? Map<String, dynamic>.from(map['taxComponent'])
-            : null,
-        rescheduleComponent: map['rescheduleComponent'] != null
-            ? Map<String, dynamic>.from(map['rescheduleComponent'])
-            : null,
-        cancellationCharges: map['cancellationCharges'] != null
-            ? Map<String, dynamic>.from(map['cancellationCharges'])
-            : null,
-        rescheduleCharges: map['rescheduleCharges'] != null
-            ? Map<String, dynamic>.from(map['rescheduleCharges'])
-            : null);
+        markUpData: map['markUpData'] != null ? Map<String, dynamic>.from(map['markUpData']) : null,
+        taxComponent: map['taxComponent'] != null ? Map<String, dynamic>.from(map['taxComponent']) : null,
+        rescheduleComponent: map['rescheduleComponent'] != null ? Map<String, dynamic>.from(map['rescheduleComponent']) : null,
+        cancellationCharges: map['cancellationCharges'] != null ? Map<String, dynamic>.from(map['cancellationCharges']) : null,
+        rescheduleCharges: map['rescheduleCharges'] != null ? Map<String, dynamic>.from(map['rescheduleCharges']) : null);
   }
 
   String toJson() => json.encode(toMap());

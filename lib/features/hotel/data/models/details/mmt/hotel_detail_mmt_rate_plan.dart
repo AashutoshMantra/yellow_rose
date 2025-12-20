@@ -141,6 +141,7 @@ class HotelDetailMMTRatePlan {
           : null,
       inclusions: map['inclusions'] != null
           ? List<MMTHotelSearchResInclusion>.from(map['inclusions']
+              ?.where((x) => x != null && x != "" && x is Map<String, dynamic>)
               ?.map((x) => MMTHotelSearchResInclusion.fromMap(x)))
           : null,
       paymentMode: map['paymentMode'],

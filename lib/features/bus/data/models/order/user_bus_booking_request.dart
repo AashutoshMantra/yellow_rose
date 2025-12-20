@@ -31,7 +31,7 @@ class UserBusBookingRequest {
   final List<BusPoint>? droppingPoint;
   final List<BusSeats> seats;
   final bool? ac;
-  final Map<String, Object> otherData;
+  final Map<String, Object>? otherData;
   UserBusBookingRequest({
     this.requestId,
     this.source,
@@ -55,7 +55,7 @@ class UserBusBookingRequest {
     this.droppingPoint,
     required this.seats,
     this.ac,
-    required this.otherData,
+    this.otherData,
   });
   final bool? holdBooking = true;
 
@@ -219,7 +219,9 @@ class UserBusBookingRequest {
           : null,
       seats: List<BusSeats>.from(map['seats']?.map((x) => BusSeats.fromMap(x))),
       ac: map['ac'],
-      otherData: Map<String, Object>.from(map['otherData']),
+      otherData: map['otherData'] != null
+          ? Map<String, Object>.from(map['otherData'])
+          : null,
     );
   }
 

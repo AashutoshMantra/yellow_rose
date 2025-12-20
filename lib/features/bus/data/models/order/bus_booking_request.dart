@@ -380,16 +380,24 @@ class BusBookingRequest {
       rmApprovalUpload: map['rmApprovalUpload'],
       fare: map['fare']?.toDouble(),
       ladiesSeat: map['ladiesSeat'],
-      busBooking: List<UserBusBookingRequest>.from(
-          map['busBooking']?.map((x) => UserBusBookingRequest.fromMap(x))),
-      seats: List<BusSeats>.from(map['seats']?.map((x) => BusSeats.fromMap(x))),
-      passengerDetails: List<PassengerDetails>.from(
-          map['passengerDetails']?.map((x) => PassengerDetails.fromMap(x))),
+      busBooking: map['busBooking'] != null
+          ? List<UserBusBookingRequest>.from(
+              map['busBooking']?.map((x) => UserBusBookingRequest.fromMap(x)))
+          : null,
+      seats: map['seats'] != null
+          ? List<BusSeats>.from(map['seats']?.map((x) => BusSeats.fromMap(x)))
+          : null,
+      passengerDetails: map['passengerDetails'] != null
+          ? List<PassengerDetails>.from(
+              map['passengerDetails']?.map((x) => PassengerDetails.fromMap(x)))
+          : null,
       dobMandatory: map['dobMandatory'],
       repriceStatus: map['repriceStatus'],
       customerCardDetails: map['customerCardDetails'],
       passThroughCardDetails: map['passThroughCardDetails'],
-      otherData: Map<String, Object>.from(map['otherData']),
+      otherData: map['otherData'] != null
+          ? Map<String, Object>.from(map['otherData'])
+          : null,
     );
   }
 

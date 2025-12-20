@@ -8,7 +8,7 @@ class DateTimeParser {
   /// - "2025-10-14T15:40:00Z" -> DateTime with 15:40 (not converted to local)
   /// - "2025-10-14T15:40:00.000-07:00" -> DateTime with 15:40
   /// - 1697294400000 (milliseconds) -> DateTime from epoch
-  static DateTime parse(dynamic dateTimeStr) {
+  static DateTime? parse(dynamic dateTimeStr) {
     if (dateTimeStr == null) {
       throw ArgumentError('DateTime string cannot be null');
     }
@@ -44,9 +44,13 @@ class DateTimeParser {
       // Only if it appears after the date part
       str = str.substring(0, lastMinusIndex);
     }
+    try {
+      return DateTime.tryParse(str);
+    } catch (e) {
+      return null;
+    }
 
     // Parse the cleaned string as local DateTime
-    return DateTime.parse(str);
   }
 
   /// Safely parses DateTime, returns null if parsing fails
@@ -59,7 +63,7 @@ class DateTimeParser {
   }
 
   /// Parses DateTime from map with a given key
-  static DateTime parseFromMap(Map<String, dynamic> map, String key) {
+  static DateTime? parseFromMap(Map<String, dynamic> map, String key) {
     if (!map.containsKey(key) || map[key] == null) {
       throw ArgumentError('Key "$key" not found or is null in map');
     }

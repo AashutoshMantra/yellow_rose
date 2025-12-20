@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:yellow_rose/core/utils/extensions.dart';
 
+import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/flight/domain/entities/air_sources.dart';
 
 class SSROptions {
@@ -18,6 +18,8 @@ class SSROptions {
   final Map<String, Object>? miscellaneousData;
   final Map<String, List<double>>? taxes;
   final Map<String, Object>? commercialData;
+  final bool? bundled;
+
   SSROptions({
     this.code,
     this.type,
@@ -30,6 +32,7 @@ class SSROptions {
     this.miscellaneousData,
     this.taxes,
     this.commercialData,
+    this.bundled,
   });
 
   SSROptions copyWith({
@@ -44,6 +47,7 @@ class SSROptions {
     Map<String, Object>? miscellaneousData,
     Map<String, List<double>>? taxes,
     Map<String, Object>? commercialData,
+    bool? bundled,
   }) {
     return SSROptions(
       code: code ?? this.code,
@@ -57,6 +61,7 @@ class SSROptions {
       miscellaneousData: miscellaneousData ?? this.miscellaneousData,
       taxes: taxes ?? this.taxes,
       commercialData: commercialData ?? this.commercialData,
+      bundled: bundled ?? this.bundled,
     );
   }
 
@@ -92,6 +97,9 @@ class SSROptions {
     if (commercialData != null) {
       result.addAll({'commercialData': commercialData});
     }
+    if (bundled != null) {
+      result.addAll({'bundled': bundled});
+    }
 
     return result;
   }
@@ -120,6 +128,7 @@ class SSROptions {
       commercialData: map['commercialData'] != null
           ? Map<String, Object>.from(map['commercialData'])
           : null,
+      bundled: map['bundled'],
     );
   }
 
@@ -130,7 +139,7 @@ class SSROptions {
 
   @override
   String toString() {
-    return 'SSROptions(code: $code, type: $type, ssrKey: $ssrKey, description: $description, baseFare: $baseFare, finalTax: $finalTax, source: $source, supplier: $supplier, miscellaneousData: $miscellaneousData, taxes: $taxes, commercialData: $commercialData)';
+    return 'SSROptions(code: $code, type: $type, ssrKey: $ssrKey, description: $description, baseFare: $baseFare, finalTax: $finalTax, source: $source, supplier: $supplier, miscellaneousData: $miscellaneousData, taxes: $taxes, commercialData: $commercialData, bundled: $bundled)';
   }
 
   @override
@@ -148,7 +157,8 @@ class SSROptions {
         other.supplier == supplier &&
         mapEquals(other.miscellaneousData, miscellaneousData) &&
         mapEquals(other.taxes, taxes) &&
-        mapEquals(other.commercialData, commercialData);
+        mapEquals(other.commercialData, commercialData) &&
+        other.bundled == bundled;
   }
 
   @override
@@ -163,6 +173,7 @@ class SSROptions {
         supplier.hashCode ^
         miscellaneousData.hashCode ^
         taxes.hashCode ^
-        commercialData.hashCode;
+        commercialData.hashCode ^
+        bundled.hashCode;
   }
 }

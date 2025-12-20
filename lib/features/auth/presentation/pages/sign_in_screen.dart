@@ -117,7 +117,7 @@ class SignInScreen extends StatelessWidget {
                           CustomTextFormField(
                             text: "Enter your Password",
                             type: TextInputType.visiblePassword,
-                            obs: state.showPassword,
+                            obs: !state.showPassword,
                             maxLines: 1,
                             validator: (_) {
                               if (state.password == null ||

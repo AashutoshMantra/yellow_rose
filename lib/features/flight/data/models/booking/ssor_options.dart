@@ -15,6 +15,8 @@ class SsrOption {
   final double finalTax;
   final Map<String, Object>? miscellaneousData;
   final Map<String, List<double>>? taxes;
+  final bool? bundled;
+
   SsrOption({
     this.commercialData,
     this.source,
@@ -22,10 +24,11 @@ class SsrOption {
     this.type,
     this.description,
     this.ssrKey,
-     this.baseFare=0,
-     this.finalTax=0,
+    this.baseFare = 0,
+    this.finalTax = 0,
     this.miscellaneousData,
     this.taxes,
+    this.bundled,
   });
 
   SsrOption copyWith({
@@ -39,6 +42,7 @@ class SsrOption {
     double? finalTax,
     Map<String, Object>? miscellaneousData,
     Map<String, List<double>>? taxes,
+    bool? bundled,
   }) {
     return SsrOption(
       commercialData: commercialData ?? this.commercialData,
@@ -51,6 +55,7 @@ class SsrOption {
       finalTax: finalTax ?? this.finalTax,
       miscellaneousData: miscellaneousData ?? this.miscellaneousData,
       taxes: taxes ?? this.taxes,
+      bundled: bundled ?? this.bundled,
     );
   }
 
@@ -81,6 +86,9 @@ class SsrOption {
     if (taxes != null) {
       result.addAll({'taxes': taxes});
     }
+    if (bundled != null) {
+      result.addAll({'bundled': bundled});
+    }
 
     return result;
   }
@@ -108,6 +116,7 @@ class SsrOption {
               ),
             )
           : null,
+      bundled: map['bundled'],
     );
   }
 
@@ -118,7 +127,7 @@ class SsrOption {
 
   @override
   String toString() {
-    return 'SsrOptions(commercialData: $commercialData, source: $source, code: $code, type: $type, description: $description, ssrKey: $ssrKey, baseFare: $baseFare, finalTax: $finalTax, miscellaneousData: $miscellaneousData, taxes: $taxes)';
+    return 'SsrOption(commercialData: $commercialData, source: $source, code: $code, type: $type, description: $description, ssrKey: $ssrKey, baseFare: $baseFare, finalTax: $finalTax, miscellaneousData: $miscellaneousData, taxes: $taxes, bundled: $bundled)';
   }
 
   @override
@@ -135,7 +144,8 @@ class SsrOption {
         other.baseFare == baseFare &&
         other.finalTax == finalTax &&
         mapEquals(other.miscellaneousData, miscellaneousData) &&
-        mapEquals(other.taxes, taxes);
+        mapEquals(other.taxes, taxes) &&
+        other.bundled == bundled;
   }
 
   @override
@@ -149,9 +159,11 @@ class SsrOption {
         baseFare.hashCode ^
         finalTax.hashCode ^
         miscellaneousData.hashCode ^
-        taxes.hashCode;
+        taxes.hashCode ^
+        bundled.hashCode;
   }
-   double get totalCost {
+
+  double get totalCost {
     return baseFare + finalTax;
   }
 }
