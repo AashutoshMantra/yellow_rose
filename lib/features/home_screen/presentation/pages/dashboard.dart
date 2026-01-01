@@ -6,6 +6,7 @@ import 'package:yellow_rose/core/common_widgets/image_icon_button.dart';
 import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/flight/data/models/airports.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
 import 'package:yellow_rose/features/flight/domain/entities/name_code.dart';
@@ -18,6 +19,7 @@ import 'package:yellow_rose/features/home_screen/presentation/pages/profile_scre
 import 'package:yellow_rose/features/home_screen/presentation/widgets/bottom_navigation_bar.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/flight_recent_search.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/show_recent_searches_widget.dart';
+import 'package:yellow_rose/features/trip/presentation/pages/trip_home_screen.dart';
 
 class Dashboard extends StatefulWidget {
   static const String routeName = "/homeScreen";
@@ -43,6 +45,12 @@ class _DashboardState extends State<Dashboard> {
 
   bool heart = false;
   final controller = PageController();
+
+  bool get _shouldShowTripAsHome {
+    final authCubit = context.read<AuthCubit>();
+    return authCubit.shouldShowTripAsHome();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeScreenCubit, HomeScreenState>(
@@ -51,7 +59,7 @@ class _DashboardState extends State<Dashboard> {
         return Scaffold(
             appBar: BaseAppBar(
               title: castedState.selectedPage == 0
-                  ? "Where to go?"
+                  ? (_shouldShowTripAsHome ? "My Trips" : "Where to go?")
                   : castedState.selectedPage == 1
                       ? "My Bookings"
                       : "Profile",
@@ -59,10 +67,12 @@ class _DashboardState extends State<Dashboard> {
               titleStyle: TextStyles.bodyXLargeBoldStyle()
                   .copyWith(color: Colors.white),
               height: 90.h,
-              shouldHaveRadius: castedState.selectedPage == 0,
+              shouldHaveRadius:
+                  castedState.selectedPage == 0 && !_shouldShowTripAsHome,
             ),
             bottomNavigationBar: CustomBottomNavigationBar(
                 selected: castedState.selectedPage,
+                hideBookings: _shouldShowTripAsHome,
                 onClick: (value) {
                   if (value == castedState.selectedPage) return;
                   controller.animateToPage(value,
@@ -73,11 +83,16 @@ class _DashboardState extends State<Dashboard> {
             body: PageView(
               controller: controller,
               physics: const NeverScrollableScrollPhysics(),
-              children: const [
-                HomeScreen(),
-                OrderListScreen(),
-                ProfileScreen()
-              ],
+              children: _shouldShowTripAsHome
+                  ? [
+                      const TripHomeScreen(),
+                      const ProfileScreen(),
+                    ]
+                  : [
+                      const HomeScreen(),
+                      const OrderListScreen(),
+                      const ProfileScreen(),
+                    ],
             ));
       },
     );

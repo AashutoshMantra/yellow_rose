@@ -14,12 +14,13 @@ import 'package:yellow_rose/features/hotel/domain/entities/hotel_search.dart';
 import 'package:yellow_rose/features/hotel/domain/entities/rooms/hotel_room.dart';
 import 'package:yellow_rose/features/hotel/domain/repositories/hotel_repository.dart';
 import 'package:yellow_rose/features/hotel/domain/usecases/hotel_mapper_utiity.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 abstract class HotelBookUseCase {
   Future<HotelDetailResponse> getHotelDetails(
       HotelSearch hotelSearch, HotelSearchResponse hotelSearchResponse);
   Future<CreateOrderResponse> createHotelOrder(HotelDetailResponse hotel,
-      HotelRoom selectedRoom, HotelSearch hotelSearch);
+      HotelRoom selectedRoom, HotelSearch hotelSearch,{TripResponse? trip});
   Future<UpdateOrderDetailResponse> updateHotelOrder(
       String orderId, HotelOrderRequest hotelOrderRequest);
   Future<HotelBookingResponse> bookHotel(String orderId);
@@ -49,9 +50,9 @@ class HotelBookUseCaseImpl implements HotelBookUseCase {
 
   @override
   Future<CreateOrderResponse> createHotelOrder(HotelDetailResponse hotel,
-      HotelRoom selectedRoom, HotelSearch hotelSearch) async {
+      HotelRoom selectedRoom, HotelSearch hotelSearch,{TripResponse? trip}) async {
     var orderRequest = HotelMapperUtiity.createHotelOrderRequest(
-        hotel, selectedRoom, hotelSearch);
+        hotel, selectedRoom, hotelSearch,trip: trip);
     var response = await _hotelRepository.createHotelOrder(orderRequest);
     var repriceResponse = await udpateHotelPriceDetail(response.orderNumber);
     return response;

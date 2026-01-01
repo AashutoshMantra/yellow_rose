@@ -7,8 +7,14 @@ import 'package:yellow_rose/core/utils/size_config.dart';
 class CustomBottomNavigationBar extends StatelessWidget {
   final int selected;
   final Function onClick;
-  const CustomBottomNavigationBar(
-      {super.key, required this.selected, required this.onClick});
+  final bool hideBookings;
+
+  const CustomBottomNavigationBar({
+    super.key,
+    required this.selected,
+    required this.onClick,
+    this.hideBookings = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
       child: SalomonBottomBar(
         currentIndex: selected,
         selectedColorOpacity: 1,
-        
         items: [
           SalomonBottomBarItem(
             icon: ImageIcon(
@@ -44,21 +49,22 @@ class CustomBottomNavigationBar extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          SalomonBottomBarItem(
-            icon: ImageIcon(const AssetImage("assets/images/ticket.png"),
-                color: AppColors.primaryTextSwatch[500]),
-            title: Text(
-              'Bookings',
-              style:
-                  TextStyles.bodySmallBoldStyle().copyWith(color: Colors.white),
+          if (!hideBookings)
+            SalomonBottomBarItem(
+              icon: ImageIcon(const AssetImage("assets/images/ticket.png"),
+                  color: AppColors.primaryTextSwatch[500]),
+              title: Text(
+                'Bookings',
+                style: TextStyles.bodySmallBoldStyle()
+                    .copyWith(color: Colors.white),
+              ),
+              selectedColor: AppColors.primary,
+              unselectedColor: Colors.transparent,
+              activeIcon: const ImageIcon(
+                AssetImage("assets/images/ticket.png"),
+                color: Colors.white,
+              ),
             ),
-            selectedColor: AppColors.primary,
-            unselectedColor: Colors.transparent,
-            activeIcon: const ImageIcon(
-              AssetImage("assets/images/ticket.png"),
-              color: Colors.white,
-            ),
-          ),
           SalomonBottomBarItem(
             icon: Icon(Icons.account_circle,
                 color: AppColors.primaryTextSwatch[500]),

@@ -14,7 +14,15 @@ import 'package:yellow_rose/features/home_screen/presentation/widgets/common/ord
 
 class AirOrderDetailCard extends StatelessWidget {
   final OrderStatus orderStatus;
-  const AirOrderDetailCard({super.key, required this.orderStatus});
+  final String? customButtonText;
+  final VoidCallback? onCustomButtonPressed;
+
+  const AirOrderDetailCard({
+    super.key,
+    required this.orderStatus,
+    this.customButtonText,
+    this.onCustomButtonPressed,
+  });
   Widget getSourceDestinationWidget(AirOrderItinerary itinarary) {
     var source = itinarary.flightDetails!.flightDetailsList.first.fromAirport;
     var destination = itinarary.flightDetails!.flightDetailsList.last.toAirport;
@@ -94,17 +102,24 @@ class AirOrderDetailCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CustomButton(
-                      text: "E-Ticket",
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(
-                          FlightTicketScreen.routeName,
-                          arguments: {
-                            'orderStatus': orderStatus,
-                          },
-                        );
-                      },
-                    ),
+                    if (customButtonText != null &&
+                        onCustomButtonPressed != null)
+                      CustomButton(
+                        text: customButtonText!,
+                        onPressed: onCustomButtonPressed!,
+                      )
+                    else
+                      CustomButton(
+                        text: "E-Ticket",
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            FlightTicketScreen.routeName,
+                            arguments: {
+                              'orderStatus': orderStatus,
+                            },
+                          );
+                        },
+                      ),
                   ],
                 ),
                 SizedBox(

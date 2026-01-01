@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:yellow_rose/features/auth/data/models/sign_in_response.dart';
 
 class UserDetails {
   final String? displayName;
@@ -58,6 +59,13 @@ class UserDetails {
       displayName: map['displayName'],
       username: map['username'],
       token: map['token'] ?? '',
+    );
+  }
+  factory UserDetails.fromSignInResponse(SignInResponse response) {
+    return UserDetails(
+      displayName: response.displayName,
+      username: response.username,
+      token: response.token ?? '',
     );
   }
 

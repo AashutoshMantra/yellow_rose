@@ -48,6 +48,10 @@ import 'package:yellow_rose/features/bus/data/models/bus_point.dart';
 import 'package:yellow_rose/features/bus/presentation/cubit/bus_book/bus_book_cubit.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_ticket_detail_screen.dart';
 import 'package:yellow_rose/features/hotel/presentation/pages/hotel_booking_detail_screen.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
+import 'package:yellow_rose/features/trip/presentation/pages/trip_home_screen.dart';
+import 'package:yellow_rose/features/trip/presentation/pages/trip_detail_screen.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 String formatScreenName(String input) {
   return input.replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
@@ -107,14 +111,16 @@ class AppRouter {
           var itineraries = args["itineraries"] as List<AirResponseData>;
           var selectedfares =
               args["selectedFares"] as Map<int, FareDetailsWithType>?;
-
           return MaterialPageRoute(
             settings: RouteSettings(
                 name: formatScreenName((FlightBookingScreen).toString())),
             builder: (_) => BlocProvider(
-              create: (context) => FlightBookingCubit()
-                ..repriceAndLoadData(itineraries, airSearch,
-                    selectedFares: selectedfares),
+              create: (context) {
+                var selectedTrip = context.read<TripCubit>().selectedTrip;
+                return FlightBookingCubit()
+                  ..repriceAndLoadData(itineraries, airSearch,
+                      selectedFares: selectedfares, trip: selectedTrip);
+              },
               child: FlightBookingScreen(
                 airSearch: airSearch,
               ),
@@ -269,9 +275,13 @@ class AppRouter {
             settings: RouteSettings(
                 name: formatScreenName((HotelBookFormScreen).toString())),
             builder: (_) => BlocProvider(
-              create: (context) => HotelBookCubit()
-                ..createOrderAndUpdate(
-                    hotelDetailResponse, selectedRoom, hotelSearch),
+              create: (context) {
+                var selectedTrip = context.read<TripCubit>().selectedTrip;
+                return HotelBookCubit()
+                  ..createOrderAndUpdate(
+                      hotelDetailResponse, selectedRoom, hotelSearch,
+                      trip: selectedTrip);
+              },
               child: HotelBookFormScreen(
                 hotelSearch: hotelSearch,
                 hotelDetailResponse: hotelDetailResponse,
@@ -414,6 +424,25 @@ class AppRouter {
             settings: RouteSettings(
                 name: formatScreenName((BusTicketDetailScreen).toString())),
             builder: (_) => BusTicketDetailScreen(orderStatus: orderStatus),
+          );
+        }
+        break;
+
+      case TripHomeScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(
+              name: formatScreenName((TripHomeScreen).toString())),
+          builder: (_) => const TripHomeScreen(),
+        );
+
+      case TripDetailScreen.routeName:
+        var args = settings.arguments as Map?;
+        if (args?['trip'] != null) {
+          final trip = args!['trip'] as TripResponse;
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                name: formatScreenName((TripDetailScreen).toString())),
+            builder: (_) => TripDetailScreen(trip: trip),
           );
         }
         break;

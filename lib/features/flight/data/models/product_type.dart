@@ -1,8 +1,11 @@
 enum ProductTypeEnum {
-  ALL("All"),
-  AIR("Air"),
-  HOTEL("Hotel");
+  ALL("All", "L"),
+  AIR("Air", "A"),
+  HOTEL("Hotel", "H"),
+  INSURANCE("Insurance", "I"),
+  BUS("Bus", "B");
 
   final String title;
-  const ProductTypeEnum(this.title);
+  final String code;
+  const ProductTypeEnum(this.title, this.code);
 }

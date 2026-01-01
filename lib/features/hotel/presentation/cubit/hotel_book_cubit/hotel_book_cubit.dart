@@ -13,6 +13,7 @@ import 'package:yellow_rose/features/hotel/domain/entities/rooms/hotel_room.dart
 import 'package:yellow_rose/features/hotel/domain/entities/special_request.dart';
 import 'package:yellow_rose/features/hotel/domain/usecases/hotel_book_use_case.dart';
 import 'package:yellow_rose/features/hotel/domain/usecases/hotel_mapper_utiity.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 part 'hotel_book_state.dart';
 
@@ -20,12 +21,11 @@ class HotelBookCubit extends Cubit<HotelBookState> {
   HotelBookCubit() : super(HotelBookInitial());
   final _hotelBookUsecase = getIt<HotelBookUseCase>();
   void createOrderAndUpdate(HotelDetailResponse hotel, HotelRoom selectedRoom,
-      HotelSearch hotelSearch) async {
+      HotelSearch hotelSearch,{TripResponse? trip}) async {
     try {
       emit(HotelBookLoading());
       var createOrderResponse = await _hotelBookUsecase.createHotelOrder(
-          hotel, selectedRoom, hotelSearch);
-
+          hotel, selectedRoom, hotelSearch, trip: trip);
       emit(HotelBookLoaded(
           hotel: hotel,
           selectedRoom: selectedRoom,

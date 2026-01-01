@@ -11,14 +11,14 @@ class TitleFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 22.h),
+      margin: EdgeInsets.only(top: 14.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             text,
             style: TextStyles.bodyMediumMediumStyle()
-                .copyWith(color: AppColors.primaryTextSwatch[600]),
+                .copyWith(color: AppColors.primaryTextSwatch[700]),
           ),
           child
         ],

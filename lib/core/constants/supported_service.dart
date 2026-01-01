@@ -3,7 +3,8 @@ enum SupportedService {
   Hotels,
   Cabs,
   Buses,
-  Insurance;
+  Insurance,
+  ;
 
   String getImagePath() {
     switch (this) {

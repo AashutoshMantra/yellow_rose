@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 enum OrderStatusEnum { success, error, warning, flight_cancel, bus_cancel }
 
@@ -13,6 +15,7 @@ class OrderStatusScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<TripCubit>().refereshSelectedTrip();
     var (message, subtitle) = switch (orderStatus) {
       OrderStatusEnum.error => (
           "Failed to process order",

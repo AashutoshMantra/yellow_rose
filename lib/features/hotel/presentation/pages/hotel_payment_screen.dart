@@ -11,6 +11,8 @@ import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
+import 'package:yellow_rose/features/auth/domain/entities/trip_type.dart';
+import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_payment.dart';
 import 'package:yellow_rose/features/flight/domain/entities/passenger_details_entity.dart';
@@ -18,6 +20,7 @@ import 'package:yellow_rose/features/flight/presentation/pages/order_status_scre
 import 'package:yellow_rose/features/flight/presentation/widgets/order/payment_method_list.dart';
 import 'package:yellow_rose/features/hotel/presentation/cubit/hotel_book_cubit/hotel_book_cubit.dart';
 import 'package:yellow_rose/features/hotel/domain/usecases/hotel_book_use_case.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 // ...existing imports...
 
 class HotelPaymentScreen extends StatefulWidget {
@@ -96,6 +99,8 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var tripType = context.read<AuthCubit>().tripType;
+
     return Scaffold(
       appBar: BaseAppBar(
         title: "Payment",
@@ -105,7 +110,7 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
       bottomNavigationBar: Container(
         margin: EdgeInsets.only(bottom: 28.h),
         child: CustomButton(
-          text: "Pay Now",
+          text: tripType == TripType.PreBooking ? "Add to cart" : "Book Now",
           onPressed: () async {
             WidgetUtil.showBottomSheet(
                 context,
@@ -123,24 +128,29 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
                           widget.orderUpdateResponse.orderNumber!,
                           paymentUpdateRequest);
 
-                      var bookResponse = await _hotelUseCase
-                          .bookHotel(widget.orderUpdateResponse.orderNumber!);
-
-                      var hasErrors = bookResponse.error?.errorData != null;
+                      var tripType = context.read<AuthCubit>().tripType;
+                      var selectedTrip = context.read<TripCubit>().selectedTrip;
                       OrderStatusEnum orderStatus = OrderStatusEnum.success;
-                      if (hasErrors ||
-                          (bookResponse.mmtBookingResponse ?? []).isEmpty &&
-                              (bookResponse.expediaBookingResponse ?? [])
-                                  .isEmpty) {
-                        orderStatus = OrderStatusEnum.error;
-                      }
 
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (ctx) {
-                        return OrderStatusScreen(orderStatus: orderStatus);
-                      }), (route) {
-                        return route.settings.name == "/";
-                      });
+                      if (selectedTrip == null ||
+                          tripType == TripType.PostBooking) {
+                        var bookResponse = await _hotelUseCase
+                            .bookHotel(widget.orderUpdateResponse.orderNumber!);
+
+                        var hasErrors = bookResponse.error?.errorData != null;
+                        if (hasErrors ||
+                            (bookResponse.mmtBookingResponse ?? []).isEmpty &&
+                                (bookResponse.expediaBookingResponse ?? [])
+                                    .isEmpty) {
+                          orderStatus = OrderStatusEnum.error;
+                        }
+                      } else {
+                        await context
+                            .read<TripCubit>()
+                            .addToTrip(widget.orderUpdateResponse.orderNumber!);
+                      }
+                      WidgetUtil.returnToHomeScreen(
+                          context, orderStatus, tripType);
                     } catch (e, s) {
                       log("$e $s");
                       WidgetUtil.showSnackBar(

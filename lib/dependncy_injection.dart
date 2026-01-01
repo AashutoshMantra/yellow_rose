@@ -35,6 +35,11 @@ import 'package:yellow_rose/features/hotel/domain/repositories/hotel_repository.
 import 'package:yellow_rose/features/hotel/domain/repositories/place_repository.dart';
 import 'package:yellow_rose/features/hotel/domain/usecases/hotel_book_use_case.dart';
 import 'package:yellow_rose/features/hotel/domain/usecases/hotel_search_case.dart';
+import 'package:yellow_rose/features/trip/data/datasources/trip_service.dart';
+import 'package:yellow_rose/features/trip/data/repositories/trip_repository_impl.dart';
+import 'package:yellow_rose/features/trip/domain/repositories/trip_repository.dart';
+import 'package:yellow_rose/features/trip/domain/usecases/trip_usecase.dart';
+import 'package:yellow_rose/features/trip/domain/usecases/trip_usecase_impl.dart';
 
 final getIt = GetIt.instance;
 Future setupDependencyInjection() async {
@@ -68,6 +73,11 @@ Future setupDependencyInjection() async {
   getIt.registerLazySingleton<HotelBookUseCase>(() => HotelBookUseCaseImpl());
 
   //BUS
+  //TRIP
+  getIt.registerLazySingleton<TripService>(() => TripServiceImpl());
+  getIt.registerLazySingleton<TripRepository>(() => TripRepositoryImpl());
+  getIt.registerLazySingleton<TripUseCase>(() => TripUseCaseImpl());
+
   getIt.registerLazySingleton<BusService>(() => BusServiceImpl());
   getIt.registerLazySingleton<BusLocalService>(() => BusLocalServiceImpl());
   getIt.registerLazySingleton<BusRepository>(() => BusRepositoryImpl());

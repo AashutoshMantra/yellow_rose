@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:yellow_rose/core/common_widgets/bottom_sheet_title_widget.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/custom_text_form_field.dart';
 import 'package:yellow_rose/core/common_widgets/cutom_dropdown_field.dart';
@@ -189,25 +190,10 @@ class _AddUpdatePassengerDetailsScreenState
                 children: [
                   Column(
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "Add Traveler details",
-                              textAlign: TextAlign.center,
-                              style: TextStyles.bodyXLargeMediumStyle(),
-                            ),
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              icon: const Icon(Icons.close))
-                        ],
-                      ),
-                      Divider(
-                        height: 0,
-                        color: AppColors.primaryTextSwatch[200],
+                      BottomSheetTitleWidget(
+                        title: widget.passengerDetailsEntity == null
+                            ? 'Add Traveler details'
+                            : 'Update Traveler details',
                       ),
                       Expanded(
                         child: Container(

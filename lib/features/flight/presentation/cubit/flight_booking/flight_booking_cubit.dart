@@ -24,6 +24,7 @@ import 'package:yellow_rose/features/flight/domain/entities/passenger_type.dart'
 import 'package:yellow_rose/features/flight/domain/entities/seat_map/selected_seat.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_mapper_utility.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 part 'flight_booking_state.dart';
 
@@ -33,11 +34,12 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
 
   void repriceAndLoadData(
       List<AirResponseData> selectedItineraries, AirSearch airSearch,
-      {Map<int, FareDetailsWithType>? selectedFares}) async {
+      {Map<int, FareDetailsWithType>? selectedFares,
+      TripResponse? trip}) async {
     try {
       emit(FlightBookingLoading());
       var mappedData = AirMapperUtility.mapFlightStateToFlightOrderDetails(
-          selectedItineraries, airSearch, selectedFares);
+          selectedItineraries, airSearch, selectedFares, trip);
       var orderCreatedDetails = await _airUseCase.createOrder(mappedData);
       var orderDetails =
           await _airUseCase.getOrderDetails(orderCreatedDetails.orderNumber);

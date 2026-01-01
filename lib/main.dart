@@ -16,6 +16,7 @@ import 'package:yellow_rose/features/flight/presentation/pages/flight_search_scr
 import 'package:yellow_rose/features/home_screen/presentation/cubit/app_update/app_update_cubit.dart';
 import 'package:yellow_rose/features/home_screen/presentation/cubit/home_screen_cubit.dart';
 import 'package:yellow_rose/features/home_screen/presentation/pages/dashboard.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +45,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<TripCubit>(
+          create: (BuildContext context) => TripCubit(),
+        ),
         BlocProvider<HomeScreenCubit>(
           create: (BuildContext context) => HomeScreenCubit(),
         ),

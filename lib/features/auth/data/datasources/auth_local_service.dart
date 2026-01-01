@@ -7,27 +7,29 @@ import 'package:yellow_rose/features/auth/domain/entities/user_details.dart';
 abstract interface class AuthLocalService {
   bool isSignedIn();
   UserDetails? getUserProfile();
+  void saveUserProfile(UserDetails userDetails);
+  void clearUserProfile();
 }
 
 class AuthLocalServiceImpl implements AuthLocalService {
-  final Box airportBox = Hive.box('userProfile');
+  final Box userProfileBox = Hive.box('userProfile');
 
   @override
   bool isSignedIn() {
     try {
-      if (airportBox.isEmpty) {
+      if (userProfileBox.isEmpty) {
         return false;
       } else {
-        var profile = jsonDecode(airportBox.get('profile') ?? '{}');
+        var profile = jsonDecode(userProfileBox.get('profile') ?? '{}');
         if (profile != null && profile['token'] != null) {
           var isExpired = JwtDecoder.isExpired(profile['token']);
           if (isExpired) {
-            airportBox.clear();
+            userProfileBox.clear();
           }
 
           return !isExpired;
         } else {
-          airportBox.clear();
+          userProfileBox.clear();
           return false;
         }
       }
@@ -40,10 +42,10 @@ class AuthLocalServiceImpl implements AuthLocalService {
   @override
   UserDetails? getUserProfile() {
     try {
-      if (airportBox.isEmpty || !isSignedIn()) {
+      if (userProfileBox.isEmpty || !isSignedIn()) {
         return null;
       } else {
-        var profile = airportBox.get('profile');
+        var profile = userProfileBox.get('profile');
         if (profile.isNotEmpty) {
           return UserDetails.fromJson(profile);
         } else {
@@ -54,5 +56,15 @@ class AuthLocalServiceImpl implements AuthLocalService {
       print('Error accessing user profile box: $e');
       return null;
     }
+  }
+
+  @override
+  void saveUserProfile(UserDetails userDetails) {
+    userProfileBox.put('profile', userDetails.toJson());
+  }
+
+  @override
+  void clearUserProfile() {
+    userProfileBox.clear();
   }
 }

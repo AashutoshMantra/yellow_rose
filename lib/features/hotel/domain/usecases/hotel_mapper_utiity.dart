@@ -22,6 +22,7 @@ import 'package:yellow_rose/features/hotel/domain/entities/rooms/hotel_room_amen
 import 'package:yellow_rose/features/hotel/domain/entities/rooms/hotel_room_type.dart';
 import 'package:yellow_rose/features/hotel/domain/entities/rooms/hotel_rrom_cancellation.dart';
 import 'package:yellow_rose/features/hotel/presentation/cubit/hotel_book_cubit/hotel_book_cubit.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 class HotelMapperUtiity {
   HotelMapperUtiity._();
@@ -66,7 +67,8 @@ class HotelMapperUtiity {
   }
 
   static HotelOrderRequest createHotelOrderRequest(HotelDetailResponse hotel,
-      HotelRoom selectedRoom, HotelSearch hotelSearch) {
+      HotelRoom selectedRoom, HotelSearch hotelSearch,
+      {TripResponse? trip}) {
     var hotelSearchMapped = mapToHotelSearchRequest(hotelSearch);
     var selectedHotelOrder = hotel;
     var mmtRoomSelected = getSelectedHotelRoomMmt(hotel, selectedRoom);
@@ -83,6 +85,7 @@ class HotelMapperUtiity {
         requestUuid: randomUid,
         source: selectedRoom.hotelSourceEnum.name,
         hotelRequest: hotelSearchMapped,
+        tripUid: trip?.tripUid,
         selectedHotelOrder: selectedHotelOrder);
   }
 

@@ -1,5 +1,6 @@
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
+import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_request.dart';
 import 'package:yellow_rose/features/auth/data/models/sign_in_request.dart';
 import 'package:yellow_rose/features/auth/domain/entities/user_details.dart';
 import 'package:yellow_rose/features/auth/domain/repositories/auth_repo.dart';
@@ -11,6 +12,7 @@ abstract class IAuthUseCase {
   UserDetails? getUserProfile();
   Future<List<BillingEntity>> getBillingEntity(String uuid);
   Future<void> signOut();
+  Future<ApprovalWorkflow> getApprovalWorkflow();
 }
 
 class AuthUseCase implements IAuthUseCase {
@@ -42,5 +44,10 @@ class AuthUseCase implements IAuthUseCase {
     await _recentSearchUsecase.saveAirRecentSearches([]);
     await _recentSearchUsecase.saveHotelRecentSearches([]);
     return await _authRepo.signOut();
+  }
+
+  @override
+  Future<ApprovalWorkflow> getApprovalWorkflow() {
+    return _authRepo.getApprovalWorkflow();
   }
 }

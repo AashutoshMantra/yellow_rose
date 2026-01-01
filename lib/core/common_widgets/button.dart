@@ -46,6 +46,7 @@ class CustomButton extends StatelessWidget {
       errorColor: AppColors.error,
       child: Text(
         text,
+        textAlign: TextAlign.center,
         style: TextStyles.bodyMediumBoldStyle().copyWith(
           color: buttonType == ButtonType.primary
               ? Colors.white

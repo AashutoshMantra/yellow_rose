@@ -15,7 +15,15 @@ import 'package:yellow_rose/features/home_screen/presentation/widgets/common/ord
 
 class BusOrderDetailCard extends StatelessWidget {
   final OrderStatus orderStatus;
-  const BusOrderDetailCard({super.key, required this.orderStatus});
+  final String? customButtonText;
+  final VoidCallback? onCustomButtonPressed;
+
+  const BusOrderDetailCard({
+    super.key,
+    required this.orderStatus,
+    this.customButtonText,
+    this.onCustomButtonPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -133,15 +141,20 @@ class BusOrderDetailCard extends StatelessWidget {
                   subtitle: '${currencyLabel.toUpperCase()} • Taxes included',
                 ),
                 SizedBox(height: 16.h),
-                CustomButton(
-                  text: 'View ticket',
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(
-                      BusTicketDetailScreen.routeName,
-                      arguments: {'orderStatus': orderStatus},
-                    );
-                  },
-                ),
+                customButtonText != null && onCustomButtonPressed != null
+                    ? CustomButton(
+                        text: customButtonText!,
+                        onPressed: onCustomButtonPressed!,
+                      )
+                    : CustomButton(
+                        text: 'View ticket',
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            BusTicketDetailScreen.routeName,
+                            arguments: {'orderStatus': orderStatus},
+                          );
+                        },
+                      ),
               ],
             ),
           ),

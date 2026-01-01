@@ -12,22 +12,38 @@ class ImageIconButton extends StatelessWidget {
   final Color? backgroundColor;
   final Function()? onClick;
 
-  const ImageIconButton({super.key, required this.image, required this.title, this.onClick, this.size = 20,
+  const ImageIconButton(
+      {super.key,
+      required this.image,
+      required this.title,
+      this.onClick,
+      this.size = 20,
       this.radius = 25,
-      this.color, this.backgroundColor});
+      this.color,
+      this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
+    final isEnabled = onClick != null;
+
     return GestureDetector(
       onTap: onClick,
       child: Container(
-        child: Column(
-         children:[
-          CustomImageIcon(image: image,radius: radius,size: size,color: color,backgroundColor: backgroundColor,),
-          SizedBox(height: 4.h,),
-          Text(title,style:TextStyles.bodySmallStyle())
-         ] 
-      
+        child: Opacity(
+          opacity: isEnabled ? 1.0 : 0.5,
+          child: Column(children: [
+            CustomImageIcon(
+              image: image,
+              radius: radius,
+              size: size,
+              color: color,
+              backgroundColor: backgroundColor,
+            ),
+            SizedBox(
+              height: 4.h,
+            ),
+            Text(title, style: TextStyles.bodySmallStyle())
+          ]),
         ),
       ),
     );

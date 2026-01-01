@@ -13,6 +13,7 @@ import 'package:yellow_rose/features/flight/data/models/booking/order/user_booki
 import 'package:yellow_rose/features/flight/data/models/booking/ssor_options.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_booking/flight_booking_cubit.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 class AirMapperUtility {
   AirMapperUtility._();
@@ -20,7 +21,8 @@ class AirMapperUtility {
   static OrderDetails mapFlightStateToFlightOrderDetails(
       List<AirResponseData> selectedItineraries,
       AirSearch airSearch,
-      Map<int, FareDetailsWithType>? selectedFares) {
+      Map<int, FareDetailsWithType>? selectedFares,
+      TripResponse? trip) {
     var mappedItinaries = selectedItineraries.mapIndexed((idx, itinerary) {
       var mappedFlight = itinerary.flightDetailsList.map((flightDetail) {
         var bookingClassFiletred = flightDetail.bookingClasses
@@ -59,6 +61,7 @@ class AirMapperUtility {
         AirMapperUtility.mapFlightStateToAirSearchRequest(airSearch);
     return OrderDetails(
         flightBooking: mappedItinaries,
+        tripUid: trip?.tripUid,
         airSearchRequest: airSearchRequest,
         requestUuid: airSearchRequest.requestId,
         travellerDetails: travellerDetails);

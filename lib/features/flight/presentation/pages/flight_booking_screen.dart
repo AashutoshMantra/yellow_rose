@@ -22,6 +22,7 @@ import 'package:yellow_rose/features/flight/presentation/widgets/bottom_button.d
 import 'package:yellow_rose/features/flight/presentation/widgets/dasshed_arrow_line.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/itineray_detail_card.dart';
 import 'package:yellow_rose/core/common_widgets/passenger_detail/traveller_details_widget.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 class FlightBookingScreen extends StatelessWidget {
   final AirSearch airSearch;

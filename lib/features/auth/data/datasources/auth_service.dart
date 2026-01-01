@@ -2,12 +2,14 @@ import 'package:yellow_rose/core/app_config.dart';
 import 'package:yellow_rose/core/utils/dio_client.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
+import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_request.dart';
 import 'package:yellow_rose/features/auth/data/models/sign_in_request.dart';
 import 'package:yellow_rose/features/auth/data/models/sign_in_response.dart';
 
 abstract interface class AuthService {
   Future<SignInResponse> signIn(SignInRequest signInRequest);
   Future<List<BillingEntity>> getBillingEntity(String uuid);
+  Future<ApprovalWorkflow> getApprovalWorkflow();
 }
 
 class AuthServiceIml implements AuthService {
@@ -34,5 +36,13 @@ class AuthServiceIml implements AuthService {
     } catch (e) {
       return [];
     }
+  }
+
+  @override
+  Future<ApprovalWorkflow> getApprovalWorkflow() async {
+    var response = await _dioClinet.get(
+      '${AppConfig.instance.apiBaseUrl}/approval/workflow/assigned',
+    );
+    return ApprovalWorkflow.fromMap(response.data);
   }
 }

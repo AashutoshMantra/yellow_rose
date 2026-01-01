@@ -93,4 +93,12 @@ enum AirBookingStatusEnum {
         this == AirBookingStatusEnum.UNCONFIRMED ||
         this == AirBookingStatusEnum.PARTIALlYRESCHEDULED;
   }
+
+  bool isTerminalState() {
+    return this == AirBookingStatusEnum.BOOKED ||
+        this == AirBookingStatusEnum.CANCELLED ||
+        this == AirBookingStatusEnum.PARTIALLYCANCELLED ||
+        this == AirBookingStatusEnum.FAILED ||
+        this == AirBookingStatusEnum.ERROR;
+  }
 }

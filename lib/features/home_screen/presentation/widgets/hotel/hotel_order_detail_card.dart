@@ -18,7 +18,15 @@ String formatBookingDate(DateTime? d) {
 
 class HotelOrderDetailCard extends StatelessWidget {
   final OrderStatus orderStatus;
-  const HotelOrderDetailCard({super.key, required this.orderStatus});
+  final String? customButtonText;
+  final VoidCallback? onCustomButtonPressed;
+
+  const HotelOrderDetailCard({
+    super.key,
+    required this.orderStatus,
+    this.customButtonText,
+    this.onCustomButtonPressed,
+  });
 
   int _computeNights(DateTime? a, DateTime? b) {
     try {
@@ -186,15 +194,20 @@ class HotelOrderDetailCard extends StatelessWidget {
             ),
           Padding(
             padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 18.h),
-            child: CustomButton(
-              text: 'View booking',
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  HotelBookingDetailScreen.routeName,
-                  arguments: {'orderStatus': orderStatus},
-                );
-              },
-            ),
+            child: customButtonText != null && onCustomButtonPressed != null
+                ? CustomButton(
+                    text: customButtonText!,
+                    onPressed: onCustomButtonPressed!,
+                  )
+                : CustomButton(
+                    text: 'View booking',
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(
+                        HotelBookingDetailScreen.routeName,
+                        arguments: {'orderStatus': orderStatus},
+                      );
+                    },
+                  ),
           ),
         ],
       ),
