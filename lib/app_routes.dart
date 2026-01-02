@@ -442,7 +442,7 @@ class AppRouter {
           return MaterialPageRoute(
             settings: RouteSettings(
                 name: formatScreenName((TripDetailScreen).toString())),
-            builder: (_) => TripDetailScreen(trip: trip),
+            builder: (_) => const TripDetailScreen(),
           );
         }
         break;

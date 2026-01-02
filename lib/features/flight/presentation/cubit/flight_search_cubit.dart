@@ -54,18 +54,52 @@ class FlightSearchCubit extends Cubit<FlightSearchState> {
   void onSourceChange(Airport airport, int idx) {
     var currState = state;
     var sources = currState.sources;
-    var newSource = [...sources];
-    newSource[idx] = sources[idx].copyWith(source: airport);
 
+    var newSource = [...sources];
+    // If selecting same airport as destination, clear destination
+    if (sources[idx].destination?.iataCode == airport.iataCode) {
+      newSource[idx] = SourceDestinationDatePair(
+        source: airport,
+        destination: null,
+        sourceDate: sources[idx].sourceDate,
+        returnDate: sources[idx].returnDate,
+      );
+    } else {
+      newSource[idx] = sources[idx].copyWith(source: airport);
+    }
     emit(currState.copyWith(sources: newSource));
   }
 
   void onDestinationChange(Airport airport, idx) {
     var currState = state;
     var sources = currState.sources;
-    var newSource = [...sources];
-    newSource[idx] = sources[idx].copyWith(destination: airport);
 
+    var newSource = [...sources];
+    // If selecting same airport as source, clear source
+    if (sources[idx].source?.iataCode == airport.iataCode) {
+      newSource[idx] = SourceDestinationDatePair(
+        source: null,
+        destination: airport,
+        sourceDate: sources[idx].sourceDate,
+        returnDate: sources[idx].returnDate,
+      );
+    } else {
+      newSource[idx] = sources[idx].copyWith(destination: airport);
+    }
+    emit(currState.copyWith(sources: newSource));
+  }
+
+  void swapSourceDestination(int idx) {
+    var currState = state;
+    var sources = currState.sources;
+    if (sources[idx].source == null || sources[idx].destination == null) {
+      return;
+    }
+    var newSource = [...sources];
+    newSource[idx] = sources[idx].copyWith(
+      source: sources[idx].destination,
+      destination: sources[idx].source,
+    );
     emit(currState.copyWith(sources: newSource));
   }
 
@@ -152,6 +186,10 @@ class FlightSearchCubit extends Cubit<FlightSearchState> {
   void onDirectFlightChange(bool value) {
     var currState = state;
     emit(currState.copyWith(directFlight: value));
+  }
+
+  void clearError() {
+    emit(state.copyWith(error: null));
   }
 
   AirSearch getAirSearch() {

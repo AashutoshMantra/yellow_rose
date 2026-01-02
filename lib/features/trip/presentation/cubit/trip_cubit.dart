@@ -64,6 +64,7 @@ class TripCubit extends Cubit<TripState> {
     if (currentState is TripLoaded) {
       emit(currentState.copyWith(selectedTrip: trip));
     }
+    refereshSelectedTrip();
   }
 
   void clearSelectedTrip() {
@@ -81,7 +82,14 @@ class TripCubit extends Cubit<TripState> {
         try {
           final refreshedTrip =
               await _tripUseCase.getTripById(currentSelectedTrip.tripUid!);
-          emit(currentState.copyWith(selectedTrip: refreshedTrip));
+          var allTrips = currentState.trips;
+          final index = allTrips
+              .indexWhere((trip) => trip.tripUid == refreshedTrip.tripUid);
+          if (index != -1) {
+            allTrips[index] = refreshedTrip;
+          }
+          emit(currentState.copyWith(
+              selectedTrip: refreshedTrip, trips: allTrips));
         } catch (e, s) {
           log("Failed to refresh trip: $e $s");
         }
@@ -103,7 +111,7 @@ class TripCubit extends Cubit<TripState> {
     if (currentSelectedTrip == null) {
       throw Exception('No trip selected');
     }
-    var currentState = state;
+    var currentState = state as TripLoaded;
 
     emit(TripLoading());
 
@@ -112,18 +120,13 @@ class TripCubit extends Cubit<TripState> {
       final refreshedTrip =
           await _tripUseCase.getTripById(currentSelectedTrip.tripUid!);
 
-      currentState = state;
-      if (currentState is TripLoaded) {
-        final updatedTrips = currentState.trips.map((trip) {
-          return trip.tripUid == refreshedTrip.tripUid ? refreshedTrip : trip;
-        }).toList();
-        emit(currentState.copyWith(
-          trips: updatedTrips,
-          selectedTrip: refreshedTrip,
-        ));
-      } else {
-        emit(TripLoaded(trips: [refreshedTrip], selectedTrip: refreshedTrip));
-      }
+      final updatedTrips = currentState.trips.map((trip) {
+        return trip.tripUid == refreshedTrip.tripUid ? refreshedTrip : trip;
+      }).toList();
+      emit(currentState.copyWith(
+        trips: updatedTrips,
+        selectedTrip: refreshedTrip,
+      ));
     } catch (e) {
       emit(currentState);
 

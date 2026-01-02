@@ -110,7 +110,7 @@ class AirOrderDetailCard extends StatelessWidget {
                       )
                     else
                       CustomButton(
-                        text: "E-Ticket",
+                        text: "View booking",
                         onPressed: () {
                           Navigator.of(context).pushNamed(
                             FlightTicketScreen.routeName,

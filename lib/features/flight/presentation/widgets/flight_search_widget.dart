@@ -21,7 +21,6 @@ import 'package:yellow_rose/features/home_screen/presentation/cubit/home_screen_
 import 'package:yellow_rose/core/constants/airline_code.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/airline_selection_sheet.dart';
 import 'package:yellow_rose/features/flight/domain/entities/name_code.dart';
-import 'package:yellow_rose/core/nullable.dart';
 
 class FlightSearchWidget extends StatelessWidget {
   final Function(AirSearch) onSearchClick;
@@ -186,11 +185,9 @@ class FlightSearchWidget extends StatelessWidget {
           child: BlocBuilder<FlightSearchCubit, FlightSearchState>(
             builder: (context, state) {
               if (state.error != null) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  WidgetUtil.showSnackBar(
-                      "Error fetching airports, try again", context);
-                  Navigator.of(context).pop();
-                });
+                WidgetUtil.showSnackBar(
+                    "Error fetching airports, try again", context);
+                Navigator.of(context).pop();
               }
               return Stack(
                 children: [
@@ -471,14 +468,62 @@ class FlightSearchWidget extends StatelessWidget {
 
     return Column(
       children: [
-        FlexSwitch(isRow: isMulti, children: [
-          isMulti ? Expanded(child: fromWidget) : fromWidget,
-          SizedBox(
-            height: isMulti ? 0 : 12.h,
-            width: !isMulti ? 0 : 12.w,
-          ),
-          isMulti ? Expanded(child: toWidget) : toWidget,
-        ]),
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            FlexSwitch(isRow: isMulti, children: [
+              isMulti ? Expanded(child: fromWidget) : fromWidget,
+              SizedBox(
+                height: isMulti ? 0 : 12.h,
+                width: !isMulti ? 0 : 12.w,
+              ),
+              isMulti ? Expanded(child: toWidget) : toWidget,
+            ]),
+            if (!isMulti &&
+                state.sources.isNotEmpty &&
+                state.sources[idx].source != null &&
+                state.sources[idx].destination != null)
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 7.h,
+                bottom: 0,
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      context
+                          .read<FlightSearchCubit>()
+                          .swapSourceDestination(idx);
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 2.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: AppColors.primary.withOpacity(0.5),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.swap_vert,
+                        color: AppColors.primary,
+                        size: 20.h,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
         SizedBox(
           height: 12.h,
         ),

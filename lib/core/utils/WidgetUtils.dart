@@ -1,14 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:yellow_rose/app_routes.dart';
 import 'package:yellow_rose/core/common_widgets/popup.dart';
 import 'package:yellow_rose/features/auth/domain/entities/trip_type.dart';
-import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/order_status_screen.dart';
+import 'package:yellow_rose/features/home_screen/presentation/pages/dashboard.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/show_update_available_body.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 import 'package:yellow_rose/features/trip/presentation/pages/trip_detail_screen.dart';
 
 class WidgetUtil {
@@ -205,13 +209,22 @@ class WidgetUtil {
 
   static void returnToHomeScreen(
       BuildContext context, OrderStatusEnum orderStatus, TripType tripType) {
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (ctx) {
-      return OrderStatusScreen(orderStatus: orderStatus);
-    }), (route) {
-      if (tripType != TripType.NoTrip) {
-        return route.settings.name == TripDetailScreen.routeName;
-      }
-      return route.settings.name == "/";
-    });
+    final targetRoute = tripType != TripType.NoTrip
+        ? formatScreenName((TripDetailScreen).toString())
+        : formatScreenName((Dashboard).toString());
+    context.read<TripCubit>().refereshSelectedTrip();
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (ctx) => OrderStatusScreen(
+          orderStatus: orderStatus,
+          tripType: tripType,
+        ),
+      ),
+      (route) {
+        final shouldKeep = route.settings.name == targetRoute;
+        return shouldKeep;
+      },
+    );
   }
 }

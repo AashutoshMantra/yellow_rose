@@ -5,26 +5,39 @@ import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/features/auth/domain/entities/trip_type.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 enum OrderStatusEnum { success, error, warning, flight_cancel, bus_cancel }
 
 class OrderStatusScreen extends StatelessWidget {
   final OrderStatusEnum orderStatus;
-  const OrderStatusScreen({super.key, required this.orderStatus});
+  final TripType? tripType;
+  const OrderStatusScreen({
+    super.key,
+    required this.orderStatus,
+    this.tripType,
+  });
 
   @override
   Widget build(BuildContext context) {
     context.read<TripCubit>().refereshSelectedTrip();
+    final isPreBooking = tripType == TripType.PreBooking;
+
     var (message, subtitle) = switch (orderStatus) {
       OrderStatusEnum.error => (
           "Failed to process order",
           "Back to homepage –  clicking the button below."
         ),
-      OrderStatusEnum.success => (
-          "Your Order Has Been Completed!",
-          "You can check your e-Ticket by clicking the button below."
-        ),
+      OrderStatusEnum.success => isPreBooking
+          ? (
+              "Order Added to Cart Successfully!",
+              "Your order has been added to the trip cart."
+            )
+          : (
+              "Your Order Has Been Completed!",
+              "You can check your e-Ticket by clicking the button below."
+            ),
       OrderStatusEnum.warning => (
           "Partial Order completed",
           "You can check your e-Ticket by clicking the button below."
@@ -74,16 +87,17 @@ class OrderStatusScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              if (orderStatus != OrderStatusEnum.error)
+              if (orderStatus != OrderStatusEnum.error && !isPreBooking)
                 CustomButton(
                   text: "Check E-Ticket",
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
-              SizedBox(
-                height: 16.h,
-              ),
+              if (orderStatus != OrderStatusEnum.error && !isPreBooking)
+                SizedBox(
+                  height: 16.h,
+                ),
               CustomButton(
                   text: "Back to home",
                   buttonType: ButtonType.secondary,
