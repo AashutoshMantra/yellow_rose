@@ -58,7 +58,7 @@ class AirMapperUtility {
         adult: airSearch.adultCount,
         infantCount: airSearch.infantCount);
     var airSearchRequest =
-        AirMapperUtility.mapFlightStateToAirSearchRequest(airSearch);
+        AirMapperUtility.mapFlightStateToAirSearchRequest(airSearch, trip: trip);
     return OrderDetails(
         flightBooking: mappedItinaries,
         tripUid: trip?.tripUid,
@@ -68,7 +68,7 @@ class AirMapperUtility {
   }
 
   static AirSearchRequest mapFlightStateToAirSearchRequest(
-      AirSearch airSearch) {
+      AirSearch airSearch,{TripResponse? trip}) {
     List<AirSearchRequestBaseDetail> airSearchRequestBaseDetails =
         airSearch.sources.map((source) {
       return AirSearchRequestBaseDetail(
@@ -97,6 +97,7 @@ class AirMapperUtility {
         requestId: airSearch.requestId,
         prefAirline: airSearch.preferredCarrier?.code,
         directFlight: airSearch.directFlight,
+        tripUid: trip?.tripUid,
         journeyType: airSearch.sources.length == 1
             ? JourneyType.oneWay
             : JourneyType.Return,

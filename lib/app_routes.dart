@@ -98,8 +98,11 @@ class AppRouter {
             settings: RouteSettings(
                 name: formatScreenName((FlightSearchListScreen).toString())),
             builder: (_) => BlocProvider(
-              create: (context) =>
-                  FlightSearchListingCubit(airSearch)..searchFlights(airSearch),
+              create: (context) {
+                var selectedTrip = context.read<TripCubit>().selectedTrip;
+                return FlightSearchListingCubit(airSearch)
+                  ..searchFlights(airSearch, trip: selectedTrip);
+              },
               child: const FlightSearchListScreen(),
             ),
           );

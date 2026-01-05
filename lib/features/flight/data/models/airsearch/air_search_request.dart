@@ -43,6 +43,7 @@ class AirSearchRequest {
   String? prefAirline;
   bool? directFlight;
   String? userBookingContext;
+  String? tripUid;
 
   AirSearchRequest({
     this.airSearchRequestBaseDetails,
@@ -59,6 +60,7 @@ class AirSearchRequest {
     this.prefAirline,
     this.directFlight,
     this.userBookingContext = "C",
+    this.tripUid,
   });
 
   Map<String, dynamic> toMap() {
@@ -109,6 +111,9 @@ class AirSearchRequest {
     if (userBookingContext != null) {
       result.addAll({'userBookingContext': userBookingContext});
     }
+    if (tripUid != null) {
+      result.addAll({'tripUid': tripUid});
+    }
 
     return result;
   }
@@ -135,6 +140,7 @@ class AirSearchRequest {
       prefAirline: map['prefAirline'],
       directFlight: map['directFlight'],
       userBookingContext: map['userBookingContext'],
+      tripUid: map['tripUid'],
     );
   }
 
@@ -158,6 +164,7 @@ class AirSearchRequest {
     String? prefAirline,
     bool? directFlight,
     String? userBookingContext,
+    String? tripUid,
   }) {
     return AirSearchRequest(
       airSearchRequestBaseDetails:
@@ -175,12 +182,13 @@ class AirSearchRequest {
       prefAirline: prefAirline ?? this.prefAirline,
       directFlight: directFlight ?? this.directFlight,
       userBookingContext: userBookingContext ?? this.userBookingContext,
+      tripUid: tripUid ?? this.tripUid,
     );
   }
 
   @override
   String toString() {
-    return 'AirSearchRequest(airSearchRequestBaseDetails: $airSearchRequestBaseDetails, journeyType: $journeyType, paxCount: $paxCount, adultCount: $adultCount, childCount: $childCount, infantCount: $infantCount, requestId: $requestId, travelType: $travelType, pointerEvents: $pointerEvents, countryTo: $countryTo, countryFrom: $countryFrom, userBookingContext: $userBookingContext)';
+    return 'AirSearchRequest(airSearchRequestBaseDetails: $airSearchRequestBaseDetails, journeyType: $journeyType, paxCount: $paxCount, adultCount: $adultCount, childCount: $childCount, infantCount: $infantCount, requestId: $requestId, travelType: $travelType, pointerEvents: $pointerEvents, countryTo: $countryTo, countryFrom: $countryFrom, userBookingContext: $userBookingContext, tripUid: $tripUid)';
   }
 
   @override
@@ -202,7 +210,8 @@ class AirSearchRequest {
         other.countryFrom == countryFrom &&
         other.prefAirline == prefAirline &&
         other.directFlight == directFlight &&
-        other.userBookingContext == userBookingContext;
+        other.userBookingContext == userBookingContext &&
+        other.tripUid == tripUid;
   }
 
   @override
@@ -220,7 +229,8 @@ class AirSearchRequest {
         countryFrom.hashCode ^
         (prefAirline?.hashCode ?? 0) ^
         (directFlight?.hashCode ?? 0) ^
-        userBookingContext.hashCode;
+        userBookingContext.hashCode ^
+        (tripUid?.hashCode ?? 0);
   }
 }
 

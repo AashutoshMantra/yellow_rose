@@ -88,62 +88,61 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
           const BottomSheetTitleWidget(
             title: 'Create Trip',
           ),
-          Expanded(
-            child: Form(
-              key: _formKey,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Column(
-                  children: [
-                    TitleFormWidget(
-                      text: 'Trip Name *',
-                      child: CustomTextFormField(
-                        cont: _tripNameController,
-                        text: 'Trip Name',
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Trip name is required';
-                          }
-                          return null;
-                        },
-                      ),
+          Form(
+            key: _formKey,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Column(
+                children: [
+                  TitleFormWidget(
+                    text: 'Trip Name *',
+                    child: CustomTextFormField(
+                      cont: _tripNameController,
+                      text: 'Trip Name',
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Trip name is required';
+                        }
+                        return null;
+                      },
                     ),
-                    TitleFormWidget(
+                  ),
+                  TitleFormWidget(
+                    text: 'Description',
+                    child: CustomTextFormField(
+                      cont: _tripDescriptionController,
                       text: 'Description',
-                      child: CustomTextFormField(
-                        cont: _tripDescriptionController,
-                        text: 'Description',
-                        maxLines: 2,
-                      ),
+                      maxLines: 2,
                     ),
-                    TitleFormWidget(
-                      text: 'Purpose',
-                      child: CustomDropDownField(
-                        hint: 'Select Purpose',
-                        val: _selectedPurpose,
-                        data: _purposeOptions,
-                        validator: (_) {
-                          if (_selectedPurpose == null ||
-                              _selectedPurpose!.isEmpty) {
-                            return 'Please select a purpose';
-                          }
-                          return null;
-                        },
-                        onchange: (value) {
-                          setState(() {
-                            _selectedPurpose = value;
-                          });
-                        },
-                      ),
+                  ),
+                  TitleFormWidget(
+                    text: 'Purpose',
+                    child: CustomDropDownField(
+                      hint: 'Select Purpose',
+                      val: _selectedPurpose,
+                      data: _purposeOptions,
+                      validator: (_) {
+                        if (_selectedPurpose == null ||
+                            _selectedPurpose!.isEmpty) {
+                          return 'Please select a purpose';
+                        }
+                        return null;
+                      },
+                      onchange: (value) {
+                        setState(() {
+                          _selectedPurpose = value;
+                        });
+                      },
                     ),
-                    SizedBox(height: 24.h),
-                    CustomButton(
-                      text: 'Create Trip',
-                      buttonController: _buttonController,
-                      onPressed: _createTrip,
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 24.h),
+                  CustomButton(
+                    text: 'Create Trip',
+                    buttonController: _buttonController,
+                    onPressed: _createTrip,
+                  ),
+                  SizedBox(height: 50.h),
+                ],
               ),
             ),
           ),

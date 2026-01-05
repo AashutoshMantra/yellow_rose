@@ -15,6 +15,7 @@ import 'package:yellow_rose/features/flight/domain/entities/search_filter.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_mapper_utility.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_search_filter/flight_search_filter_cubit.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 part 'flight_search_listing_state.dart';
 
@@ -23,12 +24,12 @@ class FlightSearchListingCubit extends Cubit<FlightSearchListingState> {
       : super(FlightSearchListingInitial(airSearch: airSearch));
   final _airUsecase = getIt<AirUseCase>();
 
-  void searchFlights(AirSearch airSearch) async {
+  void searchFlights(AirSearch airSearch,{TripResponse? trip}) async {
     try {
       emit(FlightSearchListingLoading(airSearch: airSearch));
 
       var airSearchRequest =
-          AirMapperUtility.mapFlightStateToAirSearchRequest(airSearch);
+          AirMapperUtility.mapFlightStateToAirSearchRequest(airSearch, trip: trip);
       var airSearchResponse =
           await _airUsecase.getAirSearchResponse(airSearchRequest);
       var selectedItinararis = HashMap<int, AirResponseData>();

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -96,16 +94,16 @@ class WidgetUtil {
         ),
       ),
       builder: (context) {
-        return Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        return AnimatedPadding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          duration: const Duration(milliseconds: 50),
           child: Container(
             constraints:
                 maxHeight != null ? BoxConstraints(maxHeight: maxHeight) : null,
-            child: Wrap(
-              children: [
-                body,
-              ],
+            child: SingleChildScrollView(
+              child: body,
             ),
           ),
         );
@@ -129,9 +127,11 @@ class WidgetUtil {
       isDismissible: isDismissible,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        return AnimatedPadding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          duration: const Duration(milliseconds: 50),
           child: LayoutBuilder(
             builder: (context, constraints) {
               return ConstrainedBox(

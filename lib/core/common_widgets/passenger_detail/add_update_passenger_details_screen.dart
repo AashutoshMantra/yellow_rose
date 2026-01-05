@@ -9,8 +9,6 @@ import 'package:yellow_rose/core/common_widgets/cutom_dropdown_field.dart';
 import 'package:yellow_rose/core/common_widgets/pill_button.dart';
 import 'package:yellow_rose/core/common_widgets/title_form_widget.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
-import 'package:yellow_rose/core/theme/text_styles.dart';
-import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/common_utils.dart';
 import 'package:yellow_rose/core/utils/form_filed_config.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
@@ -201,6 +199,9 @@ class _AddUpdatePassengerDetailsScreenState
                               horizontal: 24.w, vertical: 24.h),
                           child: ListView(
                             controller: _scrollController,
+                            padding: EdgeInsets.only(
+                              bottom: 80.h,
+                            ),
                             children: [
                               Row(
                                 children: Gender.values.map((gender) {
@@ -264,10 +265,7 @@ class _AddUpdatePassengerDetailsScreenState
                                     val: config.value,
                                   ),
                                 );
-                              }),
-                              SizedBox(
-                                height: 100.h,
-                              )
+                              })
                             ],
                           ),
                         ),

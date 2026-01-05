@@ -5,6 +5,7 @@ import 'package:yellow_rose/core/common_widgets/loader.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 import 'package:yellow_rose/features/trip/presentation/pages/trip_detail_screen.dart';
@@ -37,10 +38,9 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
   }
 
   void _showCreateTripSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const CreateTripBottomSheet(),
+    WidgetUtil.showBottomSheet(
+      context,
+      const CreateTripBottomSheet(),
     );
   }
 
