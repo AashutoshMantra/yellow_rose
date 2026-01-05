@@ -10,6 +10,7 @@ import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_req
 import 'package:yellow_rose/features/flight/data/models/booking/order/booking_channel_enum.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/air_booking_status.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/air_order_iitinerary.dart';
+import 'package:yellow_rose/features/hotel/data/models/order/hotel_order_item.dart';
 import 'package:yellow_rose/features/hotel/data/models/order/hotel_order_request.dart';
 
 class OrderStatus {
@@ -146,6 +147,9 @@ class OrderStatus {
   final String? busContactEmail;
   final List<BusOrderItinerary>? busOrderItineraries;
 
+  //HOTEL
+  final List<HotelOrderItems>? hotelItineraries;
+
   OrderStatus({
     this.id,
     this.uuid,
@@ -207,6 +211,7 @@ class OrderStatus {
     this.busContactNumber,
     this.busContactEmail,
     this.busOrderItineraries,
+    this.hotelItineraries,
   });
 
   OrderStatus copyWith({
@@ -270,6 +275,7 @@ class OrderStatus {
     String? busContactNumber,
     String? busContactEmail,
     List<BusOrderItinerary>? busOrderItineraries,
+    List<HotelOrderItems>? hotelItineraries,
   }) {
     return OrderStatus(
       id: id ?? this.id,
@@ -332,6 +338,7 @@ class OrderStatus {
       busContactNumber: busContactNumber ?? this.busContactNumber,
       busContactEmail: busContactEmail ?? this.busContactEmail,
       busOrderItineraries: busOrderItineraries ?? this.busOrderItineraries,
+      hotelItineraries: hotelItineraries ?? this.hotelItineraries,
     );
   }
 
@@ -519,6 +526,11 @@ class OrderStatus {
             busOrderItineraries!.map((x) => x.toMap()).toList()
       });
     }
+    if (hotelItineraries != null) {
+      result.addAll({
+        'hotelItineraries': hotelItineraries!.map((x) => x.toMap()).toList()
+      });
+    }
 
     return result;
   }
@@ -608,6 +620,10 @@ class OrderStatus {
       busOrderItineraries: map['busOrderItineraries'] != null
           ? List<BusOrderItinerary>.from(map['busOrderItineraries']
               ?.map((x) => BusOrderItinerary.fromMap(x)))
+          : null,
+      hotelItineraries: map['hotelItineraries'] != null
+          ? List<HotelOrderItems>.from(
+              map['hotelItineraries']?.map((x) => HotelOrderItems.fromMap(x)))
           : null,
     );
   }

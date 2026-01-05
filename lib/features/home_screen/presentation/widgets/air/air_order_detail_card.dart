@@ -95,7 +95,7 @@ class AirOrderDetailCard extends StatelessWidget {
                 ),
                 if (fare != null)
                   OrderFareSummary(
-                    title: 'Total paid',
+                    title: 'Total amount',
                     amountText: formatOrderAmount(fare, currencyLabel),
                     subtitle: '${currencyLabel.toUpperCase()} • Taxes included',
                   ),
@@ -150,18 +150,18 @@ class AirOrderDetailCard extends StatelessWidget {
     final primary = status.airItineraries?.firstOrNull;
     if (primary == null) return null;
 
-    final fareEntries = primary.flightDetails?.fare;
-    if (fareEntries != null && fareEntries.isNotEmpty) {
-      final cost = fareEntries.first.totalCost;
-      if (cost > 0) return cost;
-    }
-
-    double aggregate = 0;
-    for (final OrdersPassengersDetails pax in primary.orderPassengerDetails) {
-      final bookingClasses = pax.fareDetails?.passengerBookingClasses;
-      if (bookingClasses == null || bookingClasses.isEmpty) continue;
-      final fareDetails = bookingClasses.first.fareDetailsPerPassengerType;
-      aggregate += fareDetails.baseFare + fareDetails.finalTax;
+    double aggregate = status.airItineraries!.fold(
+        0.0,
+        (prev, crr) =>
+            (prev ?? 0) +
+            (crr.customerPayment?.totalBookingAmount.toDouble() ?? 0.0));
+    if ((aggregate ?? 0) <= 0) {
+      for (final OrdersPassengersDetails pax in primary.orderPassengerDetails) {
+        final bookingClasses = pax.fareDetails?.passengerBookingClasses;
+        if (bookingClasses == null || bookingClasses.isEmpty) continue;
+        final fareDetails = bookingClasses.first.fareDetailsPerPassengerType;
+        aggregate += fareDetails.baseFare + fareDetails.finalTax;
+      }
     }
     return aggregate == 0 ? null : aggregate;
   }

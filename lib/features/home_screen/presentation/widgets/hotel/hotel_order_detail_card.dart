@@ -40,16 +40,10 @@ class HotelOrderDetailCard extends StatelessWidget {
   }
 
   int _guestCount() {
-    final travellerCount = orderStatus.hotelBooking?.travellerDetails;
-    if (travellerCount != null) {
-      return travellerCount.adult +
-          travellerCount.child +
-          travellerCount.infantCount;
-    }
-    final listCount =
-        orderStatus.hotelBooking?.hotelBookingRequest?.travellers?.length;
-    if (listCount != null) return listCount;
-    return 0;
+    final travellerCount = orderStatus.hotelItineraries
+        ?.fold(0, (prev, curr) => curr.orderPassengerDetails?.length ?? 0);
+
+    return travellerCount ?? 0;
   }
 
   @override
@@ -66,7 +60,11 @@ class HotelOrderDetailCard extends StatelessWidget {
     final bookingDate = orderStatus.bookingTs ?? orderStatus.creationTs;
     final currencyLabel =
         orderStatus.hotelBooking?.hotelBookingRequest?.currency ?? 'INR';
-    final totalPaid = orderStatus.hotelBooking?.payment?.amount;
+    double? totalPaid = orderStatus.hotelItineraries?.fold(
+        0.0,
+        (prev, crr) =>
+            prev! +
+            (crr.customerPayment?.totalBookingAmount.toDouble() ?? 0.0));
 
     final imageUrl = hotelDetail != null
         ? (hotelDetail.mmtMedia != null && hotelDetail.mmtMedia!.isNotEmpty
@@ -185,11 +183,11 @@ class HotelOrderDetailCard extends StatelessWidget {
               ],
             ),
           ),
-          if (totalPaid != null)
+          if (totalPaid != null && totalPaid > 0)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 12.h),
               child: OrderFareSummary(
-                title: 'Total paid',
+                title: 'Total amount',
                 amountText: formatOrderAmount(totalPaid, currencyLabel),
                 subtitle: '${currencyLabel.toUpperCase()} • Taxes included',
               ),

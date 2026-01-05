@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -137,7 +138,8 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
             final orderStatus =
                 await _airUseCase.getDetailedOrderStauts(item.cartId!);
             _orderDetails[item.cartId!] = orderStatus;
-          } catch (e) {
+          } catch (e, s) {
+            log("$e, $s");
             debugPrint('Error loading order ${item.cartId}: $e');
           }
         }
@@ -482,7 +484,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     final isNewStatus =
         trip.status == TripStatusEnum.NEW || trip.status?.code == 'N';
 
-    final totalPrice = _calculateTotalPrice();
+    final totalPrice = _calculateTotalPrice(trip);
 
     return BlocConsumer<TripCubit, TripState>(
       listener: (context, state) {
@@ -566,46 +568,48 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     );
   }
 
-  double _calculateTotalPrice() {
-    double total = 0.0;
+  double _calculateTotalPrice(TripResponse trip) {
+    return trip.tripItemList?.fold(
+            0.0, (prev, element) => prev! + (element.itineraryCost ?? 0.0)) ??
+        0.0;
 
-    for (final order in _orderDetails.values) {
-      if (order.airItineraries != null && order.airItineraries!.isNotEmpty) {
-        final primary = order.airItineraries!.first;
-        final fareEntries = primary.flightDetails?.fare;
+    // for (final order in _orderDetails.values) {
+    //   if (order.airItineraries != null && order.airItineraries!.isNotEmpty) {
+    //     final primary = order.airItineraries!.first;
+    //     final fareEntries = primary.flightDetails?.fare;
 
-        if (fareEntries != null && fareEntries.isNotEmpty) {
-          final cost = fareEntries.first.totalCost;
-          if (cost > 0) {
-            total += cost;
-            continue;
-          }
-        }
+    //     if (fareEntries != null && fareEntries.isNotEmpty) {
+    //       final cost = fareEntries.first.totalCost;
+    //       if (cost > 0) {
+    //         total += cost;
+    //         continue;
+    //       }
+    //     }
 
-        for (final pax in primary.orderPassengerDetails) {
-          final bookingClasses = pax.fareDetails?.passengerBookingClasses;
-          if (bookingClasses != null && bookingClasses.isNotEmpty) {
-            final fareDetails =
-                bookingClasses.first.fareDetailsPerPassengerType;
-            total += fareDetails.baseFare + fareDetails.finalTax;
-          }
-        }
-      } else if (order.hotelBooking != null) {
-        final amount = order.hotelBooking!.payment?.amount;
-        if (amount != null && amount > 0) {
-          total += amount;
-        }
-      } else if (order.busOrderItineraries != null &&
-          order.busOrderItineraries!.isNotEmpty) {
-        final itinerary = order.busOrderItineraries!.first;
-        final amount = itinerary.customerPayment.totalBookingAmount;
-        if (amount > 0) {
-          total += amount;
-        }
-      }
-    }
+    //     for (final pax in primary.orderPassengerDetails) {
+    //       final bookingClasses = pax.fareDetails?.passengerBookingClasses;
+    //       if (bookingClasses != null && bookingClasses.isNotEmpty) {
+    //         final fareDetails =
+    //             bookingClasses.first.fareDetailsPerPassengerType;
+    //         total += fareDetails.baseFare + fareDetails.finalTax;
+    //       }
+    //     }
+    //   } else if (order.hotelBooking != null) {
+    //     final amount = order.hotelBooking!.payment?.amount;
+    //     if (amount != null && amount > 0) {
+    //       total += amount;
+    //     }
+    //   } else if (order.busOrderItineraries != null &&
+    //       order.busOrderItineraries!.isNotEmpty) {
+    //     final itinerary = order.busOrderItineraries!.first;
+    //     final amount = itinerary.customerPayment.totalBookingAmount;
+    //     if (amount > 0) {
+    //       total += amount;
+    //     }
+    //   }
+    // }
 
-    return total;
+    // return total;
   }
 
   Future<void> _handleApproveTrip(

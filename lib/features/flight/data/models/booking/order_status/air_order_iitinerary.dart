@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:yellow_rose/core/utils/date_time_parser.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_response_data.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/flight_detail_with_booking_class.dart';
+import 'package:yellow_rose/features/flight/data/models/booking/order/customer_payment.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/order_passenger_details.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/air_booking_status.dart';
 import 'package:yellow_rose/features/flight/data/models/erro_code_handler.dart';
@@ -75,7 +76,7 @@ class AirOrderItinerary {
 
   final String? paymentReceived;
 
-  //  final Object customerPayment;
+  final CustomerPayment? customerPayment;
 
   final String? cancellationType;
 
@@ -112,6 +113,7 @@ class AirOrderItinerary {
     this.orderUuid,
     this.fromSource,
     this.toDestination,
+    this.customerPayment,
     this.flightNumber,
     this.airline,
     this.itineraryType,
@@ -368,6 +370,9 @@ class AirOrderItinerary {
     if (travelDate != null) {
       result.addAll({'travelDate': travelDate});
     }
+    if (customerPayment != null) {
+      result.addAll({'customerPayment': customerPayment!.toMap()});
+    }
 
     return result;
   }
@@ -384,6 +389,9 @@ class AirOrderItinerary {
       itineraryType: map['itineraryType'],
       pnr: map['pnr'],
       pnrStatus: map['pnrStatus'],
+      customerPayment: map['customerPayment'] != null
+          ? CustomerPayment.fromMap(map['customerPayment'])
+          : null,
       pnrRetrieveResponse: map['pnrRetrieveResponse'],
       pnrRetrieveErrorResponse: map['pnrRetrieveErrorResponse'],
       lastpnrRetrieveStatus: map['lastpnrRetrieveStatus'],

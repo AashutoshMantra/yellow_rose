@@ -44,7 +44,12 @@ class BusOrderDetailCard extends StatelessWidget {
     final journeyDate = itinerary.firstDeparture ?? boardingPoint?.time;
     final arrivalTime = droppingPoint?.time;
     final currencyLabel = itinerary.customerPayment.currency ?? 'INR';
-    final fare = itinerary.customerPayment.totalBookingAmount;
+    final fare = orderStatus.busOrderItineraries?.fold(
+            0.0,
+            (prev, crr) =>
+                prev +
+                (crr.customerPayment.totalBookingAmount.toDouble() ?? 0.0)) ??
+        0.0;
 
     return Container(
       decoration: BoxDecoration(
