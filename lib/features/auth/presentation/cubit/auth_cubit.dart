@@ -19,10 +19,10 @@ class AuthCubit extends Cubit<AuthState> {
     if (state is Authenticated) {
       return tripType != TripType.NoTrip;
     }
-    return false;
+    throw Exception("User not authenticated");
   }
 
-  void appStarted() async {
+  Future<void> appStarted() async {
     if (_authUseCase.isLoggedIn()) {
       UserDetails? userDetails = _authUseCase.getUserProfile();
       var enitty =
@@ -55,6 +55,6 @@ class AuthCubit extends Cubit<AuthState> {
       }
       return TripType.PostBooking;
     }
-    return TripType.NoTrip;
+    throw Exception("User not authenticated");
   }
 }

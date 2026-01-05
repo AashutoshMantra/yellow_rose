@@ -13,8 +13,13 @@ import 'package:yellow_rose/features/flight/presentation/widgets/order/ticket_de
 class FlightTicketScreen extends StatefulWidget {
   static const String routeName = "/eTicektScreen";
   final OrderStatus orderStatus;
+  final bool readonly;
 
-  const FlightTicketScreen({super.key, required this.orderStatus});
+  const FlightTicketScreen({
+    super.key,
+    required this.orderStatus,
+    this.readonly = false,
+  });
 
   @override
   State<FlightTicketScreen> createState() => _FlightTicketScreenState();
@@ -54,7 +59,8 @@ class _FlightTicketScreenState extends State<FlightTicketScreen> {
         shouldHaveRadius: false,
       ),
       bottomNavigationBar:
-          widget.orderStatus.status?.isTicketDownloadable() == true
+          widget.orderStatus.status?.isTicketDownloadable() == true &&
+                  !widget.readonly
               ? Container(
                   margin: EdgeInsets.only(bottom: 32.h),
                   child: CustomButton(
@@ -92,6 +98,7 @@ class _FlightTicketScreenState extends State<FlightTicketScreen> {
                             widget.orderStatus.airItineraries![idx],
                         orderStatus: widget.orderStatus,
                         orderId: widget.orderStatus.uuid!,
+                        readonly: widget.readonly,
                       );
                     },
                     separatorBuilder: (ctx, idx) {

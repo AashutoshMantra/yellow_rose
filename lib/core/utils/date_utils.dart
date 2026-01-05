@@ -71,7 +71,7 @@ class CustomDateUtils {
     final minutes = (offset.inMinutes.abs() % 60).toString().padLeft(2, '0');
     final sign = offset.isNegative ? '-' : '+';
 
-    return "$date$sign$hours:$minutes";
+    return "$date$sign$hours:$minutes".split("+")[0];
   }
 
   static DateTime addMonths(DateTime date, int months) {

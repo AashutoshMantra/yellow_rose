@@ -23,11 +23,15 @@ class AirTicektWidget extends StatelessWidget {
   final AirOrderItinerary airOrderItinerary;
   final OrderStatus? orderStatus;
   final String orderId;
-  const AirTicektWidget(
-      {super.key,
-      required this.airOrderItinerary,
-      this.orderStatus,
-      required this.orderId});
+  final bool readonly;
+
+  const AirTicektWidget({
+    super.key,
+    required this.airOrderItinerary,
+    this.orderStatus,
+    required this.orderId,
+    this.readonly = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +80,7 @@ class AirTicektWidget extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
             ),
             SizedBox(height: 16.h),
-            if (filteredPassengers.isNotEmpty)
+            if (filteredPassengers.isNotEmpty && !readonly)
               CustomButton(
                   text: "Modify Booking",
                   onPressed: () {

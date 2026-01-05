@@ -3,8 +3,11 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_approval_request.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_approval_response.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
+import 'package:yellow_rose/features/trip/domain/entities/trip_approval_status.dart';
 import 'package:yellow_rose/features/trip/domain/usecases/trip_usecase.dart';
 
 part 'trip_state.dart';
@@ -22,6 +25,14 @@ class TripCubit extends Cubit<TripState> {
     return null;
   }
 
+  bool get isViewingTeamTrip {
+    final currentState = state;
+    if (currentState is TripLoaded) {
+      return currentState.isViewingTeamTrip;
+    }
+    return false;
+  }
+
   double getSelectedTripTotalPrice() {
     final trip = selectedTrip;
     if (trip == null) return 0.0;
@@ -34,8 +45,12 @@ class TripCubit extends Cubit<TripState> {
   Future<void> loadTrips(String userId) async {
     try {
       emit(TripLoading());
-      final trips = await _tripUseCase.getTrips(userId);
-      emit(TripLoaded(trips: trips));
+      // Load both my trips and team trips in parallel
+      final results = await Future.wait([
+        _tripUseCase.getTrips(userId),
+        _tripUseCase.getMyTeamTrip(userId),
+      ]);
+      emit(TripLoaded(trips: results[0], teamTrips: results[1]));
     } catch (e, s) {
       log("$e $s");
       emit(TripError(message: e.toString()));
@@ -59,10 +74,13 @@ class TripCubit extends Cubit<TripState> {
     }
   }
 
-  void selectTrip(TripResponse trip) {
+  void selectTrip(TripResponse trip, {bool isTeamTrip = false}) {
     final currentState = state;
     if (currentState is TripLoaded) {
-      emit(currentState.copyWith(selectedTrip: trip));
+      emit(currentState.copyWith(
+        selectedTrip: trip,
+        isViewingTeamTrip: isTeamTrip,
+      ));
     }
     refereshSelectedTrip();
   }
@@ -130,6 +148,40 @@ class TripCubit extends Cubit<TripState> {
     } catch (e) {
       emit(currentState);
 
+      rethrow;
+    }
+  }
+
+  Future<TripApprovalResponse> getTripApprovalStatus(String tripUid) async {
+    try {
+      return await _tripUseCase.getTripApprovalStatus(tripUid);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> approveTrip(String tripUid, String notes) async {
+    try {
+      final request = TripApprovalRequest(
+        approvalNotes: notes,
+        tripUid: tripUid,
+        status: TripApprovalStatus.APPROVE,
+      );
+      await _tripUseCase.approveDenyTrip(request);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> denyTrip(String tripUid, String notes) async {
+    try {
+      final request = TripApprovalRequest(
+        approvalNotes: notes,
+        tripUid: tripUid,
+        status: TripApprovalStatus.DENY,
+      );
+      await _tripUseCase.approveDenyTrip(request);
+    } catch (e) {
       rethrow;
     }
   }

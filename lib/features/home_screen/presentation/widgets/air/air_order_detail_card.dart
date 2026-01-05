@@ -16,12 +16,14 @@ class AirOrderDetailCard extends StatelessWidget {
   final OrderStatus orderStatus;
   final String? customButtonText;
   final VoidCallback? onCustomButtonPressed;
+  final bool readonly;
 
   const AirOrderDetailCard({
     super.key,
     required this.orderStatus,
     this.customButtonText,
     this.onCustomButtonPressed,
+    this.readonly = false,
   });
   Widget getSourceDestinationWidget(AirOrderItinerary itinarary) {
     var source = itinarary.flightDetails!.flightDetailsList.first.fromAirport;
@@ -116,6 +118,7 @@ class AirOrderDetailCard extends StatelessWidget {
                             FlightTicketScreen.routeName,
                             arguments: {
                               'orderStatus': orderStatus,
+                              'readonly': readonly,
                             },
                           );
                         },

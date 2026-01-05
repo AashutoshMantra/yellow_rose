@@ -17,12 +17,14 @@ class BusOrderDetailCard extends StatelessWidget {
   final OrderStatus orderStatus;
   final String? customButtonText;
   final VoidCallback? onCustomButtonPressed;
+  final bool readonly;
 
   const BusOrderDetailCard({
     super.key,
     required this.orderStatus,
     this.customButtonText,
     this.onCustomButtonPressed,
+    this.readonly = false,
   });
 
   @override
@@ -151,7 +153,10 @@ class BusOrderDetailCard extends StatelessWidget {
                         onPressed: () {
                           Navigator.of(context).pushNamed(
                             BusTicketDetailScreen.routeName,
-                            arguments: {'orderStatus': orderStatus},
+                            arguments: {
+                              'orderStatus': orderStatus,
+                              'readonly': readonly,
+                            },
                           );
                         },
                       ),

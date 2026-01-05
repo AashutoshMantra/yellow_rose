@@ -13,6 +13,8 @@ import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
+import 'package:yellow_rose/features/auth/domain/entities/trip_type.dart';
+import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bos_block_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order__create_request.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_payment_medium_status.dart';
@@ -25,6 +27,7 @@ import 'package:yellow_rose/features/bus/presentation/widgets/bus_section_card.d
 import 'package:yellow_rose/features/flight/data/models/booking/order/payment_medium_request_res.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/order_status_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/order/payment_method_list.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 class BusBookingReviewScreen extends StatefulWidget {
   static const routeName = "/busBookingReviewScreen";
@@ -92,46 +95,76 @@ class _BusBookingReviewScreenState extends State<BusBookingReviewScreen> {
       return;
     }
 
-    WidgetUtil.showBottomSheet(
-      context,
-      FlightPaymentMethodListWidget(
-        paymentMediumStatusList: methods,
-        onPaymentMethodSelected: (paymentMedium) async {
-          try {
-            _loading.value = true;
+    var selectedTrip = context.read<TripCubit>().selectedTrip;
+    var tripType = context.read<AuthCubit>().tripType;
 
-            var payemntResponse = await _busUseCase.updateOrder(
-              state.busOrderResponse.orderNumber!,
-              BusOrderCreateRequest(
-                paymentMedium: paymentMedium.mediumName!,
-              ),
-            );
-            var response = await _busUseCase.bookOrder(
-                state.busOrderResponse.orderNumber!,
-                widget.busBlockResponse.blockKey!);
+    // For trip prebooking, auto-select first payment method without popup
+    if (selectedTrip != null && tripType == TripType.PreBooking) {
+      _handlePaymentAndBooking(methods.first, state);
+    } else {
+      // Show payment method selector for non-trip bookings
+      WidgetUtil.showBottomSheet(
+        context,
+        FlightPaymentMethodListWidget(
+          paymentMediumStatusList: methods,
+          onPaymentMethodSelected: (paymentMedium) async {
+            await _handlePaymentAndBooking(paymentMedium, state);
+          },
+        ),
+      );
+    }
+  }
 
-            var hasErrors = response.error != null;
-            OrderStatusEnum orderStatus = OrderStatusEnum.success;
-            if (hasErrors) {
-              orderStatus = OrderStatusEnum.error;
-            }
+  Future<void> _handlePaymentAndBooking(
+    PaymentMediumStatus paymentMedium,
+    BusBookLoaded state,
+  ) async {
+    try {
+      _loading.value = true;
 
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (ctx) {
-              return OrderStatusScreen(orderStatus: orderStatus);
-            }), (route) {
-              return route.settings.name == "/";
-            });
-          } catch (e, s) {
-            log("$e $s");
-            WidgetUtil.showSnackBar(
-                "Failed to complete booking, try again", context);
-          } finally {
-            _loading.value = false;
-          }
-        },
-      ),
-    );
+      await _busUseCase.updateOrder(
+        state.busOrderResponse.orderNumber!,
+        BusOrderCreateRequest(
+          paymentMedium: paymentMedium.mediumName!,
+        ),
+      );
+
+      var selectedTrip = context.read<TripCubit>().selectedTrip;
+      var tripType = context.read<AuthCubit>().tripType;
+      OrderStatusEnum orderStatus = OrderStatusEnum.success;
+
+      if (selectedTrip == null || tripType == TripType.PostBooking) {
+        var response = await _busUseCase.bookOrder(
+            state.busOrderResponse.orderNumber!,
+            widget.busBlockResponse.blockKey!);
+
+        var hasErrors = response.error != null;
+        if (hasErrors) {
+          orderStatus = OrderStatusEnum.error;
+        }
+      } else {
+        await context
+            .read<TripCubit>()
+            .addToTrip(state.busOrderResponse.orderNumber!);
+      }
+
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (ctx) {
+          return OrderStatusScreen(orderStatus: orderStatus);
+        }), (route) {
+          return route.settings.name == "/";
+        });
+      }
+    } catch (e, s) {
+      log("$e $s");
+      if (mounted) {
+        WidgetUtil.showSnackBar(
+            "Failed to complete booking, try again", context);
+      }
+    } finally {
+      _loading.value = false;
+    }
   }
 
   @override

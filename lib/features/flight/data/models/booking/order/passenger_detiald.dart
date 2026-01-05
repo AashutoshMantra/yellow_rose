@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'package:yellow_rose/core/utils/date_time_parser.dart';
+import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_seats.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/flight_detail_preference.dart';
@@ -195,7 +196,7 @@ class PassengerDetails {
       result.addAll({'userVisaDetails': userVisaDetails!.toMap()});
     }
     if (dob != null) {
-      result.addAll({'dob': dob!.millisecondsSinceEpoch});
+      result.addAll({'dob': CustomDateUtils.dateTimeInIsoFormatWithoutZone(dob!)});
     }
     if (seatMeal != null) {
       result.addAll({'seatMeal': seatMeal!.map((x) => x.toMap()).toList()});

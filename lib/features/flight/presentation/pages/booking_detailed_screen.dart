@@ -14,18 +14,16 @@ import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/auth/domain/entities/trip_type.dart';
 import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:yellow_rose/features/flight/data/models/booking/order/payment_medium_request_res.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_payment.dart';
-import 'package:yellow_rose/features/flight/data/models/pnr/pnr_retrieve_response.dart';
 import 'package:yellow_rose/features/flight/domain/entities/passenger_details_entity.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_booking/flight_booking_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_booking_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/order_status_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/order/payment_method_list.dart';
-import 'package:yellow_rose/features/trip/domain/usecases/trip_usecase.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
-import 'package:yellow_rose/features/trip/presentation/pages/trip_detail_screen.dart';
 
 class BookingDetailedScreen extends StatefulWidget {
   static const String routeName = "/bookingDetailedScreen";
@@ -42,7 +40,6 @@ class BookingDetailedScreen extends StatefulWidget {
 
 class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
   final _airUseCase = getIt<AirUseCase>();
-  final _tripUseCase = getIt<TripUseCase>();
 
   bool _loading = false;
   final ScrollController _scrollController = ScrollController();
@@ -75,6 +72,63 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
       } else if (currentScroll <= threshold && _hasScrolledToPricing) {
         setState(() {
           _hasScrolledToPricing = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _handlePaymentAndBooking(
+      PaymentMediumStatus paymentMedium) async {
+    try {
+      setState(() {
+        _loading = true;
+      });
+
+      var paymentUpdateRequest =
+          UpdatePaymentRequest(paymentMedium: paymentMedium.mediumName!);
+      await _airUseCase.updateOrderPayment(
+          widget.bookingData.orderDetails.orderId!, paymentUpdateRequest);
+
+      var selectedTrip = context.read<TripCubit>().selectedTrip;
+      var tripType = context.read<AuthCubit>().tripType;
+      late OrderStatusEnum orderStatus;
+
+      if (selectedTrip == null || tripType == TripType.PostBooking) {
+        var bookResponse = await _airUseCase
+            .bookOrder(widget.bookingData.orderDetails.orderId!);
+        if (bookResponse.isEmpty) {
+          throw Exception("Empty response");
+        }
+        var errorPnrs =
+            bookResponse.where((d) => d.errorDetails != null).toList();
+        if (errorPnrs.isNotEmpty) {
+          if (errorPnrs.length == bookResponse.length) {
+            orderStatus = OrderStatusEnum.error;
+          } else {
+            orderStatus = OrderStatusEnum.warning;
+          }
+        } else {
+          orderStatus = OrderStatusEnum.success;
+        }
+      } else {
+        await context
+            .read<TripCubit>()
+            .addToTrip(widget.bookingData.orderDetails.orderId!);
+        orderStatus = OrderStatusEnum.success;
+      }
+
+      if (mounted) {
+        WidgetUtil.returnToHomeScreen(context, orderStatus, tripType);
+      }
+    } catch (e, s) {
+      log("$e $s");
+      if (mounted) {
+        WidgetUtil.showSnackBar("Failed to book order, try again", context);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
         });
       }
     }
@@ -740,69 +794,40 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
                   ),
                 ),
               CustomButton(
-                  text:tripType==TripType.PreBooking?"Add to cart": _hasScrolledToPricing
-                      ? "Pay ₹ ${grandTotal.toStringAsFixed(2)}"
-                      : "Pay Now",
+                  text: tripType == TripType.PreBooking
+                      ? "Add to cart"
+                      : _hasScrolledToPricing
+                          ? "Pay ₹ ${grandTotal.toStringAsFixed(2)}"
+                          : "Pay Now",
                   onPressed: () async {
                     if (_loading) return;
-                    WidgetUtil.showBottomSheet(
-                        context,
-                        FlightPaymentMethodListWidget(
-                          paymentMediumStatusList: widget
-                                  .orderUpdateResponse.paymentConfig?.status ??
-                              [],
-                          onPaymentMethodSelected: (paymentMedium) async {
-                            try {
-                              setState(() {
-                                _loading = true;
-                              });
-                              var paymentUpdateRequest = UpdatePaymentRequest(
-                                  paymentMedium: paymentMedium.mediumName!);
-                              await _airUseCase.updateOrderPayment(
-                                  widget.bookingData.orderDetails.orderId!,
-                                  paymentUpdateRequest);
-                              var selectedTrip =
-                                  context.read<TripCubit>().selectedTrip;
-                              var tripType = context.read<AuthCubit>().tripType;
-                              late OrderStatusEnum orderStatus;
 
-                              if (selectedTrip == null ||
-                                  tripType == TripType.PostBooking) {
-                                var bookResponse = await _airUseCase.bookOrder(
-                                    widget.bookingData.orderDetails.orderId!);
-                                if (bookResponse.isEmpty) {
-                                  throw Exception("Empty response");
-                                }
-                                var errorPnrs = bookResponse
-                                    .where((d) => d.errorDetails != null)
-                                    .toList();
-                                if (errorPnrs.isNotEmpty) {
-                                  if (errorPnrs.length == bookResponse.length) {
-                                    orderStatus = OrderStatusEnum.error;
-                                  } else {
-                                    orderStatus = OrderStatusEnum.warning;
-                                  }
-                                } else {
-                                  orderStatus = OrderStatusEnum.success;
-                                }
-                              } else {
-                                await context.read<TripCubit>().addToTrip(
-                                    widget.bookingData.orderDetails.orderId!);
-                                orderStatus = OrderStatusEnum.success;
-                              }
+                    var selectedTrip = context.read<TripCubit>().selectedTrip;
+                    var tripType = context.read<AuthCubit>().tripType;
 
-                             WidgetUtil.returnToHomeScreen(context, orderStatus, tripType); 
-                            } catch (e, s) {
-                              log("$e $s");
-                              WidgetUtil.showSnackBar(
-                                  "Failed to book order,try again", context);
-                            }
-
-                            setState(() {
-                              _loading = false;
-                            });
-                          },
-                        ));
+                    if (selectedTrip != null &&
+                        tripType == TripType.PreBooking) {
+                      final paymentMethods =
+                          widget.orderUpdateResponse.paymentConfig?.status ??
+                              [];
+                      if (paymentMethods.isEmpty) {
+                        WidgetUtil.showSnackBar(
+                            "No payment methods available", context);
+                        return;
+                      }
+                      await _handlePaymentAndBooking(paymentMethods.first);
+                    } else {
+                      WidgetUtil.showBottomSheet(
+                          context,
+                          FlightPaymentMethodListWidget(
+                            paymentMediumStatusList: widget.orderUpdateResponse
+                                    .paymentConfig?.status ??
+                                [],
+                            onPaymentMethodSelected: (paymentMedium) async {
+                              await _handlePaymentAndBooking(paymentMedium);
+                            },
+                          ));
+                    }
                   }),
             ],
           ),

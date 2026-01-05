@@ -20,12 +20,14 @@ class HotelOrderDetailCard extends StatelessWidget {
   final OrderStatus orderStatus;
   final String? customButtonText;
   final VoidCallback? onCustomButtonPressed;
+  final bool readonly;
 
   const HotelOrderDetailCard({
     super.key,
     required this.orderStatus,
     this.customButtonText,
     this.onCustomButtonPressed,
+    this.readonly = false,
   });
 
   int _computeNights(DateTime? a, DateTime? b) {
@@ -204,7 +206,10 @@ class HotelOrderDetailCard extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pushNamed(
                         HotelBookingDetailScreen.routeName,
-                        arguments: {'orderStatus': orderStatus},
+                        arguments: {
+                          'orderStatus': orderStatus,
+                          'readonly': readonly,
+                        },
                       );
                     },
                   ),

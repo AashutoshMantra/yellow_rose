@@ -1,4 +1,6 @@
 import 'package:yellow_rose/dependncy_injection.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_approval_request.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_approval_response.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 import 'package:yellow_rose/features/trip/domain/repositories/trip_repository.dart';
@@ -30,5 +32,20 @@ class TripUseCaseImpl implements TripUseCase {
   @override
   Future<void> sendTripForApproval(String tripId) async {
     return await _tripRepository.sendTripForApproval(tripId);
+  }
+
+  @override
+  Future<List<TripResponse>> getMyTeamTrip(String userId) {
+    return _tripRepository.getMyTeamTrip(userId);
+  }
+
+  @override
+  Future<void> approveDenyTrip(TripApprovalRequest request) async {
+    return await _tripRepository.approveDenyTrip(request);
+  }
+
+  @override
+  Future<TripApprovalResponse> getTripApprovalStatus(String tripUid) async {
+    return await _tripRepository.getTripApprovalStatus(tripUid);
   }
 }

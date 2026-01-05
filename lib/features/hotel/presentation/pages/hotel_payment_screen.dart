@@ -13,6 +13,7 @@ import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/auth/domain/entities/trip_type.dart';
 import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:yellow_rose/features/flight/data/models/booking/order/payment_medium_request_res.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_payment.dart';
 import 'package:yellow_rose/features/flight/domain/entities/passenger_details_entity.dart';
@@ -54,6 +55,55 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _handlePaymentAndBooking(
+      PaymentMediumStatus paymentMedium) async {
+    try {
+      setState(() {
+        _loading = true;
+      });
+
+      var paymentUpdateRequest =
+          UpdatePaymentRequest(paymentMedium: paymentMedium.mediumName!);
+      await _hotelUseCase.updateOrderPayment(
+          widget.orderUpdateResponse.orderNumber!, paymentUpdateRequest);
+
+      var tripType = context.read<AuthCubit>().tripType;
+      var selectedTrip = context.read<TripCubit>().selectedTrip;
+      OrderStatusEnum orderStatus = OrderStatusEnum.success;
+
+      if (selectedTrip == null || tripType == TripType.PostBooking) {
+        var bookResponse = await _hotelUseCase
+            .bookHotel(widget.orderUpdateResponse.orderNumber!);
+
+        var hasErrors = bookResponse.error?.errorData != null;
+        if (hasErrors ||
+            (bookResponse.mmtBookingResponse ?? []).isEmpty &&
+                (bookResponse.expediaBookingResponse ?? []).isEmpty) {
+          orderStatus = OrderStatusEnum.error;
+        }
+      } else {
+        await context
+            .read<TripCubit>()
+            .addToTrip(widget.orderUpdateResponse.orderNumber!);
+      }
+
+      if (mounted) {
+        WidgetUtil.returnToHomeScreen(context, orderStatus, tripType);
+      }
+    } catch (e, s) {
+      log("$e $s");
+      if (mounted) {
+        WidgetUtil.showSnackBar("Failed to book order, try again", context);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
+    }
   }
 
   Widget getGuestWidget(PassengerDetailsEntity p) {
@@ -112,56 +162,29 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
         child: CustomButton(
           text: tripType == TripType.PreBooking ? "Add to cart" : "Book Now",
           onPressed: () async {
-            WidgetUtil.showBottomSheet(
-                context,
-                FlightPaymentMethodListWidget(
-                  paymentMediumStatusList:
-                      widget.orderUpdateResponse.paymentConfig?.status ?? [],
-                  onPaymentMethodSelected: (paymentMedium) async {
-                    try {
-                      setState(() {
-                        _loading = true;
-                      });
-                      var paymentUpdateRequest = UpdatePaymentRequest(
-                          paymentMedium: paymentMedium.mediumName!);
-                      await _hotelUseCase.updateOrderPayment(
-                          widget.orderUpdateResponse.orderNumber!,
-                          paymentUpdateRequest);
+            var selectedTrip = context.read<TripCubit>().selectedTrip;
+            var tripType = context.read<AuthCubit>().tripType;
 
-                      var tripType = context.read<AuthCubit>().tripType;
-                      var selectedTrip = context.read<TripCubit>().selectedTrip;
-                      OrderStatusEnum orderStatus = OrderStatusEnum.success;
-
-                      if (selectedTrip == null ||
-                          tripType == TripType.PostBooking) {
-                        var bookResponse = await _hotelUseCase
-                            .bookHotel(widget.orderUpdateResponse.orderNumber!);
-
-                        var hasErrors = bookResponse.error?.errorData != null;
-                        if (hasErrors ||
-                            (bookResponse.mmtBookingResponse ?? []).isEmpty &&
-                                (bookResponse.expediaBookingResponse ?? [])
-                                    .isEmpty) {
-                          orderStatus = OrderStatusEnum.error;
-                        }
-                      } else {
-                        await context
-                            .read<TripCubit>()
-                            .addToTrip(widget.orderUpdateResponse.orderNumber!);
-                      }
-                      WidgetUtil.returnToHomeScreen(
-                          context, orderStatus, tripType);
-                    } catch (e, s) {
-                      log("$e $s");
-                      WidgetUtil.showSnackBar(
-                          "Failed to book order,try again", context);
-                    }
-
-                    setState(() {
-                      _loading = false;
-                    });
-                  },
-                ));
+            if (selectedTrip != null && tripType == TripType.PreBooking) {
+              final paymentMethods =
+                  widget.orderUpdateResponse.paymentConfig?.status ?? [];
+              if (paymentMethods.isEmpty) {
+                WidgetUtil.showSnackBar(
+                    "No payment methods available", context);
+                return;
+              }
+              await _handlePaymentAndBooking(paymentMethods.first);
+            } else {
+              WidgetUtil.showBottomSheet(
+                  context,
+                  FlightPaymentMethodListWidget(
+                    paymentMediumStatusList:
+                        widget.orderUpdateResponse.paymentConfig?.status ?? [],
+                    onPaymentMethodSelected: (paymentMedium) async {
+                      await _handlePaymentAndBooking(paymentMedium);
+                    },
+                  ));
+            }
           },
         ),
       ),

@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/base_appbar.dart';
 import 'package:yellow_rose/core/common_widgets/bottom_button.dart';
+import 'package:yellow_rose/core/common_widgets/button.dart';
+import 'package:yellow_rose/core/common_widgets/custom_outline_button.dart';
 import 'package:yellow_rose/core/common_widgets/image_icon_button.dart';
 import 'package:yellow_rose/core/common_widgets/loader.dart';
+import 'package:yellow_rose/core/common_widgets/popup.dart';
 import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
@@ -20,6 +25,7 @@ import 'package:yellow_rose/features/home_screen/presentation/widgets/hotel/hote
 import 'package:yellow_rose/features/trip/data/models/trip_item.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_status_enum.dart';
+import 'package:yellow_rose/features/trip/domain/entities/trip_approval_response_status.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 class TripDetailScreen extends StatefulWidget {
@@ -37,11 +43,58 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   final Map<String, OrderStatus> _orderDetails = {};
   bool _isLoading = true;
   String? _error;
+  Timer? _refreshTimer;
+  TripApprovalResponseStatus? _approvalStatus;
+  bool _isApprovingOrDenying = false;
 
   @override
   void initState() {
     super.initState();
     _loadTripServices();
+    _startAutoRefresh();
+    _loadApprovalStatusIfTeamTrip();
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startAutoRefresh() {
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      _refreshTrip();
+    });
+  }
+
+  Future<void> _refreshTrip() async {
+    context.read<TripCubit>().refereshSelectedTrip();
+    await Future.delayed(const Duration(milliseconds: 500));
+    await _loadTripServices(showLoading: false);
+    await _loadApprovalStatusIfTeamTrip();
+  }
+
+  Future<void> _loadApprovalStatusIfTeamTrip() async {
+    final isTeamTrip = context.read<TripCubit>().isViewingTeamTrip;
+    if (!isTeamTrip) return;
+
+    final tripState = context.read<TripCubit>().state;
+    if (tripState is! TripLoaded) return;
+
+    final trip = tripState.selectedTrip;
+    if (trip?.tripUid == null) return;
+
+    try {
+      final response =
+          await context.read<TripCubit>().getTripApprovalStatus(trip!.tripUid!);
+      if (mounted) {
+        setState(() {
+          _approvalStatus = response.status;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading approval status: $e');
+    }
   }
 
   final _supportedServiceForTrip = [
@@ -61,17 +114,19 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     });
   }
 
-  Future<void> _loadTripServices() async {
+  Future<void> _loadTripServices({bool showLoading = true}) async {
     var tripState = context.read<TripCubit>().state;
     if (tripState is! TripLoaded) {
       return;
     }
     var trip = tripState.selectedTrip!;
-    setState(() {
-      _isLoading = true;
-      _error = null;
-      _orderDetails.clear();
-    });
+    if (showLoading) {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+        _orderDetails.clear();
+      });
+    }
 
     try {
       final tripItems = trip.tripItemList ?? [];
@@ -88,9 +143,13 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         }
       }
 
-      setState(() {
-        _isLoading = false;
-      });
+      if (showLoading) {
+        setState(() {
+          _isLoading = false;
+        });
+      } else {
+        setState(() {});
+      }
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -225,53 +284,60 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                         )
                       : _error != null
                           ? _buildError()
-                          : SingleChildScrollView(
-                              child: Padding(
-                                padding: EdgeInsets.all(24.h),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if ((state).selectedTrip?.status ==
-                                        TripStatusEnum.NEW)
-                                      if (_supportedServiceForTrip.any((s) =>
-                                          !_isServiceInTrip(
-                                              state.selectedTrip!, s))) ...[
-                                        Text(
-                                          'Add Services',
-                                          style:
-                                              TextStyles.bodyLargeBoldStyle(),
-                                        ),
-                                        SizedBox(height: 16.h),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: _supportedServiceForTrip
-                                              .map((supportedService) {
-                                            final isAdded = _isServiceInTrip(
-                                                (state).selectedTrip!,
-                                                supportedService);
-                                            return ImageIconButton(
-                                              onClick: isAdded
-                                                  ? null
-                                                  : () {
-                                                      navigateToService(context,
-                                                          supportedService);
-                                                    },
-                                              image: AssetImage(
-                                                  "assets/images/icons/${supportedService.getImagePath()}.png"),
-                                              title: supportedService.name,
-                                            );
-                                          }).toList(),
-                                        ),
-                                        SizedBox(height: 24.h),
-                                      ],
-                                    Text(
-                                      'Trip Cart',
-                                      style: TextStyles.bodyLargeBoldStyle(),
-                                    ),
-                                    SizedBox(height: 16.h),
-                                    _buildTripCart(state.selectedTrip!),
-                                  ],
+                          : RefreshIndicator(
+                              onRefresh: _refreshTrip,
+                              child: SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: Padding(
+                                  padding: EdgeInsets.all(24.h),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (!state.isViewingTeamTrip &&
+                                          (state).selectedTrip?.status ==
+                                              TripStatusEnum.NEW)
+                                        if (_supportedServiceForTrip.any((s) =>
+                                            !_isServiceInTrip(
+                                                state.selectedTrip!, s))) ...[
+                                          Text(
+                                            'Add Services',
+                                            style:
+                                                TextStyles.bodyLargeBoldStyle(),
+                                          ),
+                                          SizedBox(height: 16.h),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: _supportedServiceForTrip
+                                                .map((supportedService) {
+                                              final isAdded = _isServiceInTrip(
+                                                  (state).selectedTrip!,
+                                                  supportedService);
+                                              return ImageIconButton(
+                                                onClick: isAdded
+                                                    ? null
+                                                    : () {
+                                                        navigateToService(
+                                                            context,
+                                                            supportedService);
+                                                      },
+                                                image: AssetImage(
+                                                    "assets/images/icons/${supportedService.getImagePath()}.png"),
+                                                title: supportedService.name,
+                                              );
+                                            }).toList(),
+                                          ),
+                                          SizedBox(height: 24.h),
+                                        ],
+                                      Text(
+                                        'Trip Cart',
+                                        style: TextStyles.bodyLargeBoldStyle(),
+                                      ),
+                                      SizedBox(height: 16.h),
+                                      _buildTripCart(state.selectedTrip!),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -350,53 +416,62 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
           return const SizedBox.shrink();
         }
 
-        return _buildServiceCard(item, order, trip);
+        final isTeamTrip = context.read<TripCubit>().isViewingTeamTrip;
+
+        return _buildServiceCard(item, order, trip, isTeamTrip: isTeamTrip);
       },
     );
   }
 
   Widget _buildServiceCard(
-      TripAirItem item, OrderStatus order, TripResponse trip) {
+      TripAirItem item, OrderStatus order, TripResponse trip,
+      {bool isTeamTrip = false}) {
     final productType = item.type;
     final isNewStatus =
         trip.status == TripStatusEnum.NEW || trip.status?.code == 'N';
+
+    final showModifyButton = !isTeamTrip && isNewStatus;
 
     switch (productType) {
       case ProductTypeEnum.AIR:
         return AirOrderDetailCard(
           orderStatus: order,
-          customButtonText: !isNewStatus ? null : 'Modify',
-          onCustomButtonPressed: !isNewStatus
+          customButtonText: !showModifyButton ? null : 'Modify',
+          onCustomButtonPressed: !showModifyButton
               ? null
               : () {
                   navigateToService(context, SupportedService.Flights);
                 },
+          readonly: isTeamTrip,
         );
       case ProductTypeEnum.HOTEL:
         return HotelOrderDetailCard(
           orderStatus: order,
-          customButtonText: !isNewStatus ? null : 'Modify',
-          onCustomButtonPressed: !isNewStatus
+          customButtonText: !showModifyButton ? null : 'Modify',
+          onCustomButtonPressed: !showModifyButton
               ? null
               : () {
                   navigateToService(context, SupportedService.Hotels);
                 },
+          readonly: isTeamTrip,
         );
       case ProductTypeEnum.BUS:
         return BusOrderDetailCard(
           orderStatus: order,
-          customButtonText: !isNewStatus ? null : 'Modify',
-          onCustomButtonPressed: !isNewStatus ? null : () {},
+          customButtonText: !showModifyButton ? null : 'Modify',
+          onCustomButtonPressed: !showModifyButton ? null : () {},
+          readonly: isTeamTrip,
         );
       default:
         return AirOrderDetailCard(
           orderStatus: order,
-          customButtonText: !isNewStatus ? null : 'Modify',
-          onCustomButtonPressed: !isNewStatus
+          customButtonText: !showModifyButton ? null : 'Modify',
+          onCustomButtonPressed: !showModifyButton
               ? null
               : () {
                   navigateToService(context, SupportedService.Flights);
                 },
+          readonly: isTeamTrip,
         );
     }
   }
@@ -406,7 +481,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
 
     final isNewStatus =
         trip.status == TripStatusEnum.NEW || trip.status?.code == 'N';
-    if (!isNewStatus) return const SizedBox.shrink();
 
     final totalPrice = _calculateTotalPrice();
 
@@ -417,29 +491,77 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         }
       },
       builder: (context, state) {
-        return SizedBox(
-          height: 100.h,
-          child: BottomButton(
-            title: '₹${totalPrice.toStringAsFixed(2)}',
-            subtitle: 'Total Trip Cost',
-            buttonText: 'Send for Approval',
-            onClick: () async {
-              try {
-                await context.read<TripCubit>().sendTripForApproval();
-                if (context.mounted) {
-                  WidgetUtil.showSnackBar(
-                      'Trip sent for approval successfully', context,
-                      col: AppColors.primaryGreen);
+        final isTeamTrip = state is TripLoaded && state.isViewingTeamTrip;
+
+        if (isTeamTrip) {
+          final showApprovalButtons =
+              _approvalStatus == TripApprovalResponseStatus.REVIEW;
+
+          if (!showApprovalButtons) {
+            return const SizedBox.shrink();
+          }
+
+          return Container(
+            padding: EdgeInsets.all(16.w),
+            margin: EdgeInsets.only(bottom: 24.h),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: _isApprovingOrDenying
+                ? const Center(child: CircularProgressIndicator())
+                : Row(
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          text: 'Approve',
+                          onPressed: () => _handleApproveTrip(context, trip),
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: CustomOutlinedButton(
+                          text: 'Deny',
+                          buttonType: OutlinedButtonType.danger,
+                          onPressed: () => _handleDenyTrip(context, trip),
+                        ),
+                      ),
+                    ],
+                  ),
+          );
+        }
+        if (isNewStatus) {
+          return SizedBox(
+            height: 100.h,
+            child: BottomButton(
+              title: '₹${totalPrice.toStringAsFixed(2)}',
+              subtitle: 'Total Trip Cost',
+              buttonText: 'Send for Approval',
+              onClick: () async {
+                try {
+                  await context.read<TripCubit>().sendTripForApproval();
+                  if (context.mounted) {
+                    WidgetUtil.showSnackBar(
+                        'Trip sent for approval successfully', context,
+                        col: AppColors.primaryGreen);
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    WidgetUtil.showSnackBar(
+                        'Failed to send trip for approval', context);
+                  }
                 }
-              } catch (e) {
-                if (context.mounted) {
-                  WidgetUtil.showSnackBar(
-                      'Failed to send trip for approval', context);
-                }
-              }
-            },
-          ),
-        );
+              },
+            ),
+          );
+        }
+        return const SizedBox.shrink();
       },
     );
   }
@@ -484,6 +606,118 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     }
 
     return total;
+  }
+
+  Future<void> _handleApproveTrip(
+      BuildContext context, TripResponse trip) async {
+    if (trip.tripUid == null) return;
+
+    WidgetUtil.showPopup(
+      context,
+      icon: Image.asset(
+        "assets/images/order_success.png",
+        height: 100.h,
+      ),
+      title: "Are you sure you want to approve this trip?",
+      buttons: [
+        PopupButton(
+          text: "No",
+          type: PopupButtonType.secondary,
+          onPressed: () {},
+        ),
+        PopupButton(
+          text: "Yes",
+          onPressed: () async {
+            setState(() {
+              _isApprovingOrDenying = true;
+            });
+
+            try {
+              await context.read<TripCubit>().approveTrip(trip.tripUid!, '');
+
+              await _loadApprovalStatusIfTeamTrip();
+              context.read<TripCubit>().refereshSelectedTrip();
+
+              if (mounted) {
+                WidgetUtil.showSnackBar(
+                  'Trip approved successfully',
+                  context,
+                  col: AppColors.primaryGreen,
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                WidgetUtil.showSnackBar(
+                  'Failed to approve trip, try again',
+                  context,
+                );
+              }
+            } finally {
+              if (mounted) {
+                setState(() {
+                  _isApprovingOrDenying = false;
+                });
+              }
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Future<void> _handleDenyTrip(BuildContext context, TripResponse trip) async {
+    if (trip.tripUid == null) return;
+
+    WidgetUtil.showPopup(
+      context,
+      icon: Image.asset(
+        "assets/images/cacel_icon.png",
+        height: 40.h,
+      ),
+      title: "Are you sure you want to deny this trip?",
+      buttons: [
+        PopupButton(
+          text: "No",
+          type: PopupButtonType.secondary,
+          onPressed: () {},
+        ),
+        PopupButton(
+          text: "Yes",
+          onPressed: () async {
+            setState(() {
+              _isApprovingOrDenying = true;
+            });
+
+            try {
+              await context.read<TripCubit>().denyTrip(trip.tripUid!, '');
+
+              await _loadApprovalStatusIfTeamTrip();
+
+              if (mounted) {
+                WidgetUtil.showSnackBar(
+                  'Trip denied successfully',
+                  context,
+                  col: AppColors.primaryGreen,
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                WidgetUtil.showSnackBar(
+                  'Failed to deny trip: ${e.toString()}',
+                  context,
+                );
+              }
+            } finally {
+              if (mounted) {
+                setState(() {
+                  _isApprovingOrDenying = false;
+                });
+              }
+            }
+          },
+        ),
+      ],
+    );
   }
 
   Color _getStatusColor(TripStatusEnum status) {

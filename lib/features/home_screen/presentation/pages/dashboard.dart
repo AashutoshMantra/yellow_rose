@@ -59,7 +59,7 @@ class _DashboardState extends State<Dashboard> {
         return Scaffold(
             appBar: BaseAppBar(
               title: castedState.selectedPage == 0
-                  ? (_shouldShowTripAsHome ? "My Trips" : "Where to go?")
+                  ? (_shouldShowTripAsHome ? "Trips" : "Where to go?")
                   : castedState.selectedPage == 1
                       ? "My Bookings"
                       : "Profile",

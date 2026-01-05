@@ -165,10 +165,14 @@ class AppRouter {
         var args = settings.arguments as Map?;
         if (args?['orderStatus'] != null) {
           var orderStatus = args!["orderStatus"] as OrderStatus;
+          var isReadOnly = args["readonly"] as bool;
           return MaterialPageRoute(
             settings: RouteSettings(
                 name: formatScreenName((FlightTicketScreen).toString())),
-            builder: (_) => FlightTicketScreen(orderStatus: orderStatus),
+            builder: (_) {
+              return FlightTicketScreen(
+                  orderStatus: orderStatus, readonly: isReadOnly);
+            },
           );
         }
       case FlightOrderModifyScreen.routeName:
@@ -323,10 +327,12 @@ class AppRouter {
         var args = settings.arguments as Map?;
         if (args?['orderStatus'] != null) {
           final orderStatus = args!['orderStatus'] as OrderStatus;
+          final readonly = args['readonly'] as bool;
           return MaterialPageRoute(
             settings: RouteSettings(
                 name: formatScreenName((HotelBookingDetailScreen).toString())),
-            builder: (_) => HotelBookingDetailScreen(orderStatus: orderStatus),
+            builder: (_) => HotelBookingDetailScreen(
+                orderStatus: orderStatus, readonly: readonly),
           );
         }
         break;
@@ -423,10 +429,12 @@ class AppRouter {
         var args = settings.arguments as Map?;
         if (args?['orderStatus'] != null) {
           final orderStatus = args!['orderStatus'] as OrderStatus;
+          final readonly = args['readonly'] as bool;
           return MaterialPageRoute(
             settings: RouteSettings(
                 name: formatScreenName((BusTicketDetailScreen).toString())),
-            builder: (_) => BusTicketDetailScreen(orderStatus: orderStatus),
+            builder: (_) => BusTicketDetailScreen(
+                orderStatus: orderStatus, readonly: readonly),
           );
         }
         break;

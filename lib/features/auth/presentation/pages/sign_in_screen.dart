@@ -25,7 +25,7 @@ class SignInScreen extends StatelessWidget {
       if (_formKey.currentState!.validate()) {
         _btnController.start();
         await context.read<SignInFormCubit>().signIn();
-        context.read<AuthCubit>().appStarted();
+        await context.read<AuthCubit>().appStarted();
         Navigator.of(context).pushReplacementNamed(Dashboard.routeName);
         _btnController.successReset();
       }

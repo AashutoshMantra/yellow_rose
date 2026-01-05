@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/loader.dart';
+import 'package:yellow_rose/core/common_widgets/rounded_tab_bar.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
@@ -48,14 +49,64 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<TripCubit, TripState>(
       builder: (context, state) {
-        return Scaffold(
-          body: _buildBody(state),
+        if (state is! TripLoaded) {
+          return Scaffold(
+            body: _buildBody(state, isTeamTrips: false),
+          );
+        }
+
+        return DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            body: Column(
+              children: [
+                Container(
+                  color: AppColors.primary,
+                  child: SafeArea(
+                    bottom: false,
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 16.h),
+                          child: RoundedTabBars(
+                            onTap: (index) {},
+                            tabBarHeight: 48.h,
+                            tabChildrens: const [
+                              Tab(
+                                child: Center(
+                                  child: Text('My Trips'),
+                                ),
+                              ),
+                              Tab(
+                                child: Center(
+                                  child: Text('Team Trips'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      _buildBody(state, isTeamTrips: false),
+                      _buildBody(state, isTeamTrips: true),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
 
-  Widget _buildBody(TripState state) {
+  Widget _buildBody(TripState state, {required bool isTeamTrips}) {
     if (state is TripLoading) {
       return const Center(
         child: Loader(color: Colors.transparent),
@@ -99,16 +150,17 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
     }
 
     if (state is TripLoaded) {
-      if (state.trips.isEmpty) {
-        return _buildEmptyState();
+      final trips = isTeamTrips ? state.teamTrips : state.trips;
+      if (trips.isEmpty) {
+        return _buildEmptyState(isTeamTrips);
       }
-      return _buildTripList(state.trips);
+      return _buildTripList(trips, isTeamTrips);
     }
 
     return const SizedBox.shrink();
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(bool isTeamTrips) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(24.w),
@@ -122,29 +174,33 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
             ),
             SizedBox(height: 16.h),
             Text(
-              'No trips yet',
+              isTeamTrips ? 'No team trips yet' : 'No trips yet',
               style: TextStyles.bodyLargeBoldStyle(),
             ),
             SizedBox(height: 8.h),
             Text(
-              'Create your first trip to get started',
+              isTeamTrips
+                  ? 'Team trips will appear here when available'
+                  : 'Create your first trip to get started',
               style: TextStyles.bodyMediumMediumStyle().copyWith(
                 color: AppColors.primaryTextSwatch[500],
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 24.h),
-            CustomButton(
-              text: 'Create Trip',
-              onPressed: _showCreateTripSheet,
-            ),
+            if (!isTeamTrips) ...[
+              SizedBox(height: 24.h),
+              CustomButton(
+                text: 'Create Trip',
+                onPressed: _showCreateTripSheet,
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTripList(List<TripResponse> trips) {
+  Widget _buildTripList(List<TripResponse> trips, bool isTeamTrips) {
     return Column(
       children: [
         Expanded(
@@ -159,7 +215,9 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
                 return TripCard(
                   trip: trip,
                   onTap: () {
-                    context.read<TripCubit>().selectTrip(trip);
+                    context
+                        .read<TripCubit>()
+                        .selectTrip(trip, isTeamTrip: isTeamTrips);
                     Navigator.pushNamed(
                       context,
                       TripDetailScreen.routeName,
@@ -171,29 +229,30 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
             ),
           ),
         ),
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: CustomButton(
-                  text: 'Create Trip',
-                  onPressed: _showCreateTripSheet,
+        if (!isTeamTrips)
+          Container(
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
                 ),
-              ),
-            ],
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: CustomButton(
+                    text: 'Create Trip',
+                    onPressed: _showCreateTripSheet,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }

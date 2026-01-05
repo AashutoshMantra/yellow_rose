@@ -20,8 +20,13 @@ import 'package:yellow_rose/features/home_screen/presentation/widgets/common/ord
 class HotelBookingDetailScreen extends StatelessWidget {
   static const String routeName = '/hotelBookingDetails';
   final OrderStatus orderStatus;
+  final bool readonly;
 
-  const HotelBookingDetailScreen({super.key, required this.orderStatus});
+  const HotelBookingDetailScreen({
+    super.key,
+    required this.orderStatus,
+    this.readonly = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +116,9 @@ class HotelBookingDetailScreen extends StatelessWidget {
 
   Widget? _buildDownloadButton(BuildContext context) {
     final orderId = orderStatus.uuid;
-    if (orderId == null || orderStatus.status?.isTicketDownloadable() != true) {
+    if (orderId == null ||
+        orderStatus.status?.isTicketDownloadable() != true ||
+        readonly) {
       return null;
     }
     return Container(

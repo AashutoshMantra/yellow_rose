@@ -20,8 +20,13 @@ import 'package:yellow_rose/features/home_screen/presentation/widgets/common/ord
 class BusTicketDetailScreen extends StatelessWidget {
   static const String routeName = '/busTicketDetails';
   final OrderStatus orderStatus;
+  final bool readonly;
 
-  const BusTicketDetailScreen({super.key, required this.orderStatus});
+  const BusTicketDetailScreen({
+    super.key,
+    required this.orderStatus,
+    this.readonly = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +110,7 @@ class BusTicketDetailScreen extends StatelessWidget {
                   ),
                 SizedBox(height: 16.h),
                 // Modify Booking Button
-                if (_canModifyBooking(itinerary))
+                if (_canModifyBooking(itinerary) && !readonly)
                   SizedBox(
                     width: double.infinity,
                     child: CustomButton(
