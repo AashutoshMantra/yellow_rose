@@ -448,12 +448,19 @@ class AppRouter {
 
       case TripDetailScreen.routeName:
         var args = settings.arguments as Map?;
-        if (args?['trip'] != null) {
+        if (args?['trip'] != null && args?['isTeamTrips']!=null) {
           final trip = args!['trip'] as TripResponse;
+          final isTeamTrips = args['isTeamTrips'] as bool;
+
           return MaterialPageRoute(
             settings: RouteSettings(
                 name: formatScreenName((TripDetailScreen).toString())),
-            builder: (_) => const TripDetailScreen(),
+            builder: (context) {
+              context
+                  .read<TripCubit>()
+                  .selectTrip(trip, isTeamTrip: isTeamTrips);
+              return const TripDetailScreen();
+            },
           );
         }
         break;

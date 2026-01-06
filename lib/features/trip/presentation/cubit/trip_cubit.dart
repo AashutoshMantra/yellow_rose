@@ -57,7 +57,7 @@ class TripCubit extends Cubit<TripState> {
     }
   }
 
-  Future<void> createTrip(TripCreateRequest request) async {
+  Future<TripResponse> createTrip(TripCreateRequest request) async {
     final currentState = state;
     try {
       final trip = await _tripUseCase.createTrip(request);
@@ -68,6 +68,7 @@ class TripCubit extends Cubit<TripState> {
       } else {
         emit(TripLoaded(trips: [trip]));
       }
+      return trip;
     } catch (e, s) {
       log("$e $s");
       rethrow;

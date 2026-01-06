@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
+import 'package:yellow_rose/core/common_widgets/custom_text_form_field.dart';
 import 'package:yellow_rose/core/common_widgets/loader.dart';
 import 'package:yellow_rose/core/common_widgets/rounded_tab_bar.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
@@ -24,10 +25,18 @@ class TripHomeScreen extends StatefulWidget {
 }
 
 class _TripHomeScreenState extends State<TripHomeScreen> {
+  final ValueNotifier<String> _searchQuery = ValueNotifier<String>('');
+
   @override
   void initState() {
     super.initState();
     _loadTrips();
+  }
+
+  @override
+  void dispose() {
+    _searchQuery.dispose();
+    super.dispose();
   }
 
   void _loadTrips() {
@@ -51,7 +60,7 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
       builder: (context, state) {
         if (state is! TripLoaded) {
           return Scaffold(
-            body: _buildBody(state, isTeamTrips: false),
+            body: _buildBody(state, isTeamTrips: false, searchQuery: ''),
           );
         }
 
@@ -85,17 +94,35 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 8.h),
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 16.w, vertical: 12.h),
+                          child: CustomTextFormField(
+                            icon: Icons.search,
+                            fillColor: Colors.white,
+                            text: "Search trips",
+                            onchange: (value) {
+                              _searchQuery.value = value?.toLowerCase() ?? '';
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
                 Expanded(
-                  child: TabBarView(
-                    children: [
-                      _buildBody(state, isTeamTrips: false),
-                      _buildBody(state, isTeamTrips: true),
-                    ],
+                  child: ValueListenableBuilder<String>(
+                    valueListenable: _searchQuery,
+                    builder: (context, searchQuery, child) {
+                      return TabBarView(
+                        children: [
+                          _buildBody(state,
+                              isTeamTrips: false, searchQuery: searchQuery),
+                          _buildBody(state,
+                              isTeamTrips: true, searchQuery: searchQuery),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ],
@@ -106,7 +133,8 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
     );
   }
 
-  Widget _buildBody(TripState state, {required bool isTeamTrips}) {
+  Widget _buildBody(TripState state,
+      {required bool isTeamTrips, required String searchQuery}) {
     if (state is TripLoading) {
       return const Center(
         child: Loader(color: Colors.transparent),
@@ -151,10 +179,22 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
 
     if (state is TripLoaded) {
       final trips = isTeamTrips ? state.teamTrips : state.trips;
-      if (trips.isEmpty) {
+
+      final filteredTrips = searchQuery.isEmpty
+          ? trips
+          : trips.where((trip) {
+              final tripName = trip.tripName?.toLowerCase() ?? '';
+              final tripFor = trip.tripFor?.toLowerCase() ?? '';
+              final tripPurpose = trip.tripPurpose?.toLowerCase() ?? '';
+              return tripName.contains(searchQuery) ||
+                  tripFor.contains(searchQuery) ||
+                  tripPurpose.contains(searchQuery);
+            }).toList();
+
+      if (filteredTrips.isEmpty) {
         return _buildEmptyState(isTeamTrips);
       }
-      return _buildTripList(trips, isTeamTrips);
+      return _buildTripList(filteredTrips, isTeamTrips);
     }
 
     return const SizedBox.shrink();
@@ -215,13 +255,10 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
                 return TripCard(
                   trip: trip,
                   onTap: () {
-                    context
-                        .read<TripCubit>()
-                        .selectTrip(trip, isTeamTrip: isTeamTrips);
                     Navigator.pushNamed(
                       context,
                       TripDetailScreen.routeName,
-                      arguments: {'trip': trip},
+                      arguments: {'trip': trip, "isTeamTrips": isTeamTrips},
                     );
                   },
                 );

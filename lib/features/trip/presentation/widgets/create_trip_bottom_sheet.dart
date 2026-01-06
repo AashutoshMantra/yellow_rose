@@ -10,6 +10,7 @@ import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
+import 'package:yellow_rose/features/trip/presentation/pages/trip_detail_screen.dart';
 
 class CreateTripBottomSheet extends StatefulWidget {
   const CreateTripBottomSheet({super.key});
@@ -56,12 +57,17 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
     );
 
     try {
-      await context.read<TripCubit>().createTrip(request);
+      var createdTrip = await context.read<TripCubit>().createTrip(request);
       _buttonController.successReset();
       if (mounted) {
         Future.delayed(const Duration(milliseconds: 600), () {
           if (mounted) {
             Navigator.of(context).pop();
+            Navigator.pushNamed(
+              context,
+              TripDetailScreen.routeName,
+              arguments: {'trip': createdTrip, "isTeamTrips": false},
+            );
           }
         });
       }

@@ -66,7 +66,7 @@ class _DashboardState extends State<Dashboard> {
               subTitle: "",
               titleStyle: TextStyles.bodyXLargeBoldStyle()
                   .copyWith(color: Colors.white),
-              height: 90.h,
+              height: _shouldShowTripAsHome ? 45.h : 90.h,
               shouldHaveRadius:
                   castedState.selectedPage == 0 && !_shouldShowTripAsHome,
             ),

@@ -28,6 +28,7 @@ import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_status_enum.dart';
 import 'package:yellow_rose/features/trip/domain/entities/trip_approval_response_status.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
+import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_status_banner.dart';
 
 class TripDetailScreen extends StatefulWidget {
   static const String routeName = '/trip-detail';
@@ -160,105 +161,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     }
   }
 
-  Widget _buildStatusBanner(TripResponse trip) {
-    final status = trip.status;
-    if (status == null) return const SizedBox.shrink();
-
-    final statusColor = _getStatusColor(status);
-    final statusIcon = _getStatusIcon(status);
-
-    return Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            statusColor.withOpacity(0.15),
-            statusColor.withOpacity(0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: statusColor.withOpacity(0.3),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: statusColor.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: statusColor,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: statusColor.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                statusIcon,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Current Status',
-                    style: TextStyles.bodySmallStyle().copyWith(
-                      color: AppColors.primaryTextSwatch[500],
-                      fontSize: 11,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    status.description,
-                    style: TextStyles.bodyLargeBoldStyle().copyWith(
-                      color: statusColor,
-                      fontSize: 18,
-                      height: 1.2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: statusColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                status.code,
-                style: TextStyles.bodySmallBoldStyle().copyWith(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<TripCubit, TripState>(
@@ -278,7 +180,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
             body: Column(
               children: [
                 if (state is TripLoaded)
-                  _buildStatusBanner(state.selectedTrip!),
+                  TripStatusBanner(trip: state.selectedTrip!),
                 Expanded(
                   child: (state is! TripLoaded || _isLoading)
                       ? const Center(
@@ -326,6 +228,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                                                       },
                                                 image: AssetImage(
                                                     "assets/images/icons/${supportedService.getImagePath()}.png"),
+                                                color: AppColors.icon,
                                                 title: supportedService.name,
                                               );
                                             }).toList(),
@@ -572,44 +475,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     return trip.tripItemList?.fold(
             0.0, (prev, element) => prev! + (element.itineraryCost ?? 0.0)) ??
         0.0;
-
-    // for (final order in _orderDetails.values) {
-    //   if (order.airItineraries != null && order.airItineraries!.isNotEmpty) {
-    //     final primary = order.airItineraries!.first;
-    //     final fareEntries = primary.flightDetails?.fare;
-
-    //     if (fareEntries != null && fareEntries.isNotEmpty) {
-    //       final cost = fareEntries.first.totalCost;
-    //       if (cost > 0) {
-    //         total += cost;
-    //         continue;
-    //       }
-    //     }
-
-    //     for (final pax in primary.orderPassengerDetails) {
-    //       final bookingClasses = pax.fareDetails?.passengerBookingClasses;
-    //       if (bookingClasses != null && bookingClasses.isNotEmpty) {
-    //         final fareDetails =
-    //             bookingClasses.first.fareDetailsPerPassengerType;
-    //         total += fareDetails.baseFare + fareDetails.finalTax;
-    //       }
-    //     }
-    //   } else if (order.hotelBooking != null) {
-    //     final amount = order.hotelBooking!.payment?.amount;
-    //     if (amount != null && amount > 0) {
-    //       total += amount;
-    //     }
-    //   } else if (order.busOrderItineraries != null &&
-    //       order.busOrderItineraries!.isNotEmpty) {
-    //     final itinerary = order.busOrderItineraries!.first;
-    //     final amount = itinerary.customerPayment.totalBookingAmount;
-    //     if (amount > 0) {
-    //       total += amount;
-    //     }
-    //   }
-    // }
-
-    // return total;
   }
 
   Future<void> _handleApproveTrip(
@@ -722,51 +587,5 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         ),
       ],
     );
-  }
-
-  Color _getStatusColor(TripStatusEnum status) {
-    switch (status.code) {
-      case 'A':
-      case 'B':
-      case 'C':
-        return Colors.green;
-      case 'P':
-      case 'I':
-      case 'R':
-        return Colors.orange;
-      case 'D':
-      case 'F':
-        return Colors.red;
-      case 'N':
-      case 'G':
-        return AppColors.primary;
-      default:
-        return AppColors.primaryTextSwatch[400]!;
-    }
-  }
-
-  IconData _getStatusIcon(TripStatusEnum status) {
-    switch (status.code) {
-      case 'A':
-        return Icons.check_circle;
-      case 'B':
-        return Icons.flight;
-      case 'C':
-        return Icons.done_all;
-      case 'P':
-      case 'I':
-      case 'R':
-        return Icons.pending;
-      case 'D':
-        return Icons.cancel;
-      case 'F':
-        return Icons.error;
-      case 'N':
-        return Icons.fiber_new;
-      case 'G':
-        return Icons.edit_note;
-      default:
-        return Icons.info;
-    }
   }
 }
