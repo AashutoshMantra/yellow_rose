@@ -1,6 +1,7 @@
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_request.dart';
+import 'package:yellow_rose/features/auth/data/models/profile/user_booking_profile.dart';
 import 'package:yellow_rose/features/auth/data/models/sign_in_request.dart';
 import 'package:yellow_rose/features/auth/domain/entities/user_details.dart';
 import 'package:yellow_rose/features/auth/domain/repositories/auth_repo.dart';
@@ -9,10 +10,13 @@ import 'package:yellow_rose/features/home_screen/domain/usecases/recent_search_u
 abstract class IAuthUseCase {
   Future signIn(SignInRequest signInRequest);
   bool isLoggedIn();
-  UserDetails? getUserProfile();
+  UserDetails? getUserDetails();
   Future<List<BillingEntity>> getBillingEntity(String uuid);
   Future<void> signOut();
   Future<ApprovalWorkflow> getApprovalWorkflow();
+  Future<List<UserBookingProfile>> getAllCorporateProfile();
+  Future<UserBookingProfile> getUserProfile();
+  Future<List<UserBookingProfile>> getGroupByCorporateUserProfiles();
 }
 
 class AuthUseCase implements IAuthUseCase {
@@ -30,8 +34,8 @@ class AuthUseCase implements IAuthUseCase {
   }
 
   @override
-  UserDetails? getUserProfile() {
-    return getIt<AuthRepository>().getUserProfile();
+  UserDetails? getUserDetails() {
+    return getIt<AuthRepository>().getUserDetail();
   }
 
   @override
@@ -49,5 +53,20 @@ class AuthUseCase implements IAuthUseCase {
   @override
   Future<ApprovalWorkflow> getApprovalWorkflow() {
     return _authRepo.getApprovalWorkflow();
+  }
+
+  @override
+  Future<List<UserBookingProfile>> getAllCorporateProfile() {
+    return _authRepo.getAllCorporateProfile();
+  }
+
+  @override
+  Future<UserBookingProfile> getUserProfile() {
+    return _authRepo.getUserProfile();
+  }
+
+  @override
+  Future<List<UserBookingProfile>> getGroupByCorporateUserProfiles() {
+    return _authRepo.getGroupByCorporateUserProfiles();
   }
 }

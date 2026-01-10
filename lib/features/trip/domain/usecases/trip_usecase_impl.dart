@@ -48,4 +48,9 @@ class TripUseCaseImpl implements TripUseCase {
   Future<TripApprovalResponse> getTripApprovalStatus(String tripUid) async {
     return await _tripRepository.getTripApprovalStatus(tripUid);
   }
+
+  @override
+  Future<Map<String, String>> cancelTrip(List<String> tripItemList) {
+    return _tripRepository.cancelTrip(tripItemList);
+  }
 }

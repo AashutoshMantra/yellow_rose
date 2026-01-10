@@ -186,4 +186,46 @@ class TripCubit extends Cubit<TripState> {
       rethrow;
     }
   }
+
+  Future<void> cancelTrip() async {
+    final currentSelectedTrip = selectedTrip;
+    if (currentSelectedTrip == null) {
+      throw Exception('No trip selected');
+    }
+
+    final currentState = state as TripLoaded;
+
+    // Extract all trip item IDs from the trip
+    final tripItemIds = currentSelectedTrip.tripItemList
+            ?.map((item) => item.id)
+            .whereType<String>()
+            .toList() ??
+        [];
+
+    if (tripItemIds.isEmpty) {
+      throw Exception('No items to cancel in this trip');
+    }
+
+    emit(TripLoading());
+
+    try {
+      await _tripUseCase.cancelTrip(tripItemIds);
+
+      // Refresh the trip after cancellation
+      final refreshedTrip =
+          await _tripUseCase.getTripById(currentSelectedTrip.tripUid!);
+
+      final updatedTrips = currentState.trips.map((trip) {
+        return trip.tripUid == refreshedTrip.tripUid ? refreshedTrip : trip;
+      }).toList();
+
+      emit(currentState.copyWith(
+        trips: updatedTrips,
+        selectedTrip: refreshedTrip,
+      ));
+    } catch (e) {
+      emit(currentState);
+      rethrow;
+    }
+  }
 }

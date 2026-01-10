@@ -12,4 +12,5 @@ abstract interface class TripRepository {
   Future<List<TripResponse>> getMyTeamTrip(String userId);
   Future<void> approveDenyTrip(TripApprovalRequest request);
   Future<TripApprovalResponse> getTripApprovalStatus(String tripUid);
+  Future<Map<String, String>> cancelTrip(List<String> tripItemList);
 }

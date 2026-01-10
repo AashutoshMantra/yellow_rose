@@ -118,6 +118,11 @@ class HotelBookFormScreen extends StatelessWidget {
                         var billingEntities =
                             (context.read<AuthCubit>().state as Authenticated)
                                 .billingEntities;
+
+                        // Get saved profiles for searchable dropdown
+                        final allProfiles =
+                            context.read<AuthCubit>().allProfiles;
+
                         return SingleChildScrollView(
                           physics: const ClampingScrollPhysics(),
                           child: Column(
@@ -135,6 +140,7 @@ class HotelBookFormScreen extends StatelessWidget {
                                           hotelSearch.childAges?.length ?? 0,
                                       maxInfant: 0,
                                       passengerDetails: state.passengerDetails,
+                                      savedProfiles: allProfiles,
                                       onAddUpdate: (passengerDetail) {
                                         context
                                             .read<HotelBookCubit>()

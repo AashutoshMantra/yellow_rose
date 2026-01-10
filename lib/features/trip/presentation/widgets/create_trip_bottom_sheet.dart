@@ -25,7 +25,7 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
   final _tripNameController = TextEditingController();
   final _tripDescriptionController = TextEditingController();
 
-  String? _selectedTripFor;
+  TripFor? _selectedTripFor;
   String? _selectedPurpose;
 
   final List<String> _purposeOptions = [

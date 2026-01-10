@@ -100,6 +100,9 @@ class FlightBookingScreen extends StatelessWidget {
               var billingEntities =
                   (context.read<AuthCubit>().state as Authenticated)
                       .billingEntities;
+
+              final allProfiles = context.read<AuthCubit>().allProfiles;
+
               return SingleChildScrollView(
                 physics: const ClampingScrollPhysics(),
                 child: Column(
@@ -150,6 +153,7 @@ class FlightBookingScreen extends StatelessWidget {
                             maxChild: airSearch.childCount,
                             maxInfant: airSearch.infantCount,
                             passengerDetails: state.passengerDetails,
+                            savedProfiles: allProfiles,
                             onAddUpdate: (passengerDetail) {
                               context
                                   .read<FlightBookingCubit>()

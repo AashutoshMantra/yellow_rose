@@ -3,6 +3,7 @@ import 'package:yellow_rose/core/utils/dio_client.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_request.dart';
+import 'package:yellow_rose/features/auth/data/models/profile/user_booking_profile.dart';
 import 'package:yellow_rose/features/auth/data/models/sign_in_request.dart';
 import 'package:yellow_rose/features/auth/data/models/sign_in_response.dart';
 
@@ -10,6 +11,9 @@ abstract interface class AuthService {
   Future<SignInResponse> signIn(SignInRequest signInRequest);
   Future<List<BillingEntity>> getBillingEntity(String uuid);
   Future<ApprovalWorkflow> getApprovalWorkflow();
+  Future<List<UserBookingProfile>> getAllCorporateProfile();
+  Future<UserBookingProfile> getUserProfile();
+  Future<List<UserBookingProfile>> getGroupByCorporateUserProfiles();
 }
 
 class AuthServiceIml implements AuthService {
@@ -44,5 +48,38 @@ class AuthServiceIml implements AuthService {
       '${AppConfig.instance.apiBaseUrl}/approval/workflow/assigned',
     );
     return ApprovalWorkflow.fromMap(response.data);
+  }
+
+  @override
+  Future<List<UserBookingProfile>> getAllCorporateProfile() async {
+    var response = await _dioClinet.post(
+        '${AppConfig.instance.apiBaseUrl}/crm/userProfile/list',
+        data: {});
+    final List<UserBookingProfile> profileList = (response.data ?? [])
+        .map<UserBookingProfile>((d) => UserBookingProfile.fromMap(d))
+        .toList();
+    return profileList;
+  }
+
+  @override
+  Future<UserBookingProfile> getUserProfile() async {
+    var response = await _dioClinet
+        .post('${AppConfig.instance.apiBaseUrl}/crm/userProfile', data: {});
+    return UserBookingProfile.fromMap(response.data);
+  }
+
+  @override
+  Future<List<UserBookingProfile>> getGroupByCorporateUserProfiles() async {
+    var response = await _dioClinet.post(
+        '${AppConfig.instance.apiBaseUrl}/crm/userBookProfile/list',
+        data: {});
+    final List<UserBookingProfile> profileList =
+        (response.data ?? []).map<UserBookingProfile>((d) {
+      var result = UserBookingProfile.fromMap(d["userBookingProfile"]);
+      return result.copyWith(
+          contactNumber: result.contactNumber ?? d["contactNumber"],
+          email: result.email ?? d["email"]);
+    }).toList();
+    return profileList;
   }
 }

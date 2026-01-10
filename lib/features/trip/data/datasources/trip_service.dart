@@ -15,6 +15,7 @@ abstract class TripService {
   Future<List<TripResponse>> getMyTeamTrip(String userId);
   Future<void> approveDenyTrip(TripApprovalRequest request);
   Future<TripApprovalResponse> getTripApprovalStatus(String tripUid);
+  Future<Map<String, String>> cancelTrip(List<String> tripItemList);
 }
 
 class TripServiceImpl implements TripService {
@@ -87,5 +88,14 @@ class TripServiceImpl implements TripService {
       '${AppConfig.instance.apiBaseUrl}/tripapproval/getByApprovalId/$tripUid',
     );
     return TripApprovalResponse.fromMap(response.data);
+  }
+
+  @override
+  Future<Map<String, String>> cancelTrip(List<String> tripItemList) async {
+    var response = await _dioClient.post(
+        "${AppConfig.instance.apiBaseUrl}/trips/canceltrip",
+        data: {"tripAirItemIdList": tripItemList});
+
+    return Map<String, String>.from(response.data);
   }
 }

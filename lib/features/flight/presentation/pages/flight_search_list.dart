@@ -23,6 +23,7 @@ import 'package:yellow_rose/features/flight/presentation/pages/selected_itinery_
 import 'package:yellow_rose/features/flight/presentation/widgets/bottom_button.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/flight_search_widget.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/itineray_detail_card.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 String getFlightDetailTitle(AirSearch airSearch) {
   if (airSearch.sources.length < 3) {
@@ -69,7 +70,9 @@ class FlightSearchListScreen extends StatelessWidget {
           initialData: context.read<FlightSearchListingCubit>().state.airSearch,
           onSearchClick: (search) {
             Navigator.of(context).pop();
-            context.read<FlightSearchListingCubit>().searchFlights(search);
+                            var selectedTrip = context.read<TripCubit>().selectedTrip;
+
+            context.read<FlightSearchListingCubit>().searchFlights(search, trip: selectedTrip);
           },
         ));
   }

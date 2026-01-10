@@ -107,6 +107,10 @@ class BusBookFormScreen extends StatelessWidget {
                       var billingEntities =
                           (context.read<AuthCubit>().state as Authenticated)
                               .billingEntities;
+
+                      // Get saved profiles for searchable dropdown
+                      final allProfiles = context.read<AuthCubit>().allProfiles;
+
                       return SingleChildScrollView(
                         physics: const ClampingScrollPhysics(),
                         child: Column(
@@ -122,6 +126,7 @@ class BusBookFormScreen extends StatelessWidget {
                                     maxInfant: 0,
                                     showAge: false,
                                     passengerDetails: state.passengers,
+                                    savedProfiles: allProfiles,
                                     onAddUpdate: (passenger) {
                                       context
                                           .read<BusBookCubit>()

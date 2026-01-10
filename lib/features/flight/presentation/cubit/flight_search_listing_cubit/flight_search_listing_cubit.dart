@@ -24,12 +24,13 @@ class FlightSearchListingCubit extends Cubit<FlightSearchListingState> {
       : super(FlightSearchListingInitial(airSearch: airSearch));
   final _airUsecase = getIt<AirUseCase>();
 
-  void searchFlights(AirSearch airSearch,{TripResponse? trip}) async {
+  void searchFlights(AirSearch airSearch, {TripResponse? trip}) async {
     try {
       emit(FlightSearchListingLoading(airSearch: airSearch));
 
-      var airSearchRequest =
-          AirMapperUtility.mapFlightStateToAirSearchRequest(airSearch, trip: trip);
+      var airSearchRequest = AirMapperUtility.mapFlightStateToAirSearchRequest(
+          airSearch,
+          trip: null);
       var airSearchResponse =
           await _airUsecase.getAirSearchResponse(airSearchRequest);
       var selectedItinararis = HashMap<int, AirResponseData>();

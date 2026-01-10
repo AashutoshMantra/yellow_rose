@@ -48,4 +48,9 @@ class TripRepositoryImpl implements TripRepository {
   Future<TripApprovalResponse> getTripApprovalStatus(String tripUid) async {
     return await _tripService.getTripApprovalStatus(tripUid);
   }
+  
+  @override
+  Future<Map<String, String>> cancelTrip(List<String> tripItemList) {
+   return _tripService.cancelTrip(tripItemList);
+  }
 }
