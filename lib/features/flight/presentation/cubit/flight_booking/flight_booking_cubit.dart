@@ -35,7 +35,8 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
   void repriceAndLoadData(
       List<AirResponseData> selectedItineraries, AirSearch airSearch,
       {Map<int, FareDetailsWithType>? selectedFares,
-      TripResponse? trip}) async {
+      TripResponse? trip,
+      List<PassengerDetailsEntity>? initialPassengerDetails}) async {
     try {
       emit(FlightBookingLoading());
       var mappedData = AirMapperUtility.mapFlightStateToFlightOrderDetails(
@@ -43,7 +44,8 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
       var orderCreatedDetails = await _airUseCase.createOrder(mappedData);
       var orderDetails =
           await _airUseCase.getOrderDetails(orderCreatedDetails.orderNumber);
-      List<PassengerDetailsEntity> passengerDetais = [];
+      List<PassengerDetailsEntity> passengerDetais =
+          initialPassengerDetails ?? [];
 
       emit(FlightBookingLoaded(
           selectedItineraries: selectedItineraries,

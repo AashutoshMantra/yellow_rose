@@ -7,8 +7,12 @@ import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_request.dart';
 import 'package:yellow_rose/features/auth/data/models/profile/user_booking_profile.dart';
 import 'package:yellow_rose/features/auth/domain/entities/trip_type.dart';
+import 'package:yellow_rose/features/auth/domain/entities/user_booking_profile_extensions.dart';
 import 'package:yellow_rose/features/auth/domain/entities/user_details.dart';
 import 'package:yellow_rose/features/auth/domain/usecases/auth_use_case.dart';
+import 'package:yellow_rose/features/flight/domain/entities/passenger_details_entity.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 part 'auth_state.dart';
 
@@ -74,7 +78,6 @@ class AuthCubit extends Cubit<AuthState> {
     throw Exception("User not authenticated");
   }
 
-  /// Returns all profiles (user + corporate) for traveler selection
   List<UserBookingProfile> get allProfiles {
     if (state is Authenticated) {
       final authState = state as Authenticated;
@@ -83,7 +86,6 @@ class AuthCubit extends Cubit<AuthState> {
     return [];
   }
 
-  /// Returns only corporate profiles
   List<UserBookingProfile> get corporateProfiles {
     if (state is Authenticated) {
       return (state as Authenticated).corporateProfiles;
@@ -91,11 +93,27 @@ class AuthCubit extends Cubit<AuthState> {
     return [];
   }
 
-  /// Returns user's own booking profile
   UserBookingProfile? get userProfile {
     if (state is Authenticated) {
       return (state as Authenticated).userBookingProfile;
     }
     return null;
+  }
+
+  List<PassengerDetailsEntity> getfixedPassengerDetails({TripResponse? trip}) {
+    if (state is Authenticated && trip != null) {
+      final authState = state as Authenticated;
+      if (trip.tripFor == TripFor.Self.value) {
+        return [
+          authState.userBookingProfile.toPassengerDetailsEntity()
+        ];
+      } else {
+        return corporateProfiles
+        .where((profile)=>profile.userUid!=null && trip.tripDetails?.onBehalf?.contains(profile.userUid) == true)
+            .map((profile) => profile.toPassengerDetailsEntity())
+            .toList();
+      }
+    }
+    return [];
   }
 }

@@ -49,8 +49,7 @@ class FlightPaymentMethodListWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             child: Column(
               children: [
-                ...(paymentMediumStatusList.where(
-                    (d) => (d.isBusinessEnabled == true))).map((paymentMedium) {
+                ...(paymentMediumStatusList).map((paymentMedium) {
                   return GestureDetector(
                     onTap: () {
                       onPaymentMethodSelected(paymentMedium);

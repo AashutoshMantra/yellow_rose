@@ -2,18 +2,21 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:yellow_rose/core/nullable.dart';
+import 'package:yellow_rose/core/utils/trip_validation_helper.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/flight/data/models/airports.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
 import 'package:yellow_rose/features/flight/domain/entities/name_code.dart';
 import 'package:yellow_rose/features/flight/domain/entities/source_date_pair.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 part 'flight_search_state.dart';
 
 class FlightSearchCubit extends Cubit<FlightSearchState> {
-  FlightSearchCubit() : super(FlightSearchState.initial());
+  FlightSearchCubit({this.selectedTrip}) : super(FlightSearchState.initial());
   final airUseCase = getIt<AirUseCase>();
+  final TripResponse? selectedTrip;
 
   void loadInitial({AirSearch? airSearch}) async {
     try {
@@ -44,7 +47,9 @@ class FlightSearchCubit extends Cubit<FlightSearchState> {
       emit(FlightSearchState(
           sources: sources,
           isLoading: false,
-          adultCount: 1,
+          adultCount: _getInitialAdultCount(),
+          childCount: _getInitialChildCount(),
+          infantCount: _getInitialInfantCount(),
           searchClass: FlightSearchClass.Economy));
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
@@ -190,6 +195,33 @@ class FlightSearchCubit extends Cubit<FlightSearchState> {
 
   void clearError() {
     emit(state.copyWith(error: null));
+  }
+
+  int _getInitialAdultCount() {
+    if (selectedTrip != null) {
+      final constraints =
+          TripValidationHelper.getRequiredPassengerCounts(selectedTrip!);
+      return constraints.adultCount ?? 1;
+    }
+    return 1;
+  }
+
+  int _getInitialChildCount() {
+    if (selectedTrip != null) {
+      final constraints =
+          TripValidationHelper.getRequiredPassengerCounts(selectedTrip!);
+      return constraints.childCount ?? 0;
+    }
+    return 0;
+  }
+
+  int _getInitialInfantCount() {
+    if (selectedTrip != null) {
+      final constraints =
+          TripValidationHelper.getRequiredPassengerCounts(selectedTrip!);
+      return constraints.infantCount ?? 0;
+    }
+    return 0;
   }
 
   AirSearch getAirSearch() {

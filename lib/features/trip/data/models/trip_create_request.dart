@@ -11,8 +11,7 @@ import 'package:yellow_rose/features/trip/data/models/trip_detail.dart';
 
 enum TripFor {
   Self("Self"),
-  OnBehalfOf("On Behalf Of"),
-  Other("Other");
+  OnBehalfOf("On Behalf Of");
 
   final String value;
   const TripFor(this.value);
@@ -29,14 +28,14 @@ class TripCreateRequest {
   final String? tripDescription;
   final TripFor? tripFor;
   final String? tripPurpose;
-  final TripDetail? tripDetail;
+  final TripDetail? tripDetails;
 
   TripCreateRequest({
     this.tripName,
     this.tripDescription,
     this.tripFor,
     this.tripPurpose,
-    this.tripDetail,
+    this.tripDetails,
   });
 
   TripCreateRequest copyWith({
@@ -51,29 +50,29 @@ class TripCreateRequest {
       tripDescription: tripDescription ?? this.tripDescription,
       tripFor: tripFor ?? this.tripFor,
       tripPurpose: tripPurpose ?? this.tripPurpose,
-      tripDetail: tripDetail ?? this.tripDetail,
+      tripDetails: tripDetail ?? tripDetails,
     );
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    if(tripName != null){
+
+    if (tripName != null) {
       result.addAll({'tripName': tripName});
     }
-    if(tripDescription != null){
+    if (tripDescription != null) {
       result.addAll({'tripDescription': tripDescription});
     }
-    if(tripFor != null){
+    if (tripFor != null) {
       result.addAll({'tripFor': tripFor!.value});
     }
-    if(tripPurpose != null){
+    if (tripPurpose != null) {
       result.addAll({'tripPurpose': tripPurpose});
     }
-    if(tripDetail != null){
-      result.addAll({'tripDetail': tripDetail!.toMap()});
+    if (tripDetails != null) {
+      result.addAll({'tripDetails': tripDetails!.toMap()});
     }
-  
+
     return result;
   }
 
@@ -81,9 +80,12 @@ class TripCreateRequest {
     return TripCreateRequest(
       tripName: map['tripName'],
       tripDescription: map['tripDescription'],
-      tripFor: map['tripFor'] != null ? TripFor.fromString(map['tripFor']) : null,
+      tripFor:
+          map['tripFor'] != null ? TripFor.fromString(map['tripFor']) : null,
       tripPurpose: map['tripPurpose'],
-      tripDetail: map['tripDetail'] != null ? TripDetail.fromMap(map['tripDetail']) : null,
+      tripDetails: map['tripDetail'] != null
+          ? TripDetail.fromMap(map['tripDetail'])
+          : null,
     );
   }
 
@@ -94,27 +96,27 @@ class TripCreateRequest {
 
   @override
   String toString() {
-    return 'TripCreateRequest(tripName: $tripName, tripDescription: $tripDescription, tripFor: $tripFor, tripPurpose: $tripPurpose, tripDetail: $tripDetail)';
+    return 'TripCreateRequest(tripName: $tripName, tripDescription: $tripDescription, tripFor: $tripFor, tripPurpose: $tripPurpose, tripDetail: $tripDetails)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is TripCreateRequest &&
-      other.tripName == tripName &&
-      other.tripDescription == tripDescription &&
-      other.tripFor == tripFor &&
-      other.tripPurpose == tripPurpose &&
-      other.tripDetail == tripDetail;
+        other.tripName == tripName &&
+        other.tripDescription == tripDescription &&
+        other.tripFor == tripFor &&
+        other.tripPurpose == tripPurpose &&
+        other.tripDetails == tripDetails;
   }
 
   @override
   int get hashCode {
     return tripName.hashCode ^
-      tripDescription.hashCode ^
-      tripFor.hashCode ^
-      tripPurpose.hashCode ^
-      tripDetail.hashCode;
+        tripDescription.hashCode ^
+        tripFor.hashCode ^
+        tripPurpose.hashCode ^
+        tripDetails.hashCode;
   }
 }

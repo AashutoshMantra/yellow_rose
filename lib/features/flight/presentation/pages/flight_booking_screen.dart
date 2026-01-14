@@ -154,6 +154,14 @@ class FlightBookingScreen extends StatelessWidget {
                             maxInfant: airSearch.infantCount,
                             passengerDetails: state.passengerDetails,
                             savedProfiles: allProfiles,
+                            isReadOnly:
+                                context.read<TripCubit>().selectedTrip != null,
+                            lockMessage: context
+                                        .read<TripCubit>()
+                                        .selectedTrip !=
+                                    null
+                                ? "Passenger details are fixed for this trip booking"
+                                : null,
                             onAddUpdate: (passengerDetail) {
                               context
                                   .read<FlightBookingCubit>()

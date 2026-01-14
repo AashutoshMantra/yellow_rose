@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:yellow_rose/core/nullable.dart';
+import 'package:yellow_rose/core/utils/trip_validation_helper.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_detail_request.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_detail_response.dart';
@@ -9,13 +10,23 @@ import 'package:yellow_rose/features/bus/data/models/bus_details/bus_seats.dart'
 import 'package:yellow_rose/features/bus/data/models/bus_point.dart';
 import 'package:yellow_rose/features/bus/data/models/search/bus_search_response.dart';
 import 'package:yellow_rose/features/bus/domain/usecases/bus_usecase.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 part 'bus_detail_state.dart';
 
 class BusDetailCubit extends Cubit<BusDetailState> {
-  BusDetailCubit() : super(BusDetailInitial());
+  BusDetailCubit({this.selectedTrip}) : super(BusDetailInitial());
 
   final _busUseCase = getIt<BusUseCase>();
+  final TripResponse? selectedTrip;
+
+  int? getMaxAllowedSeats() {
+    if (selectedTrip == null) return null;
+
+    final constraints =
+        TripValidationHelper.getRequiredPassengerCounts(selectedTrip!);
+    return constraints.adultCount;
+  }
 
   void loadBusDetails(BusSearchResponse busSearchResponse) async {
     try {
@@ -44,7 +55,10 @@ class BusDetailCubit extends Cubit<BusDetailState> {
       if (newSelected.contains(seatId)) {
         newSelected.remove(seatId);
       } else {
-        // Optional: add max seats constraint if needed
+        final maxSeats = getMaxAllowedSeats();
+        if (maxSeats != null && newSelected.length >= maxSeats) {
+          return;
+        }
         newSelected.add(seatId);
       }
       emit(currentState.copyWith(selectedSeats: newSelected));
@@ -55,6 +69,12 @@ class BusDetailCubit extends Cubit<BusDetailState> {
     if (state is BusDetailLoaded) {
       final currentState = state as BusDetailLoaded;
       final newSelected = Set<String>.from(currentState.selectedSeats);
+
+      final maxSeats = getMaxAllowedSeats();
+      if (maxSeats != null && newSelected.length >= maxSeats) {
+        return;
+      }
+
       newSelected.add(seatId);
       emit(currentState.copyWith(selectedSeats: newSelected));
     }

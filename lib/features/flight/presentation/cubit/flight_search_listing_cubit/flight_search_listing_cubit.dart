@@ -30,7 +30,7 @@ class FlightSearchListingCubit extends Cubit<FlightSearchListingState> {
 
       var airSearchRequest = AirMapperUtility.mapFlightStateToAirSearchRequest(
           airSearch,
-          trip: null);
+          trip: trip);
       var airSearchResponse =
           await _airUsecase.getAirSearchResponse(airSearchRequest);
       var selectedItinararis = HashMap<int, AirResponseData>();

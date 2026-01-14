@@ -2,22 +2,19 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yellow_rose/core/common_widgets/ImageIcon.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/date_picker.dart';
-import 'package:yellow_rose/core/common_widgets/flex_switch.dart';
 import 'package:yellow_rose/core/common_widgets/labeled_info_widget.dart';
-import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
-import 'package:yellow_rose/dependncy_injection.dart';
 
 import 'package:yellow_rose/features/home_screen/presentation/cubit/home_screen_cubit.dart';
 import 'package:yellow_rose/features/hotel/domain/entities/hotel_search.dart';
 import 'package:yellow_rose/features/hotel/presentation/cubit/search/hotel_search_cubit.dart';
 import 'package:yellow_rose/features/hotel/presentation/widgets/search/hotel_traveller_count_selection_widget.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 import 'package:yellow_rose/features/hotel/presentation/widgets/search/place_search_widget.dart';
 
 class HotelSearchWidget extends StatelessWidget {
@@ -134,9 +131,11 @@ class HotelSearchWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedTrip = context.read<TripCubit>().selectedTrip;
+
     return BlocProvider(
-      create: (context) =>
-          HotelSearchCubit()..loadInitial(hotelSearch: initialData),
+      create: (context) => HotelSearchCubit(selectedTrip: selectedTrip)
+        ..loadInitial(hotelSearch: initialData),
       child: BlocListener<HotelSearchCubit, HotelSearchState>(
         listener: (context, state) {},
         child: BlocBuilder<HotelSearchCubit, HotelSearchState>(

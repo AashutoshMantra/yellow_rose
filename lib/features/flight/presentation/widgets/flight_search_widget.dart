@@ -21,6 +21,7 @@ import 'package:yellow_rose/features/home_screen/presentation/cubit/home_screen_
 import 'package:yellow_rose/core/constants/airline_code.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/airline_selection_sheet.dart';
 import 'package:yellow_rose/features/flight/domain/entities/name_code.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 class FlightSearchWidget extends StatelessWidget {
   final Function(AirSearch) onSearchClick;
@@ -167,9 +168,11 @@ class FlightSearchWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedTrip = context.read<TripCubit>().selectedTrip;
+
     return BlocProvider(
-      create: (context) =>
-          FlightSearchCubit()..loadInitial(airSearch: initialData),
+      create: (context) => FlightSearchCubit(selectedTrip: selectedTrip)
+        ..loadInitial(airSearch: initialData),
       child: DefaultTabController(
         length: 3,
         initialIndex: getInitialIndex(),

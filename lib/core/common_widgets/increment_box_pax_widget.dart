@@ -11,6 +11,7 @@ class IncrementBoxPaxWidget extends StatelessWidget {
   final int initialValue;
   final int? maxValue;
   final int minValue;
+  final bool enabled;
 
   const IncrementBoxPaxWidget({
     super.key,
@@ -20,6 +21,7 @@ class IncrementBoxPaxWidget extends StatelessWidget {
     this.initialValue = 0,
     this.maxValue,
     this.minValue = 0,
+    this.enabled = true,
   });
 
   @override
@@ -27,18 +29,23 @@ class IncrementBoxPaxWidget extends StatelessWidget {
     return CustomListTile(
       title: Text(
         title,
-        style: TextStyles.bodyLargeSemiBoldStyle(),
+        style: TextStyles.bodyLargeSemiBoldStyle().copyWith(
+          color: enabled ? null : AppColors.primaryTextSwatch[400],
+        ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyles.bodySmallStyle()
-            .copyWith(color: AppColors.primaryTextSwatch[500]),
+        style: TextStyles.bodySmallStyle().copyWith(
+            color: enabled
+                ? AppColors.primaryTextSwatch[500]
+                : AppColors.primaryTextSwatch[400]),
       ),
       trailing: IncrementBoxWidget(
-          onValueChange: onChange,
+          onValueChange: enabled ? onChange : null,
           initialValue: initialValue,
           minValue: minValue,
-          maxValue: maxValue),
+          maxValue: maxValue,
+          enabled: enabled),
     );
   }
 }

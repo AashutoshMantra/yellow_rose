@@ -8,6 +8,7 @@ import 'package:yellow_rose/features/flight/data/models/booking/order/booking_re
 import 'package:yellow_rose/features/flight/data/models/booking/order/order_details.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/order_traveller_details.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/passenger_detiald.dart';
+import 'package:yellow_rose/features/flight/data/models/booking/order/payment_medium_request_res.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/segment.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/user_booking_request.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/ssor_options.dart';
@@ -57,8 +58,9 @@ class AirMapperUtility {
         child: airSearch.childCount,
         adult: airSearch.adultCount,
         infantCount: airSearch.infantCount);
-    var airSearchRequest =
-        AirMapperUtility.mapFlightStateToAirSearchRequest(airSearch, trip: trip);
+    var airSearchRequest = AirMapperUtility.mapFlightStateToAirSearchRequest(
+        airSearch,
+        trip: trip);
     return OrderDetails(
         flightBooking: mappedItinaries,
         tripUid: trip?.tripUid,
@@ -67,8 +69,8 @@ class AirMapperUtility {
         travellerDetails: travellerDetails);
   }
 
-  static AirSearchRequest mapFlightStateToAirSearchRequest(
-      AirSearch airSearch,{TripResponse? trip}) {
+  static AirSearchRequest mapFlightStateToAirSearchRequest(AirSearch airSearch,
+      {TripResponse? trip}) {
     List<AirSearchRequestBaseDetail> airSearchRequestBaseDetails =
         airSearch.sources.map((source) {
       return AirSearchRequestBaseDetail(
@@ -269,5 +271,12 @@ class AirMapperUtility {
       final ssrOption = passengerMap[passengerId];
       return MapEntry(segmentId, ssrOption != null ? [ssrOption] : []);
     });
+  }
+
+  static List<PaymentMediumStatus> getFilteredPaymentMediumStatusList(
+      List<PaymentMediumStatus> paymentMediumStatusList, TripResponse? trip) {
+    return paymentMediumStatusList
+        .where((d) => (d.isBusinessEnabled == true))
+        .toList();
   }
 }

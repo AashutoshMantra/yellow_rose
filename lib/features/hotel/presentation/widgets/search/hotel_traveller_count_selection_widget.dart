@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/cutom_dropdown_field.dart';
 import 'package:yellow_rose/core/common_widgets/increment_box_pax_widget.dart';
+import 'package:yellow_rose/core/common_widgets/custom_banner.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/core/utils/trip_validation_helper.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 class HotelTravellerCountSelectionWidget extends StatefulWidget {
   final int adultCount;
@@ -37,6 +42,8 @@ class _HotelTravellerCountSelectionWidgetState
     _adultCount = widget.adultCount;
     _childCount = widget.childCount;
     _roomCount = widget.roomCount;
+
+    _childAges.clear();
     _childAges.addAll(widget.childAges);
   }
 
@@ -72,6 +79,11 @@ class _HotelTravellerCountSelectionWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final selectedTrip = context.read<TripCubit>().selectedTrip;
+    final shouldDisableControls =
+        TripValidationHelper.shouldDisablePassengerControls(selectedTrip);
+    final shouldDisableRooms = selectedTrip?.tripFor == TripFor.Self.value;
+
     return Container(
       child: Padding(
         padding: EdgeInsets.all(24.h),
@@ -108,6 +120,15 @@ class _HotelTravellerCountSelectionWidgetState
               color: AppColors.primaryTextSwatch[500],
               thickness: .5,
             ),
+            // Trip constraint info banner
+            if (selectedTrip != null && shouldDisableControls) ...[
+              CustomBanner(
+                message: selectedTrip.tripFor == TripFor.Self.value
+                    ? "Self trip: Only 1 room and 1 adult allowed"
+                    : "On Behalf trip: Guest count fixed to ${selectedTrip.tripDetails?.onBehalf?.length ?? 0} passengers as per trip. Maximum $_adultCount rooms allowed.",
+                type: BannerType.info,
+              ),
+            ],
             ListView(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
@@ -129,11 +150,13 @@ class _HotelTravellerCountSelectionWidgetState
                   onChange: (value) {
                     if (mounted)
                       setState(() {
-                        _adultCount = value;
+                        _roomCount = value;
                       });
                   },
-                  initialValue: widget.adultCount,
+                  initialValue: _roomCount,
                   minValue: 1,
+                  maxValue: shouldDisableRooms ? 1 : _adultCount,
+                  enabled: !shouldDisableRooms,
                 ),
                 IncrementBoxPaxWidget(
                   title: "Adults",
@@ -144,8 +167,9 @@ class _HotelTravellerCountSelectionWidgetState
                         _adultCount = value;
                       });
                   },
-                  initialValue: widget.adultCount,
+                  initialValue: _adultCount,
                   minValue: 1,
+                  enabled: !shouldDisableControls,
                 ),
                 IncrementBoxPaxWidget(
                     title: "Children",
@@ -162,7 +186,8 @@ class _HotelTravellerCountSelectionWidgetState
                           _childCount = value;
                         });
                     },
-                    initialValue: widget.childCount),
+                    initialValue: _childCount,
+                    enabled: !shouldDisableControls),
                 SizedBox(
                   height: 20.h,
                 ),

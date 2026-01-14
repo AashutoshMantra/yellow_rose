@@ -25,6 +25,7 @@ import 'package:yellow_rose/features/bus/presentation/widgets/bus_journey_timeli
 import 'package:yellow_rose/features/bus/presentation/widgets/bus_passenger_tile.dart';
 import 'package:yellow_rose/features/bus/presentation/widgets/bus_section_card.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/payment_medium_request_res.dart';
+import 'package:yellow_rose/features/flight/domain/usecases/air_mapper_utility.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/order_status_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/order/payment_method_list.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
@@ -68,7 +69,7 @@ class _BusBookingReviewScreenState extends State<BusBookingReviewScreen> {
   List<PaymentMediumStatus> _mapPaymentStatuses(
       List<dynamic>? paymentStatuses) {
     if (paymentStatuses == null) return [];
-    return paymentStatuses.map((status) {
+    var paymentStatus = paymentStatuses.map((status) {
       if (status is PaymentMediumStatus) return status;
       if (status is BusPaymentMediumStatus) {
         return PaymentMediumStatus(
@@ -82,6 +83,9 @@ class _BusBookingReviewScreenState extends State<BusBookingReviewScreen> {
       }
       return PaymentMediumStatus(mediumName: status.toString());
     }).toList();
+    var selectedTrip = context.read<TripCubit>().selectedTrip;
+    return AirMapperUtility.getFilteredPaymentMediumStatusList(
+        paymentStatus, selectedTrip);
   }
 
   void _handlePaymentSelection(

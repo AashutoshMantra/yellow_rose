@@ -21,16 +21,19 @@ class HotelBookCubit extends Cubit<HotelBookState> {
   HotelBookCubit() : super(HotelBookInitial());
   final _hotelBookUsecase = getIt<HotelBookUseCase>();
   void createOrderAndUpdate(HotelDetailResponse hotel, HotelRoom selectedRoom,
-      HotelSearch hotelSearch,{TripResponse? trip}) async {
+      HotelSearch hotelSearch,
+      {TripResponse? trip,
+      List<PassengerDetailsEntity>? initialPassengerDetails}) async {
     try {
       emit(HotelBookLoading());
-      var createOrderResponse = await _hotelBookUsecase.createHotelOrder(
-          hotel, selectedRoom, hotelSearch, trip: trip);
+      var createOrderResponse = await _hotelBookUsecase
+          .createHotelOrder(hotel, selectedRoom, hotelSearch, trip: trip);
       emit(HotelBookLoaded(
           hotel: hotel,
           selectedRoom: selectedRoom,
           hotelSearch: hotelSearch,
-          hotelBookingResponse: createOrderResponse));
+          hotelBookingResponse: createOrderResponse,
+          passengerDetails: initialPassengerDetails));
     } catch (e) {}
   }
 

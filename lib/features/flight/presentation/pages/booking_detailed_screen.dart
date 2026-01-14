@@ -18,6 +18,7 @@ import 'package:yellow_rose/features/flight/data/models/booking/order/payment_me
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_order_detail_response.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/update_payment.dart';
 import 'package:yellow_rose/features/flight/domain/entities/passenger_details_entity.dart';
+import 'package:yellow_rose/features/flight/domain/usecases/air_mapper_utility.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_booking/flight_booking_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_booking_screen.dart';
@@ -808,7 +809,11 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
                     if (selectedTrip != null &&
                         tripType == TripType.PreBooking) {
                       final paymentMethods =
-                          widget.orderUpdateResponse.paymentConfig?.status ??
+                          AirMapperUtility.getFilteredPaymentMediumStatusList(
+                                  widget.orderUpdateResponse.paymentConfig
+                                          ?.status ??
+                                      [],
+                                  selectedTrip) ??
                               [];
                       if (paymentMethods.isEmpty) {
                         WidgetUtil.showSnackBar(
@@ -820,8 +825,12 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
                       WidgetUtil.showBottomSheet(
                           context,
                           FlightPaymentMethodListWidget(
-                            paymentMediumStatusList: widget.orderUpdateResponse
-                                    .paymentConfig?.status ??
+                            paymentMediumStatusList: AirMapperUtility
+                                    .getFilteredPaymentMediumStatusList(
+                                        widget.orderUpdateResponse.paymentConfig
+                                                ?.status ??
+                                            [],
+                                        null) ??
                                 [],
                             onPaymentMethodSelected: (paymentMedium) async {
                               await _handlePaymentAndBooking(paymentMedium);

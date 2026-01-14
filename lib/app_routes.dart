@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/auth/presentation/pages/sign_in_screen.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bos_block_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bus_order_itinerary.dart';
@@ -9,6 +10,7 @@ import 'package:yellow_rose/features/flight/data/models/booking/order/update_ord
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/air_order_iitinerary.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/order_status.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
+import 'package:yellow_rose/features/flight/domain/entities/passenger_details_entity.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_booking/flight_booking_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_order_modify/flight_order_modify_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/cubit/flight_search_listing_cubit/flight_search_listing_cubit.dart';
@@ -120,9 +122,17 @@ class AppRouter {
             builder: (_) => BlocProvider(
               create: (context) {
                 var selectedTrip = context.read<TripCubit>().selectedTrip;
+                List<PassengerDetailsEntity>? tripPassengerDetails;
+                if (selectedTrip != null) {
+                  tripPassengerDetails = context
+                      .read<AuthCubit>()
+                      .getfixedPassengerDetails(trip: selectedTrip);
+                }
                 return FlightBookingCubit()
                   ..repriceAndLoadData(itineraries, airSearch,
-                      selectedFares: selectedfares, trip: selectedTrip);
+                      selectedFares: selectedfares,
+                      trip: selectedTrip,
+                      initialPassengerDetails: tripPassengerDetails);
               },
               child: FlightBookingScreen(
                 airSearch: airSearch,
@@ -284,10 +294,17 @@ class AppRouter {
             builder: (_) => BlocProvider(
               create: (context) {
                 var selectedTrip = context.read<TripCubit>().selectedTrip;
+                List<PassengerDetailsEntity>? tripPassengerDetails;
+                if (selectedTrip != null) {
+                  tripPassengerDetails = context
+                      .read<AuthCubit>()
+                      .getfixedPassengerDetails(trip: selectedTrip);
+                }
                 return HotelBookCubit()
                   ..createOrderAndUpdate(
                       hotelDetailResponse, selectedRoom, hotelSearch,
-                      trip: selectedTrip);
+                      trip: selectedTrip,
+                      initialPassengerDetails: tripPassengerDetails);
               },
               child: HotelBookFormScreen(
                 hotelSearch: hotelSearch,
@@ -395,15 +412,25 @@ class AppRouter {
             settings: RouteSettings(
                 name: formatScreenName((BusBookFormScreen).toString())),
             builder: (_) => BlocProvider(
-              create: (context) => BusBookCubit()
-                ..createOrderAndUpdate(
-                  busSearch,
-                  busDetailResponse,
-                  busSearchResponse,
-                  selectedSeats,
-                  selectedBoardingPoint,
-                  selectedDroppingPoint,
-                ),
+              create: (context) {
+                var selectedTrip = context.read<TripCubit>().selectedTrip;
+                List<PassengerDetailsEntity>? tripPassengerDetails;
+                if (selectedTrip != null) {
+                  tripPassengerDetails = context
+                      .read<AuthCubit>()
+                      .getfixedPassengerDetails(trip: selectedTrip);
+                }
+                return BusBookCubit()
+                  ..createOrderAndUpdate(
+                    busSearch,
+                    busDetailResponse,
+                    busSearchResponse,
+                    selectedSeats,
+                    selectedBoardingPoint,
+                    selectedDroppingPoint,
+                    initialPassengerDetails: tripPassengerDetails,
+                  );
+              },
               child: BusBookFormScreen(
                 busSearchResponse: busSearchResponse,
               ),
@@ -448,7 +475,7 @@ class AppRouter {
 
       case TripDetailScreen.routeName:
         var args = settings.arguments as Map?;
-        if (args?['trip'] != null && args?['isTeamTrips']!=null) {
+        if (args?['trip'] != null && args?['isTeamTrips'] != null) {
           final trip = args!['trip'] as TripResponse;
           final isTeamTrips = args['isTeamTrips'] as bool;
 

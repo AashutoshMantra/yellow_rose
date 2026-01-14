@@ -14,6 +14,8 @@ import 'package:yellow_rose/features/bus/presentation/widgets/seat/seat_selectio
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_seats.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/bottom_button.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_boarding_dropping/bus_boarding_dropping_screen.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 String getBusDetailTitle(BusSearchResponse busSearchResponse) {
   return "${busSearchResponse.source ?? ''} → ${busSearchResponse.destination ?? ''}";
@@ -44,8 +46,11 @@ class BusDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedTrip = context.read<TripCubit>().selectedTrip;
+
     return BlocProvider(
-      create: (context) => BusDetailCubit()..loadBusDetails(busSearchResponse),
+      create: (context) => BusDetailCubit(selectedTrip: selectedTrip)
+        ..loadBusDetails(busSearchResponse),
       child: _BusDetailScreenContent(
           busSearchResponse: busSearchResponse, busSearch: busSearch),
     );
@@ -92,6 +97,10 @@ class _BusDetailScreenContentState extends State<_BusDetailScreenContent> {
         child: BlocBuilder<BusDetailCubit, BusDetailState>(
           builder: (context, state) {
             if (state is BusDetailLoaded) {
+              final selectedTrip = context.read<TripCubit>().selectedTrip;
+              final maxSeats =
+                  context.read<BusDetailCubit>().getMaxAllowedSeats();
+
               return SingleChildScrollView(
                 controller: _scrollController,
                 child: Column(
@@ -113,6 +122,36 @@ class _BusDetailScreenContentState extends State<_BusDetailScreenContent> {
                         scrollController: _scrollController,
                       ),
                     ),
+                    // Trip constraint info banner
+                    if (selectedTrip != null && maxSeats != null) ...[
+                      Container(
+                        padding: EdgeInsets.all(12.h),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 12.w, vertical: 8.h),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8.h),
+                          border: Border.all(
+                              color: AppColors.primary.withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline,
+                                color: AppColors.primary, size: 20.h),
+                            SizedBox(width: 8.w),
+                            Expanded(
+                              child: Text(
+                                selectedTrip.tripFor == TripFor.Self.value
+                                    ? "Self trip: Only 1 seat can be selected"
+                                    : "On Behalf trip: Maximum $maxSeats seats can be selected as per trip",
+                                style: TextStyles.bodySmallMediumStyle()
+                                    .copyWith(color: AppColors.primary),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     // Seat canvas placeholder: converts dynamic seat list to Seat models
                     Padding(
                       padding: EdgeInsets.all(12.w),

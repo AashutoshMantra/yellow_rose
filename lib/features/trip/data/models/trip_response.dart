@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:yellow_rose/features/trip/data/models/trip_detail.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_item.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_status_enum.dart';
 
@@ -37,6 +38,7 @@ class TripResponse {
   final String? approvalWorkFlowId;
   final String? createdBy;
   final DateTime? genTs;
+  final TripDetail? tripDetails;
   final List<TripAirItem>? tripItemList;
   TripResponse({
     this.statuss,
@@ -70,6 +72,7 @@ class TripResponse {
     this.approvalWorkFlowId,
     this.createdBy,
     this.genTs,
+    this.tripDetails,
     this.tripItemList,
   });
 
@@ -105,6 +108,7 @@ class TripResponse {
     String? approvalWorkFlowId,
     String? createdBy,
     DateTime? genTs,
+    TripDetail? tripDetail,
     List<TripAirItem>? tripItemList,
   }) {
     return TripResponse(
@@ -143,6 +147,7 @@ class TripResponse {
       approvalWorkFlowId: approvalWorkFlowId ?? this.approvalWorkFlowId,
       createdBy: createdBy ?? this.createdBy,
       genTs: genTs ?? this.genTs,
+      tripDetails: tripDetail ?? tripDetails,
       tripItemList: tripItemList ?? this.tripItemList,
     );
   }
@@ -243,6 +248,9 @@ class TripResponse {
     if (genTs != null) {
       result.addAll({'genTs': genTs!.millisecondsSinceEpoch});
     }
+    if (tripDetails != null) {
+      result.addAll({'tripDetails': tripDetails!.toMap()});
+    }
     if (tripItemList != null) {
       result.addAll(
           {'tripItemList': tripItemList!.map((x) => x.toMap()).toList()});
@@ -285,6 +293,9 @@ class TripResponse {
       approvalWorkFlowId: map['approvalWorkFlowId'],
       createdBy: map['createdBy'],
       genTs: map['genTs'] != null ? DateTime.tryParse(map['genTs']) : null,
+      tripDetails: map['tripDetails'] != null
+          ? TripDetail.fromMap(map['tripDetails'])
+          : null,
       tripItemList: map['tripItemList'] != null
           ? List<TripAirItem>.from(
               map['tripItemList']?.map((x) => TripAirItem.fromMap(x)))
@@ -299,7 +310,7 @@ class TripResponse {
 
   @override
   String toString() {
-    return 'TripResponse(statuss: $statuss, message: $message, tripUid: $tripUid, tripId: $tripId, userUid: $userUid, tripFor: $tripFor, tripPurpose: $tripPurpose, tripDescription: $tripDescription, tripName: $tripName, totalAirCost: $totalAirCost, totalHotelCost: $totalHotelCost, status: $status, statusDesc: $statusDesc, approvalLevel1: $approvalLevel1, approvalLevel1Email: $approvalLevel1Email, approvalLevel1EmpCode: $approvalLevel1EmpCode, approvalLevel2: $approvalLevel2, approvalLevel2Email: $approvalLevel2Email, approvalLevel2EmpCode: $approvalLevel2EmpCode, approvalLevel3: $approvalLevel3, approvalLevel3Email: $approvalLevel3Email, approvalLevel3EmpCode: $approvalLevel3EmpCode, approvalLevel4: $approvalLevel4, approvalLevel4Email: $approvalLevel4Email, approvalLevel4EmpCode: $approvalLevel4EmpCode, approvalReferenceId: $approvalReferenceId, policyRuleId: $policyRuleId, policyRuleApplied: $policyRuleApplied, approvalWorkFlowId: $approvalWorkFlowId, createdBy: $createdBy, genTs: $genTs, tripItemList: $tripItemList)';
+    return 'TripResponse(statuss: $statuss, message: $message, tripUid: $tripUid, tripId: $tripId, userUid: $userUid, tripFor: $tripFor, tripPurpose: $tripPurpose, tripDescription: $tripDescription, tripName: $tripName, totalAirCost: $totalAirCost, totalHotelCost: $totalHotelCost, status: $status, statusDesc: $statusDesc, approvalLevel1: $approvalLevel1, approvalLevel1Email: $approvalLevel1Email, approvalLevel1EmpCode: $approvalLevel1EmpCode, approvalLevel2: $approvalLevel2, approvalLevel2Email: $approvalLevel2Email, approvalLevel2EmpCode: $approvalLevel2EmpCode, approvalLevel3: $approvalLevel3, approvalLevel3Email: $approvalLevel3Email, approvalLevel3EmpCode: $approvalLevel3EmpCode, approvalLevel4: $approvalLevel4, approvalLevel4Email: $approvalLevel4Email, approvalLevel4EmpCode: $approvalLevel4EmpCode, approvalReferenceId: $approvalReferenceId, policyRuleId: $policyRuleId, policyRuleApplied: $policyRuleApplied, approvalWorkFlowId: $approvalWorkFlowId, createdBy: $createdBy, genTs: $genTs, tripDetail: $tripDetails, tripItemList: $tripItemList)';
   }
 
   @override
@@ -338,6 +349,7 @@ class TripResponse {
         other.approvalWorkFlowId == approvalWorkFlowId &&
         other.createdBy == createdBy &&
         other.genTs == genTs &&
+        other.tripDetails == tripDetails &&
         listEquals(other.tripItemList, tripItemList);
   }
 
@@ -374,6 +386,7 @@ class TripResponse {
         approvalWorkFlowId.hashCode ^
         createdBy.hashCode ^
         genTs.hashCode ^
+        tripDetails.hashCode ^
         tripItemList.hashCode;
   }
 }

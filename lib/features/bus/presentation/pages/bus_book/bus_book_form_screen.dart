@@ -17,6 +17,7 @@ import 'package:yellow_rose/core/common_widgets/passenger_detail/traveller_detai
 import 'package:yellow_rose/features/bus/presentation/cubit/bus_book/bus_book_cubit.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_book/bus_booking_review_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/bottom_button.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 class BusBookFormScreen extends StatelessWidget {
   final BusSearchResponse busSearchResponse;
@@ -127,6 +128,16 @@ class BusBookFormScreen extends StatelessWidget {
                                     showAge: false,
                                     passengerDetails: state.passengers,
                                     savedProfiles: allProfiles,
+                                    isReadOnly: context
+                                            .read<TripCubit>()
+                                            .selectedTrip !=
+                                        null,
+                                    lockMessage: context
+                                                .read<TripCubit>()
+                                                .selectedTrip !=
+                                            null
+                                        ? "Passenger details are fixed for this trip booking"
+                                        : null,
                                     onAddUpdate: (passenger) {
                                       context
                                           .read<BusBookCubit>()

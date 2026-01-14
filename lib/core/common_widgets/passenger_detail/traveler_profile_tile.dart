@@ -3,7 +3,6 @@ import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/features/auth/data/models/profile/user_booking_profile.dart';
-import 'package:yellow_rose/features/auth/domain/entities/user_booking_profile_extensions.dart';
 
 class TravelerProfileTile extends StatelessWidget {
   final UserBookingProfile profile;
@@ -32,19 +31,42 @@ class TravelerProfileTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Avatar icon
-          Container(
-            width: 40.w,
-            height: 40.w,
-            decoration: BoxDecoration(
-              color: AppColors.primarySwatch[100],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Icon(
-              _getGenderIcon(),
-              color: AppColors.primary,
-              size: 20.w,
-            ),
+          // Avatar icon with checkmark overlay for selected profiles
+          Stack(
+            children: [
+              Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: AppColors.primarySwatch[100],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(
+                  _getGenderIcon(),
+                  color: AppColors.primary,
+                  size: 20.w,
+                ),
+              ),
+              if (isSelected)
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 16.w,
+                    height: 16.w,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryGreen,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 10.w,
+                    ),
+                  ),
+                ),
+            ],
           ),
           SizedBox(width: 12.w),
 

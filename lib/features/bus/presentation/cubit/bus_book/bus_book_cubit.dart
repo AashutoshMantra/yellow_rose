@@ -29,8 +29,9 @@ class BusBookCubit extends Cubit<BusBookState> {
     BusSearchResponse busSearchResponse,
     Set<String> selectedSeats,
     BusPoint selectedBoardingPoint,
-    BusPoint selectedDroppingPoint,
-  ) async {
+    BusPoint selectedDroppingPoint, {
+    List<PassengerDetailsEntity>? initialPassengerDetails,
+  }) async {
     try {
       emit(BusBookLoading());
 
@@ -66,6 +67,7 @@ class BusBookCubit extends Cubit<BusBookState> {
         selectedBoardingPoint: selectedBoardingPoint,
         selectedDroppingPoint: selectedDroppingPoint,
         busOrderResponse: createOrderResponse,
+        passengers: initialPassengerDetails ?? [],
       ));
     } catch (e, s) {
       log("$e $s");

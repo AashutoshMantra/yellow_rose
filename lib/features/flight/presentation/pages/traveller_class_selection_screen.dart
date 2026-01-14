@@ -2,14 +2,15 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
-import 'package:yellow_rose/core/common_widgets/custom_list_tile.dart';
-import 'package:yellow_rose/core/common_widgets/increment_box.dart';
 import 'package:yellow_rose/core/common_widgets/increment_box_pax_widget.dart';
+import 'package:yellow_rose/core/common_widgets/custom_banner.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/core/utils/trip_validation_helper.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
-import 'package:yellow_rose/features/flight/presentation/cubit/flight_search_cubit.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 class TravelerClassSelectionScreen extends StatefulWidget {
   final int adultCount;
@@ -35,6 +36,7 @@ class _TravelerClassSelectionScreenState
   int _childCount = 0;
   int _infantCount = 0;
   FlightSearchClass _flightSearchClass = FlightSearchClass.Economy;
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +48,10 @@ class _TravelerClassSelectionScreenState
 
   @override
   Widget build(BuildContext context) {
+    final selectedTrip = context.read<TripCubit>().selectedTrip;
+    final shouldDisableControls =
+        TripValidationHelper.shouldDisablePassengerControls(selectedTrip);
+
     return SizedBox(
       height: 600.h,
       child: Padding(
@@ -91,6 +97,18 @@ class _TravelerClassSelectionScreenState
               style: TextStyles.bodyMediumSemiBoldStyle()
                   .copyWith(color: AppColors.primaryTextSwatch[500]),
             ),
+            if (selectedTrip != null && shouldDisableControls) ...[
+              SizedBox(height: 12.h),
+              CustomBanner(
+                message: selectedTrip.tripFor == TripFor.Self.value
+                    ? "Trip is for self - only 1 adult allowed"
+                    : "Trip is on behalf of ${selectedTrip.tripDetails?.onBehalf?.length ?? 0} people",
+                type: BannerType.info,
+                backgroundColor: AppColors.primarySwatch[50],
+                borderColor: AppColors.primarySwatch[200]!,
+                textColor: AppColors.primaryTextSwatch[600],
+              ),
+            ],
             SizedBox(
               height: 19.h,
             ),
@@ -102,28 +120,33 @@ class _TravelerClassSelectionScreenState
                   _adultCount = value;
                 });
               },
-              initialValue: widget.adultCount,
+              initialValue: _adultCount,
               minValue: 1,
+              enabled: !shouldDisableControls,
             ),
             IncrementBoxPaxWidget(
-                title: "Children",
-                subtitle: "2 - 12 yrs",
-                onChange: (value) {
-                  setState(() {
-                    _childCount = value;
-                  });
-                },
-                initialValue: widget.childCount),
+              title: "Children",
+              subtitle: "2 - 12 yrs",
+              onChange: (value) {
+                setState(() {
+                  _childCount = value;
+                });
+              },
+              initialValue: _childCount,
+              enabled: !shouldDisableControls,
+            ),
             IncrementBoxPaxWidget(
-                title: "Infants",
-                subtitle: "Under 2 yrs",
-                onChange: (value) {
-                  setState(() {
-                    _infantCount = value;
-                  });
-                },
-                initialValue: widget.infantCount,
-                maxValue: _adultCount),
+              title: "Infants",
+              subtitle: "Under 2 yrs",
+              onChange: (value) {
+                setState(() {
+                  _infantCount = value;
+                });
+              },
+              initialValue: _infantCount,
+              maxValue: _adultCount,
+              enabled: !shouldDisableControls,
+            ),
             SizedBox(
               height: 20.h,
             ),

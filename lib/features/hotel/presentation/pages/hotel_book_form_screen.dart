@@ -21,6 +21,7 @@ import 'package:yellow_rose/features/hotel/presentation/cubit/hotel_book_cubit/h
 import 'package:yellow_rose/features/hotel/presentation/pages/hotel_booking_review_screen.dart';
 import 'package:yellow_rose/features/hotel/presentation/pages/hotel_search_list_scree.dart';
 import 'package:yellow_rose/features/hotel/presentation/widgets/book_form/hotel_special_request.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 
 class HotelBookFormScreen extends StatelessWidget {
   final HotelSearch hotelSearch;
@@ -141,6 +142,16 @@ class HotelBookFormScreen extends StatelessWidget {
                                       maxInfant: 0,
                                       passengerDetails: state.passengerDetails,
                                       savedProfiles: allProfiles,
+                                      isReadOnly: context
+                                              .read<TripCubit>()
+                                              .selectedTrip !=
+                                          null,
+                                      lockMessage: context
+                                                  .read<TripCubit>()
+                                                  .selectedTrip !=
+                                              null
+                                          ? "Passenger details are fixed for this trip booking"
+                                          : null,
                                       onAddUpdate: (passengerDetail) {
                                         context
                                             .read<HotelBookCubit>()
