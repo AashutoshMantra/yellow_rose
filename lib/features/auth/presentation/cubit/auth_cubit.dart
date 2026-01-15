@@ -81,14 +81,14 @@ class AuthCubit extends Cubit<AuthState> {
   List<UserBookingProfile> get allProfiles {
     if (state is Authenticated) {
       final authState = state as Authenticated;
-      return [authState.userBookingProfile, ...authState.corporateProfiles];
+      return  getFilteredProfile([authState.userBookingProfile, ...authState.corporateProfiles]);
     }
     return [];
   }
 
   List<UserBookingProfile> get corporateProfiles {
     if (state is Authenticated) {
-      return (state as Authenticated).corporateProfiles;
+      return getFilteredProfile((state as Authenticated).corporateProfiles) ;
     }
     return [];
   }
@@ -98,6 +98,20 @@ class AuthCubit extends Cubit<AuthState> {
       return (state as Authenticated).userBookingProfile;
     }
     return null;
+  }
+  List<UserBookingProfile> getFilteredProfile(List<UserBookingProfile> profiles) {
+   return profiles
+        .where((profile) =>
+            profile.firstName != null &&
+            profile.firstName!.isNotEmpty &&
+            profile.email != null &&
+            profile.contactNumber != null &&
+            profile.email!.isNotEmpty &&
+            profile.contactNumber!.isNotEmpty&&
+            profile.gender != null &&
+            profile.gender!.isNotEmpty
+        ).toList();
+
   }
 
   List<PassengerDetailsEntity> getfixedPassengerDetails({TripResponse? trip}) {
