@@ -24,6 +24,7 @@ import 'package:yellow_rose/features/flight/domain/entities/passenger_type.dart'
 import 'package:yellow_rose/features/flight/domain/entities/seat_map/selected_seat.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_mapper_utility.dart';
+import 'package:yellow_rose/features/flight/domain/usecases/ssr_filter_utility.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 part 'flight_booking_state.dart';
@@ -96,7 +97,7 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
         var seatMapResponses =
             Map.fromEntries(await Future.wait(futureToLoadSeatMap));
 
-        var futureToLoadSsr = flights.map((flights) async {
+        var futureToLoadSsr = flights.mapIndexed((flightIndex, flights) async {
           var key =
               "${flights.carrierName}-${flights.flightNumber}#${flights.fromAirport}#${flights.toAirport ?? ''}";
           SsrResponse? seatMapResponse;
@@ -113,6 +114,12 @@ class FlightBookingCubit extends Cubit<FlightBookingState> {
               ssrBaggage: _deduplicateSsrByCode(seatMapResponse.ssrBaggage),
               ssrSpecial: _deduplicateSsrByCode(seatMapResponse.ssrSpecial),
               miscSSR: _deduplicateSsrByCode(seatMapResponse.miscSSR),
+            );
+
+            seatMapResponse = SsrFilterUtility.filterSsrResponseForFlight(
+              ssrResponse: seatMapResponse,
+              flightIndex: flightIndex,
+              carrierCode: flights.carrierName,
             );
           } catch (e, s) {
             log("$e $s");
