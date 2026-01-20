@@ -28,45 +28,51 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> appStarted() async {
-    if (_authUseCase.isLoggedIn()) {
-      UserDetails? userDetails = _authUseCase.getUserDetails();
-      var enitty =
-          await _authUseCase.getBillingEntity(userDetails?.userUid ?? '');
-      ApprovalWorkflow? approvalWorkflow;
-      try {
-        approvalWorkflow = await _authUseCase.getApprovalWorkflow();
-      } catch (e) {
-        log('No approval workflow found: $e');
-      }
-      if (userDetails != null) {
-        UserBookingProfile userBookingProfile =
-            await _authUseCase.getUserProfile();
-        List<UserBookingProfile> corporateProfiles = [];
-        if (approvalWorkflow?.tripType != TripType.NoTrip) {
-          corporateProfiles =
-              await _authUseCase.getGroupByCorporateUserProfiles();
-        } else {
-          corporateProfiles = await _authUseCase.getAllCorporateProfile();
+    try {
+      emit(AuthInitial());
+      if (_authUseCase.isLoggedIn()) {
+        UserDetails? userDetails = _authUseCase.getUserDetails();
+        var enitty =
+            await _authUseCase.getBillingEntity(userDetails?.userUid ?? '');
+        ApprovalWorkflow? approvalWorkflow;
+        try {
+          approvalWorkflow = await _authUseCase.getApprovalWorkflow();
+        } catch (e) {
+          log('No approval workflow found: $e');
         }
-        corporateProfiles = corporateProfiles
-            .where((profile) =>
-                profile.firstName != null &&
-                profile.firstName!.isNotEmpty &&
-                profile.gender != null &&
-                profile.contactNumber != null)
-            .toList();
+        if (userDetails != null) {
+          UserBookingProfile userBookingProfile =
+              await _authUseCase.getUserProfile();
+          List<UserBookingProfile> corporateProfiles = [];
+          if (approvalWorkflow?.tripType != TripType.NoTrip) {
+            corporateProfiles =
+                await _authUseCase.getGroupByCorporateUserProfiles();
+          } else {
+            corporateProfiles = await _authUseCase.getAllCorporateProfile();
+          }
+          corporateProfiles = corporateProfiles
+              .where((profile) =>
+                  profile.firstName != null &&
+                  profile.firstName!.isNotEmpty &&
+                  profile.gender != null &&
+                  profile.contactNumber != null)
+              .toList();
 
-        emit(Authenticated(
-            userDetails: userDetails,
-            billingEntities: enitty,
-            approvalWorkflow: approvalWorkflow,
-            userBookingProfile: userBookingProfile,
-            corporateProfiles: corporateProfiles));
+          emit(Authenticated(
+              userDetails: userDetails,
+              billingEntities: enitty,
+              approvalWorkflow: approvalWorkflow,
+              userBookingProfile: userBookingProfile,
+              corporateProfiles: corporateProfiles));
+        } else {
+          emit(Unauthenticated());
+        }
       } else {
         emit(Unauthenticated());
       }
-    } else {
-      emit(Unauthenticated());
+    } catch (e, s) {
+      log("$e,$s");
+      rethrow;
     }
   }
 
@@ -75,7 +81,7 @@ class AuthCubit extends Cubit<AuthState> {
         (state as Authenticated).approvalWorkflow != null) {
       return (state as Authenticated).approvalWorkflow!.tripType;
     }
-    throw Exception("User not authenticated");
+    return TripType.NoTrip;
   }
 
   bool get isTripAdmin {
@@ -83,7 +89,7 @@ class AuthCubit extends Cubit<AuthState> {
         (state as Authenticated).approvalWorkflow != null) {
       return (state as Authenticated).approvalWorkflow!.approvalAdmin == true;
     }
-    throw Exception("User not authenticated");
+    return false;
   }
 
   List<UserBookingProfile> get allProfiles {
