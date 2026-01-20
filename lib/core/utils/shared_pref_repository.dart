@@ -20,6 +20,7 @@ class SharedPreferencesRepository {
   static int getInteger(String key) {
     return _prefs == null ? 0 : _prefs!.getInt(key) ?? 0;
   }
+
   static putDouble(String key, double value) {
     if (_prefs != null) _prefs!.setDouble(key, value);
   }
@@ -58,5 +59,9 @@ class SharedPreferencesRepository {
 
   static removeDataForKey(String key) {
     _prefs!.remove(key);
+  }
+
+  static void clearAllData() {
+    _prefs?.clear();
   }
 }

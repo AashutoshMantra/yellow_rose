@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yellow_rose/core/common_widgets/ImageIcon.dart';
 import 'package:yellow_rose/core/common_widgets/base_appbar.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/custom_text_form_field.dart';
 import 'package:yellow_rose/core/common_widgets/form_title_widget.dart';
+import 'package:yellow_rose/core/storage/hive_setup.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
+import 'package:yellow_rose/core/utils/shared_pref_repository.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/auth/presentation/cubit/sign_in_form_cubit.dart';
@@ -24,6 +27,8 @@ class SignInScreen extends StatelessWidget {
     try {
       if (_formKey.currentState!.validate()) {
         _btnController.start();
+        await HiveSetup.clearAllBoxes();
+        SharedPreferencesRepository.clear();
         await context.read<SignInFormCubit>().signIn();
         await context.read<AuthCubit>().appStarted();
         Navigator.of(context).pushReplacementNamed(Dashboard.routeName);
