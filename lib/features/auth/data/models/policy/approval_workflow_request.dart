@@ -21,6 +21,7 @@ class ApprovalWorkflow {
   final String? product;
   final String? policyApplied;
   final int? priority;
+  final bool? approvalAdmin;
   ApprovalWorkflow({
     this.workFlowId,
     this.workFlowName,
@@ -34,6 +35,7 @@ class ApprovalWorkflow {
     this.product,
     this.policyApplied,
     this.priority,
+    this.approvalAdmin,
   });
 
   ApprovalWorkflow copyWith({
@@ -49,6 +51,7 @@ class ApprovalWorkflow {
     String? product,
     String? policyApplied,
     int? priority,
+    bool? approvalAdmin,
   }) {
     return ApprovalWorkflow(
       workFlowId: workFlowId ?? this.workFlowId,
@@ -63,49 +66,53 @@ class ApprovalWorkflow {
       product: product ?? this.product,
       policyApplied: policyApplied ?? this.policyApplied,
       priority: priority ?? this.priority,
+      approvalAdmin: approvalAdmin ?? this.approvalAdmin,
     );
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-
-    if (workFlowId != null) {
+  
+    if(workFlowId != null){
       result.addAll({'workFlowId': workFlowId});
     }
-    if (workFlowName != null) {
+    if(workFlowName != null){
       result.addAll({'workFlowName': workFlowName});
     }
-    if (workFlowDesc != null) {
+    if(workFlowDesc != null){
       result.addAll({'workFlowDesc': workFlowDesc});
     }
-    if (status != null) {
+    if(status != null){
       result.addAll({'status': status});
     }
-    if (workflow != null) {
-      result.addAll({'workflow': workflow!.map((x) => x.toMap()).toList()});
+    if(workflow != null){
+      result.addAll({'workflow': workflow!.map((x) => x?.toMap()).toList()});
     }
-    if (createdBy != null) {
+    if(createdBy != null){
       result.addAll({'createdBy': createdBy});
     }
-    if (corporateUserUid != null) {
+    if(corporateUserUid != null){
       result.addAll({'corporateUserUid': corporateUserUid});
     }
-    if (lastModifiedBy != null) {
+    if(lastModifiedBy != null){
       result.addAll({'lastModifiedBy': lastModifiedBy});
     }
-    if (travelPolicyId != null) {
+    if(travelPolicyId != null){
       result.addAll({'travelPolicyId': travelPolicyId});
     }
-    if (product != null) {
+    if(product != null){
       result.addAll({'product': product});
     }
-    if (policyApplied != null) {
+    if(policyApplied != null){
       result.addAll({'policyApplied': policyApplied});
     }
-    if (priority != null) {
+    if(priority != null){
       result.addAll({'priority': priority});
     }
-
+    if(approvalAdmin != null){
+      result.addAll({'approvalAdmin': approvalAdmin});
+    }
+  
     return result;
   }
 
@@ -115,10 +122,7 @@ class ApprovalWorkflow {
       workFlowName: map['workFlowName'],
       workFlowDesc: map['workFlowDesc'],
       status: map['status'],
-      workflow: map['workflow'] != null
-          ? List<Approvers>.from(
-              map['workflow']?.map((x) => Approvers.fromMap(x)))
-          : null,
+      workflow: map['workflow'] != null ? List<Approvers>.from(map['workflow']?.map((x) => Approvers.fromMap(x))) : null,
       createdBy: map['createdBy'],
       corporateUserUid: map['corporateUserUid'],
       lastModifiedBy: map['lastModifiedBy'],
@@ -126,6 +130,7 @@ class ApprovalWorkflow {
       product: map['product'],
       policyApplied: map['policyApplied'],
       priority: map['priority']?.toInt(),
+      approvalAdmin: map['approvalAdmin'],
     );
   }
 
@@ -136,41 +141,43 @@ class ApprovalWorkflow {
 
   @override
   String toString() {
-    return 'ApprovalWorkflow(workFlowId: $workFlowId, workFlowName: $workFlowName, workFlowDesc: $workFlowDesc, status: $status, workflow: $workflow, createdBy: $createdBy, corporateUserUid: $corporateUserUid, lastModifiedBy: $lastModifiedBy, travelPolicyId: $travelPolicyId, product: $product, policyApplied: $policyApplied, priority: $priority)';
+    return 'ApprovalWorkflow(workFlowId: $workFlowId, workFlowName: $workFlowName, workFlowDesc: $workFlowDesc, status: $status, workflow: $workflow, createdBy: $createdBy, corporateUserUid: $corporateUserUid, lastModifiedBy: $lastModifiedBy, travelPolicyId: $travelPolicyId, product: $product, policyApplied: $policyApplied, priority: $priority, approvalAdmin: $approvalAdmin)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is ApprovalWorkflow &&
-        other.workFlowId == workFlowId &&
-        other.workFlowName == workFlowName &&
-        other.workFlowDesc == workFlowDesc &&
-        other.status == status &&
-        listEquals(other.workflow, workflow) &&
-        other.createdBy == createdBy &&
-        other.corporateUserUid == corporateUserUid &&
-        other.lastModifiedBy == lastModifiedBy &&
-        other.travelPolicyId == travelPolicyId &&
-        other.product == product &&
-        other.policyApplied == policyApplied &&
-        other.priority == priority;
+      other.workFlowId == workFlowId &&
+      other.workFlowName == workFlowName &&
+      other.workFlowDesc == workFlowDesc &&
+      other.status == status &&
+      listEquals(other.workflow, workflow) &&
+      other.createdBy == createdBy &&
+      other.corporateUserUid == corporateUserUid &&
+      other.lastModifiedBy == lastModifiedBy &&
+      other.travelPolicyId == travelPolicyId &&
+      other.product == product &&
+      other.policyApplied == policyApplied &&
+      other.priority == priority &&
+      other.approvalAdmin == approvalAdmin;
   }
 
   @override
   int get hashCode {
     return workFlowId.hashCode ^
-        workFlowName.hashCode ^
-        workFlowDesc.hashCode ^
-        status.hashCode ^
-        workflow.hashCode ^
-        createdBy.hashCode ^
-        corporateUserUid.hashCode ^
-        lastModifiedBy.hashCode ^
-        travelPolicyId.hashCode ^
-        product.hashCode ^
-        policyApplied.hashCode ^
-        priority.hashCode;
+      workFlowName.hashCode ^
+      workFlowDesc.hashCode ^
+      status.hashCode ^
+      workflow.hashCode ^
+      createdBy.hashCode ^
+      corporateUserUid.hashCode ^
+      lastModifiedBy.hashCode ^
+      travelPolicyId.hashCode ^
+      product.hashCode ^
+      policyApplied.hashCode ^
+      priority.hashCode ^
+      approvalAdmin.hashCode;
   }
 }

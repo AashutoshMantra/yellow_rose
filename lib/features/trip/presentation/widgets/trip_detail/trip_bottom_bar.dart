@@ -7,6 +7,7 @@ import 'package:yellow_rose/core/common_widgets/popup.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
+import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_status_enum.dart';
 import 'package:yellow_rose/features/trip/domain/entities/trip_approval_response_status.dart';
@@ -117,24 +118,31 @@ class _TripBottomBarState extends State<TripBottomBar> {
   }
 
   Widget _buildNewTripBottomBar(BuildContext context, double totalPrice) {
+    var isTripAdmin = context.read<AuthCubit>().isTripAdmin;
     return SizedBox(
       height: 100.h,
       child: BottomButton(
         title: '₹${totalPrice.toStringAsFixed(2)}',
         subtitle: 'Total Trip Cost',
-        buttonText: 'Send for Approval',
+        buttonText: isTripAdmin ? "Book" : 'Send for Approval',
         onClick: () async {
           try {
             await context.read<TripCubit>().sendTripForApproval();
             if (context.mounted) {
               WidgetUtil.showSnackBar(
-                  'Trip sent for approval successfully', context,
+                  isTripAdmin
+                      ? "Trip booked successfully"
+                      : 'Trip sent for approval successfully',
+                  context,
                   col: AppColors.primaryGreen);
             }
           } catch (e) {
             if (context.mounted) {
               WidgetUtil.showSnackBar(
-                  'Failed to send trip for approval', context);
+                  isTripAdmin
+                      ? "Failed to book trip"
+                      : 'Failed to send trip for approval',
+                  context);
             }
           }
         },

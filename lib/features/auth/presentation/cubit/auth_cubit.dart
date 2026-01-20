@@ -78,17 +78,26 @@ class AuthCubit extends Cubit<AuthState> {
     throw Exception("User not authenticated");
   }
 
+  bool get isTripAdmin {
+    if (state is Authenticated &&
+        (state as Authenticated).approvalWorkflow != null) {
+      return (state as Authenticated).approvalWorkflow!.approvalAdmin == true;
+    }
+    throw Exception("User not authenticated");
+  }
+
   List<UserBookingProfile> get allProfiles {
     if (state is Authenticated) {
       final authState = state as Authenticated;
-      return  getFilteredProfile([authState.userBookingProfile, ...authState.corporateProfiles]);
+      return getFilteredProfile(
+          [authState.userBookingProfile, ...authState.corporateProfiles]);
     }
     return [];
   }
 
   List<UserBookingProfile> get corporateProfiles {
     if (state is Authenticated) {
-      return getFilteredProfile((state as Authenticated).corporateProfiles) ;
+      return getFilteredProfile((state as Authenticated).corporateProfiles);
     }
     return [];
   }
@@ -99,31 +108,32 @@ class AuthCubit extends Cubit<AuthState> {
     }
     return null;
   }
-  List<UserBookingProfile> getFilteredProfile(List<UserBookingProfile> profiles) {
-   return profiles
+
+  List<UserBookingProfile> getFilteredProfile(
+      List<UserBookingProfile> profiles) {
+    return profiles
         .where((profile) =>
             profile.firstName != null &&
             profile.firstName!.isNotEmpty &&
             profile.email != null &&
             profile.contactNumber != null &&
             profile.email!.isNotEmpty &&
-            profile.contactNumber!.isNotEmpty&&
+            profile.contactNumber!.isNotEmpty &&
             profile.gender != null &&
-            profile.gender!.isNotEmpty
-        ).toList();
-
+            profile.gender!.isNotEmpty)
+        .toList();
   }
 
   List<PassengerDetailsEntity> getfixedPassengerDetails({TripResponse? trip}) {
     if (state is Authenticated && trip != null) {
       final authState = state as Authenticated;
       if (trip.tripFor == TripFor.Self.value) {
-        return [
-          authState.userBookingProfile.toPassengerDetailsEntity()
-        ];
+        return [authState.userBookingProfile.toPassengerDetailsEntity()];
       } else {
         return corporateProfiles
-        .where((profile)=>profile.userUid!=null && trip.tripDetails?.onBehalf?.contains(profile.userUid) == true)
+            .where((profile) =>
+                profile.userUid != null &&
+                trip.tripDetails?.onBehalf?.contains(profile.userUid) == true)
             .map((profile) => profile.toPassengerDetailsEntity())
             .toList();
       }
