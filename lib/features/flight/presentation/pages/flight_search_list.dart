@@ -70,9 +70,11 @@ class FlightSearchListScreen extends StatelessWidget {
           initialData: context.read<FlightSearchListingCubit>().state.airSearch,
           onSearchClick: (search) {
             Navigator.of(context).pop();
-                            var selectedTrip = context.read<TripCubit>().selectedTrip;
+            var selectedTrip = context.read<TripCubit>().selectedTrip;
 
-            context.read<FlightSearchListingCubit>().searchFlights(search, trip: selectedTrip);
+            context
+                .read<FlightSearchListingCubit>()
+                .searchFlights(search, trip: selectedTrip);
           },
         ));
   }

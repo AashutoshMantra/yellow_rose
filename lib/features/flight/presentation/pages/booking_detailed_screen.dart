@@ -862,10 +862,8 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
                         airResponseData:
                             widget.bookingData.selectedItineraries[idx],
                         airSearch: widget.bookingData.airSearch,
-                        fareType: widget.bookingData.selectedFares[idx]!
-                                .fareTypeDisplay ??
-                            widget.bookingData.selectedFares[idx]?.fareType ??
-                            "",
+                        fareType: widget
+                            .bookingData.selectedFares[idx]!.effectiveFareType,
                       );
                     },
                     separatorBuilder: (BuildContext context, int index) {

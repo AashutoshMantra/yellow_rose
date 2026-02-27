@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:yellow_rose/core/common_widgets/base_appbar.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/loader.dart';
@@ -76,16 +77,41 @@ class _FlightTicketScreenState extends State<FlightTicketScreen> {
               children: [
                 Text("Ticket Details", style: TextStyles.bodyMediumBoldStyle()),
                 SizedBox(height: 6.h),
-                Text.rich(
-                  TextSpan(
-                    text: "Cart ID: ",
-                    style: TextStyles.bodySmallMediumStyle()
-                        .copyWith(color: AppColors.primaryTextSwatch[600]),
+                GestureDetector(
+                  onTap: () {
+                    final uuid = widget.orderStatus.uuid;
+                    if (uuid != null && uuid.isNotEmpty) {
+                      Clipboard.setData(ClipboardData(text: uuid));
+                      WidgetUtil.showSnackBar('Cart ID copied!', context,
+                          col: AppColors.primaryGreen);
+                    }
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextSpan(
-                        text: widget.orderStatus.uuid ?? '',
-                        style: TextStyles.bodySmallBoldStyle(),
+                      Text.rich(
+                        TextSpan(
+                          text: "Cart ID: ",
+                          style: TextStyles.bodySmallMediumStyle().copyWith(
+                              color: AppColors.primaryTextSwatch[600]),
+                          children: [
+                            TextSpan(
+                              text: widget.orderStatus.uuid ?? '',
+                              style: TextStyles.bodySmallBoldStyle(),
+                            ),
+                          ],
+                        ),
                       ),
+                      if (widget.orderStatus.uuid != null &&
+                          widget.orderStatus.uuid!.isNotEmpty)
+                        Padding(
+                          padding: EdgeInsets.only(left: 4.w),
+                          child: Icon(
+                            Icons.copy,
+                            size: 14.w,
+                            color: AppColors.primaryTextSwatch[600],
+                          ),
+                        ),
                     ],
                   ),
                 ),

@@ -15,6 +15,7 @@ import 'package:yellow_rose/features/bus/data/models/search/bus_search_response.
 import 'package:yellow_rose/features/bus/domain/entities/bus_search.dart';
 import 'package:yellow_rose/features/bus/domain/usecases/bus_usecase.dart';
 import 'package:yellow_rose/features/bus/domain/usecases/bus_mapper_utility.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 part 'bus_book_state.dart';
 
@@ -30,6 +31,7 @@ class BusBookCubit extends Cubit<BusBookState> {
     Set<String> selectedSeats,
     BusPoint selectedBoardingPoint,
     BusPoint selectedDroppingPoint, {
+      TripResponse? trip,
     List<PassengerDetailsEntity>? initialPassengerDetails,
   }) async {
     try {
@@ -52,6 +54,7 @@ class BusBookCubit extends Cubit<BusBookState> {
         sourceId: busSearchResponse.sourceId?.toString(),
         destinationId: busSearchResponse.destinationId?.toString(),
         bookingRequest: bookingRequest,
+        tripUid:  trip?.tripUid,
         busBooking: bookingRequest.busBooking,
         whiteLabelId: 1, // TODO: Get from config
       );

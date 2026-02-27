@@ -36,9 +36,9 @@ class FareInfoWidget extends StatelessWidget {
                   onSelect(fareDetail);
                 },
                 title: Text(
-                  fareDetail.fareTypeDisplay ??
-                      fareDetail.fareType ??
-                      "Published",
+                  fareDetail.effectiveFareType.isNotEmpty
+                      ? fareDetail.effectiveFareType
+                      : "Published",
                   style: TextStyles.bodyLargeSemiBoldStyle().copyWith(
                     color: AppColors.primaryTextSwatch[700],
                   ),

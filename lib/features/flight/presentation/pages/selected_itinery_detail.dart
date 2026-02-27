@@ -34,7 +34,7 @@ class _SelectedItineraryDetailScreenState
   @override
   void initState() {
     super.initState();
-    _selectedFare = widget.airResponseData.fare.first.fareType;
+    _selectedFare = widget.airResponseData.fare.first.effectiveFareType;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToFareSection();
     });
@@ -133,10 +133,10 @@ class _SelectedItineraryDetailScreenState
                           fareDetail: fare,
                           onSelect: (fareDetail) {
                             setState(() {
-                              _selectedFare = fareDetail.fareType;
+                              _selectedFare = fareDetail.effectiveFareType;
                             });
                           },
-                          isSelected: _selectedFare == fare.fareType,
+                          isSelected: _selectedFare == fare.effectiveFareType,
                         ),
                       );
                     }).toList(),

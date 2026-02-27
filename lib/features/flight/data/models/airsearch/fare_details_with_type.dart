@@ -45,39 +45,39 @@ class FareDetailsWithType {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
+
     result.addAll({'fareType': fareType});
-    if(fareTypeDisplay != null){
+    if (fareTypeDisplay != null) {
       result.addAll({'fareTypeDisplay': fareTypeDisplay});
     }
-    if(source != null){
+    if (source != null) {
       result.addAll({'source': source});
     }
     result.addAll({'refundable': refundable});
     result.addAll({'corporateFare': corporateFare});
-    if(commercialData != null){
+    if (commercialData != null) {
       result.addAll({'commercialData': commercialData!.toMap()});
     }
     result.addAll({'hasFreeMeal': hasFreeMeal});
     result.addAll({'baseFare': baseFare});
     result.addAll({'finalTax': finalTax});
-    if(supplier != null){
+    if (supplier != null) {
       result.addAll({'supplier': supplier});
     }
     result.addAll({'netFare': netFare});
     result.addAll({'incentiveAmt': incentiveAmt});
     result.addAll({'incentiveTds': incentiveTds});
-    if(miscellaneousData != null){
+    if (miscellaneousData != null) {
       result.addAll({'miscellaneousData': miscellaneousData});
     }
-    if(taxes != null){
+    if (taxes != null) {
       result.addAll({'taxes': taxes});
     }
-    if(otherData != null){
+    if (otherData != null) {
       result.addAll({'otherData': otherData});
     }
     result.addAll({'surCharge': surCharge});
-  
+
     return result;
   }
 
@@ -88,7 +88,9 @@ class FareDetailsWithType {
       source: map['source'],
       refundable: map['refundable'] ?? false,
       corporateFare: map['corporateFare'] ?? false,
-      commercialData: map['commercialData'] != null ? CommercialData.fromMap(map['commercialData']) : null,
+      commercialData: map['commercialData'] != null
+          ? CommercialData.fromMap(map['commercialData'])
+          : null,
       hasFreeMeal: map['hasFreeMeal'] ?? false,
       baseFare: map['baseFare']?.toDouble() ?? 0.0,
       finalTax: map['finalTax']?.toDouble() ?? 0.0,
@@ -96,15 +98,20 @@ class FareDetailsWithType {
       netFare: map['netFare']?.toDouble() ?? 0.0,
       incentiveAmt: map['incentiveAmt']?.toDouble() ?? 0.0,
       incentiveTds: map['incentiveTds']?.toDouble() ?? 0.0,
-      miscellaneousData:map['miscellaneousData']!=null? Map<String, Object>.from(map['miscellaneousData']):null,
-      taxes:map['taxes']!=null? (map['taxes'] as Map).map<String, List<double>>(
+      miscellaneousData: map['miscellaneousData'] != null
+          ? Map<String, Object>.from(map['miscellaneousData'])
+          : null,
+      taxes: map['taxes'] != null
+          ? (map['taxes'] as Map).map<String, List<double>>(
               (key, value) => MapEntry(
                 key.toString(), // Ensure key is a String
                 (value as List).map((e) => (e as num).toDouble()).toList(),
               ),
             )
-          :null,
-      otherData:map['otherData']!=null? Map<String, Object>.from(map['otherData']):null,
+          : null,
+      otherData: map['otherData'] != null
+          ? Map<String, Object>.from(map['otherData'])
+          : null,
       surCharge: map['surCharge']?.toDouble() ?? 0.0,
     );
   }
@@ -113,6 +120,9 @@ class FareDetailsWithType {
 
   factory FareDetailsWithType.fromJson(String source) =>
       FareDetailsWithType.fromMap(json.decode(source));
+
+  /// Returns the fare type to use everywhere — prefers fareTypeDisplay, falls back to fareType.
+  String get effectiveFareType => fareTypeDisplay ?? fareType;
 
   double get totalCost {
     return baseFare + finalTax;
@@ -166,45 +176,45 @@ class FareDetailsWithType {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is FareDetailsWithType &&
-      other.fareType == fareType &&
-      other.fareTypeDisplay == fareTypeDisplay &&
-      other.source == source &&
-      other.refundable == refundable &&
-      other.corporateFare == corporateFare &&
-      other.commercialData == commercialData &&
-      other.hasFreeMeal == hasFreeMeal &&
-      other.baseFare == baseFare &&
-      other.finalTax == finalTax &&
-      other.supplier == supplier &&
-      other.netFare == netFare &&
-      other.incentiveAmt == incentiveAmt &&
-      other.incentiveTds == incentiveTds &&
-      mapEquals(other.miscellaneousData, miscellaneousData) &&
-      mapEquals(other.taxes, taxes) &&
-      mapEquals(other.otherData, otherData) &&
-      other.surCharge == surCharge;
+        other.fareType == fareType &&
+        other.fareTypeDisplay == fareTypeDisplay &&
+        other.source == source &&
+        other.refundable == refundable &&
+        other.corporateFare == corporateFare &&
+        other.commercialData == commercialData &&
+        other.hasFreeMeal == hasFreeMeal &&
+        other.baseFare == baseFare &&
+        other.finalTax == finalTax &&
+        other.supplier == supplier &&
+        other.netFare == netFare &&
+        other.incentiveAmt == incentiveAmt &&
+        other.incentiveTds == incentiveTds &&
+        mapEquals(other.miscellaneousData, miscellaneousData) &&
+        mapEquals(other.taxes, taxes) &&
+        mapEquals(other.otherData, otherData) &&
+        other.surCharge == surCharge;
   }
 
   @override
   int get hashCode {
     return fareType.hashCode ^
-      fareTypeDisplay.hashCode ^
-      source.hashCode ^
-      refundable.hashCode ^
-      corporateFare.hashCode ^
-      commercialData.hashCode ^
-      hasFreeMeal.hashCode ^
-      baseFare.hashCode ^
-      finalTax.hashCode ^
-      supplier.hashCode ^
-      netFare.hashCode ^
-      incentiveAmt.hashCode ^
-      incentiveTds.hashCode ^
-      miscellaneousData.hashCode ^
-      taxes.hashCode ^
-      otherData.hashCode ^
-      surCharge.hashCode;
+        fareTypeDisplay.hashCode ^
+        source.hashCode ^
+        refundable.hashCode ^
+        corporateFare.hashCode ^
+        commercialData.hashCode ^
+        hasFreeMeal.hashCode ^
+        baseFare.hashCode ^
+        finalTax.hashCode ^
+        supplier.hashCode ^
+        netFare.hashCode ^
+        incentiveAmt.hashCode ^
+        incentiveTds.hashCode ^
+        miscellaneousData.hashCode ^
+        taxes.hashCode ^
+        otherData.hashCode ^
+        surCharge.hashCode;
   }
 }

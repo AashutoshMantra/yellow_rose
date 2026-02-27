@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/bus/data/datasources/bus_local_service.dart';
 import 'package:yellow_rose/features/bus/data/datasources/bus_service.dart';
@@ -37,11 +39,16 @@ class BusRepositoryImpl implements BusRepository {
       _cachedBusCities.addAll(cachedJson);
       return cachedJson;
     }
-    final apiResults = await _busService.getBusCities();
-    await _busLocalService
-        .cacheBusCities(apiResults.map((d) => d.toMap()).toList());
-    _cachedBusCities.addAll(apiResults);
-    return apiResults;
+    try {
+      final apiResults = await _busService.getBusCities();
+      await _busLocalService
+          .cacheBusCities(apiResults.map((d) => d.toMap()).toList());
+      _cachedBusCities.addAll(apiResults);
+      return apiResults;
+    } catch (e, s) {
+      log("$e $s");
+      rethrow;
+    }
   }
 
   @override

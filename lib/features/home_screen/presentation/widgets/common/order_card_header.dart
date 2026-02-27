@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:yellow_rose/core/common_widgets/pill.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
+import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 
@@ -42,17 +44,40 @@ class OrderCardHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text.rich(
-                  TextSpan(
-                    text: 'Cart ID: ',
-                    style: TextStyles.bodySmallMediumStyle().copyWith(
-                      color: AppColors.primaryTextSwatch[600],
-                    ),
+                GestureDetector(
+                  onTap: () {
+                    if (cartId != null && cartId!.isNotEmpty) {
+                      Clipboard.setData(ClipboardData(text: cartId!));
+                      WidgetUtil.showSnackBar('Cart ID copied!', context,
+                          col: AppColors.primaryGreen);
+                    }
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextSpan(
-                        text: cartId ?? '-',
-                        style: TextStyles.bodySmallBoldStyle(),
+                      Text.rich(
+                        TextSpan(
+                          text: 'Cart ID: ',
+                          style: TextStyles.bodySmallMediumStyle().copyWith(
+                            color: AppColors.primaryTextSwatch[600],
+                          ),
+                          children: [
+                            TextSpan(
+                              text: cartId ?? '-',
+                              style: TextStyles.bodySmallBoldStyle(),
+                            ),
+                          ],
+                        ),
                       ),
+                      if (cartId != null && cartId!.isNotEmpty)
+                        Padding(
+                          padding: EdgeInsets.only(left: 4.w),
+                          child: Icon(
+                            Icons.copy,
+                            size: 14.w,
+                            color: AppColors.primaryTextSwatch[600],
+                          ),
+                        ),
                     ],
                   ),
                 ),

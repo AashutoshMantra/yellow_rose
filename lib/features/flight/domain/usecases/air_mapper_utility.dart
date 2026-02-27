@@ -28,8 +28,8 @@ class AirMapperUtility {
       var mappedFlight = itinerary.flightDetailsList.map((flightDetail) {
         var bookingClassFiletred = flightDetail.bookingClasses
             .where((d) =>
-                d.fareType
-                    .equalsIgnoreCase(selectedFares?[idx]?.fareType ?? "") ==
+                d.effectiveFareType.equalsIgnoreCase(
+                    selectedFares?[idx]?.effectiveFareType ?? "") ==
                 true)
             .toList();
         flightDetail.copyWith(bookingClasses: bookingClassFiletred);
@@ -37,8 +37,8 @@ class AirMapperUtility {
       }).toList();
       var filteredFare = itinerary.fare
           .where((fare) =>
-              fare.fareType
-                  .equalsIgnoreCase(selectedFares?[idx]?.fareType ?? "") ==
+              fare.effectiveFareType.equalsIgnoreCase(
+                  selectedFares?[idx]?.effectiveFareType ?? "") ==
               true)
           .toList();
       return UserBookingRequest(

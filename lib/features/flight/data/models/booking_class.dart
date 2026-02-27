@@ -9,6 +9,7 @@ class BookingClass {
   final FareDetailsPerPassengerType fareDetailsPerPassengerType;
   final String seatsAvailability;
   final String fareType;
+  final String? fareTypeDisplay;
   final Map<String, Object>? otherData;
   final String? segmentKeys;
   final BaggageInfo? baggageInfo;
@@ -20,12 +21,16 @@ class BookingClass {
     required this.fareDetailsPerPassengerType,
     required this.seatsAvailability,
     required this.fareType,
+    this.fareTypeDisplay,
     this.otherData,
     this.segmentKeys,
     this.baggageInfo,
     this.source,
     this.supplier,
   });
+
+  /// Returns the fare type to use everywhere — prefers fareTypeDisplay, falls back to fareType.
+  String get effectiveFareType => fareTypeDisplay ?? fareType;
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
@@ -36,6 +41,9 @@ class BookingClass {
         {'fareDetailsPerPassengerType': fareDetailsPerPassengerType.toMap()});
     result.addAll({'seatsAvailability': seatsAvailability});
     result.addAll({'fareType': fareType});
+    if (fareTypeDisplay != null) {
+      result.addAll({'fareTypeDisplay': fareTypeDisplay});
+    }
     if (otherData != null) {
       result.addAll({'otherData': otherData});
     }
@@ -63,6 +71,7 @@ class BookingClass {
           map['fareDetailsPerPassengerType']),
       seatsAvailability: map['seatsAvailability'] ?? '',
       fareType: map['fareType'] ?? '',
+      fareTypeDisplay: map['fareTypeDisplay'],
       otherData: map['otherData'] != null
           ? Map<String, Object>.from(map['otherData'])
           : null,

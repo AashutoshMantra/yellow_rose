@@ -428,6 +428,7 @@ class AppRouter {
                     selectedSeats,
                     selectedBoardingPoint,
                     selectedDroppingPoint,
+                    trip: selectedTrip,
                     initialPassengerDetails: tripPassengerDetails,
                   );
               },

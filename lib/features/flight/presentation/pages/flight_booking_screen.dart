@@ -126,9 +126,7 @@ class FlightBookingScreen extends StatelessWidget {
                             airResponseData: state.selectedItineraries[idx],
                             airSearch: airSearch,
                             fareType:
-                                state.selectedFares[idx]!.fareTypeDisplay ??
-                                    state.selectedFares[idx]?.fareType ??
-                                    "",
+                                state.selectedFares[idx]!.effectiveFareType,
                           );
                         },
                         separatorBuilder: (BuildContext context, int index) {

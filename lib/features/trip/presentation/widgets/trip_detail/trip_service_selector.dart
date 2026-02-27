@@ -24,6 +24,8 @@ class TripServiceSelector extends StatelessWidget {
         return item.type == ProductTypeEnum.AIR;
       } else if (service == SupportedService.Hotels) {
         return item.type == ProductTypeEnum.HOTEL;
+      } else if (service == SupportedService.Buses) {
+        return item.type == ProductTypeEnum.BUS;
       }
       return false;
     });
@@ -33,7 +35,8 @@ class TripServiceSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final supportedServices = [
       SupportedService.Flights,
-      SupportedService.Hotels
+      SupportedService.Hotels,
+      SupportedService.Buses
     ];
 
     final hasServicesToAdd =

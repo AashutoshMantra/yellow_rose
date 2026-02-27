@@ -29,7 +29,8 @@ class _SelectedItinerariesScreenState extends State<SelectedItinerariesScreen> {
   void initState() {
     super.initState();
     selectedFareType = Map.fromEntries(widget.selectedItineraries.mapIndexed(
-        (idx, itinarary) => MapEntry(idx, itinarary.fare.first.fareType)));
+        (idx, itinarary) =>
+            MapEntry(idx, itinarary.fare.first.effectiveFareType)));
   }
 
   double totalCost() {
@@ -37,7 +38,7 @@ class _SelectedItinerariesScreenState extends State<SelectedItinerariesScreen> {
     for (var i = 0; i < widget.selectedItineraries.length; i++) {
       var fares = widget.selectedItineraries[i].fare;
       totalCost += fares
-          .firstWhere((far) => far.fareType == selectedFareType[i])
+          .firstWhere((far) => far.effectiveFareType == selectedFareType[i])
           .totalCost;
     }
     return totalCost;
@@ -83,9 +84,11 @@ class _SelectedItinerariesScreenState extends State<SelectedItinerariesScreen> {
                           airResponseData: itinarary,
                           onFareChange: (fareType) {
                             WidgetsBinding.instance.addPostFrameCallback((_) {
-                              setState(() {
-                                selectedFareType[idx] = fareType;
-                              });
+                              if (selectedFareType[idx] != fareType) {
+                                setState(() {
+                                  selectedFareType[idx] = fareType;
+                                });
+                              }
                             });
                           },
                           airSearch: widget.airSearch);
@@ -107,7 +110,8 @@ class _SelectedItinerariesScreenState extends State<SelectedItinerariesScreen> {
                             i++) {
                           var itinararyFare = widget.selectedItineraries[i].fare
                               .firstWhere((fare) =>
-                                  fare.fareType == selectedFareType[i]);
+                                  fare.effectiveFareType ==
+                                  selectedFareType[i]);
                           selectedFares[i] = itinararyFare;
                         }
                         Navigator.of(context).pop();
