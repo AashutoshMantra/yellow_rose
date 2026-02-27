@@ -4,6 +4,7 @@ import 'package:yellow_rose/features/auth/data/datasources/auth_service.dart';
 import 'package:yellow_rose/features/auth/data/datasources/auth_local_service.dart';
 import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_request.dart';
+import 'package:yellow_rose/features/auth/data/models/policy/corporate_policy.dart';
 import 'package:yellow_rose/features/auth/data/models/profile/user_booking_profile.dart';
 import 'package:yellow_rose/features/auth/data/models/sign_in_request.dart';
 import 'package:yellow_rose/features/auth/domain/entities/user_details.dart';
@@ -44,6 +45,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<ApprovalWorkflow> getApprovalWorkflow() {
     return _authService.getApprovalWorkflow();
+  }
+
+  @override
+  Future<CorporatePolicyResponse> getUserPolicies() {
+    return _authService.getUserPolicies();
   }
 
   @override

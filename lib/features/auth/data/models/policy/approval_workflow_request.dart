@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/approvers.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/condition_request.dart';
+import 'package:yellow_rose/features/auth/data/models/policy/travel_rule.dart';
 import 'package:yellow_rose/features/flight/data/models/product_type.dart';
 
 class ApprovalWorkflow {
@@ -13,6 +14,7 @@ class ApprovalWorkflow {
   final String? workFlowDesc;
   final String? status;
   final List<Approvers>? workflow;
+  final List<TravelRulesDTO>? travelRules;
 
   final String? createdBy;
   final String? corporateUserUid;
@@ -28,6 +30,7 @@ class ApprovalWorkflow {
     this.workFlowDesc,
     this.status,
     this.workflow,
+    this.travelRules,
     this.createdBy,
     this.corporateUserUid,
     this.lastModifiedBy,
@@ -44,6 +47,7 @@ class ApprovalWorkflow {
     String? workFlowDesc,
     String? status,
     List<Approvers>? workflow,
+    List<TravelRulesDTO>? travelRules,
     String? createdBy,
     String? corporateUserUid,
     String? lastModifiedBy,
@@ -59,6 +63,7 @@ class ApprovalWorkflow {
       workFlowDesc: workFlowDesc ?? this.workFlowDesc,
       status: status ?? this.status,
       workflow: workflow ?? this.workflow,
+      travelRules: travelRules ?? this.travelRules,
       createdBy: createdBy ?? this.createdBy,
       corporateUserUid: corporateUserUid ?? this.corporateUserUid,
       lastModifiedBy: lastModifiedBy ?? this.lastModifiedBy,
@@ -87,6 +92,9 @@ class ApprovalWorkflow {
     }
     if(workflow != null){
       result.addAll({'workflow': workflow!.map((x) => x?.toMap()).toList()});
+    }
+    if(travelRules != null){
+      result.addAll({'travelRules': travelRules!.map((x) => x?.toMap()).toList()});
     }
     if(createdBy != null){
       result.addAll({'createdBy': createdBy});
@@ -123,6 +131,7 @@ class ApprovalWorkflow {
       workFlowDesc: map['workFlowDesc'],
       status: map['status'],
       workflow: map['workflow'] != null ? List<Approvers>.from(map['workflow']?.map((x) => Approvers.fromMap(x))) : null,
+      travelRules: map['travelRules'] != null ? List<TravelRulesDTO>.from(map['travelRules']?.map((x) => TravelRulesDTO.fromMap(x))) : null,
       createdBy: map['createdBy'],
       corporateUserUid: map['corporateUserUid'],
       lastModifiedBy: map['lastModifiedBy'],
@@ -141,7 +150,7 @@ class ApprovalWorkflow {
 
   @override
   String toString() {
-    return 'ApprovalWorkflow(workFlowId: $workFlowId, workFlowName: $workFlowName, workFlowDesc: $workFlowDesc, status: $status, workflow: $workflow, createdBy: $createdBy, corporateUserUid: $corporateUserUid, lastModifiedBy: $lastModifiedBy, travelPolicyId: $travelPolicyId, product: $product, policyApplied: $policyApplied, priority: $priority, approvalAdmin: $approvalAdmin)';
+    return 'ApprovalWorkflow(workFlowId: $workFlowId, workFlowName: $workFlowName, workFlowDesc: $workFlowDesc, status: $status, workflow: $workflow, travelRules: $travelRules, createdBy: $createdBy, corporateUserUid: $corporateUserUid, lastModifiedBy: $lastModifiedBy, travelPolicyId: $travelPolicyId, product: $product, policyApplied: $policyApplied, priority: $priority, approvalAdmin: $approvalAdmin)';
   }
 
   @override
@@ -154,6 +163,7 @@ class ApprovalWorkflow {
       other.workFlowDesc == workFlowDesc &&
       other.status == status &&
       listEquals(other.workflow, workflow) &&
+      listEquals(other.travelRules, travelRules) &&
       other.createdBy == createdBy &&
       other.corporateUserUid == corporateUserUid &&
       other.lastModifiedBy == lastModifiedBy &&
@@ -171,6 +181,7 @@ class ApprovalWorkflow {
       workFlowDesc.hashCode ^
       status.hashCode ^
       workflow.hashCode ^
+      travelRules.hashCode ^
       createdBy.hashCode ^
       corporateUserUid.hashCode ^
       lastModifiedBy.hashCode ^

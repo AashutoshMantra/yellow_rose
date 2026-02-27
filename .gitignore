@@ -47,3 +47,4 @@ app.*.map.json
 *_secret.*
 
 task*.md
+share_flight_results_plan.md

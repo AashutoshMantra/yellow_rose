@@ -48,9 +48,17 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
   }
 
   void _showCreateTripSheet() {
+    final allowedTypes = context.read<AuthCubit>().allowedRequesterTypes;
+    if (allowedTypes.isEmpty) {
+      WidgetUtil.showSnackBar(
+        'Trip profile is not configured. Please contact your administrator.',
+        context,
+      );
+      return;
+    }
     WidgetUtil.showBottomSheet(
       context,
-      const CreateTripBottomSheet(),
+      CreateTripBottomSheet(allowedTripForOptions: allowedTypes),
     );
   }
 

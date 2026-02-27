@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
+import 'package:yellow_rose/features/auth/domain/entities/trip_type.dart';
 import 'package:yellow_rose/features/bus/data/models/bus_details/bus_detail_response.dart';
 import 'package:yellow_rose/features/bus/data/models/order/block_bus_ticket.dart';
 import 'package:yellow_rose/features/bus/data/models/order/bos_block_response.dart';
@@ -31,7 +32,7 @@ class BusBookCubit extends Cubit<BusBookState> {
     Set<String> selectedSeats,
     BusPoint selectedBoardingPoint,
     BusPoint selectedDroppingPoint, {
-      TripResponse? trip,
+    TripResponse? trip,
     List<PassengerDetailsEntity>? initialPassengerDetails,
   }) async {
     try {
@@ -54,7 +55,7 @@ class BusBookCubit extends Cubit<BusBookState> {
         sourceId: busSearchResponse.sourceId?.toString(),
         destinationId: busSearchResponse.destinationId?.toString(),
         bookingRequest: bookingRequest,
-        tripUid:  trip?.tripUid,
+        tripUid: trip?.tripUid,
         busBooking: bookingRequest.busBooking,
         whiteLabelId: 1, // TODO: Get from config
       );
@@ -102,7 +103,8 @@ class BusBookCubit extends Cubit<BusBookState> {
     }
   }
 
-  Future<BusBlockTicketResponse> updatePassengerDetailInOrder() async {
+  Future<BusBlockTicketResponse> updatePassengerDetailInOrder(
+      {TripResponse? trip, TripType? tripType}) async {
     if (state is BusBookLoaded) {
       var currentState = state as BusBookLoaded;
 
@@ -127,23 +129,26 @@ class BusBookCubit extends Cubit<BusBookState> {
         if (updatedOrder.priceData == null) {
           throw "Error updating order details";
         }
+        BusBlockTicketResponse blockResponse =
+            BusBlockTicketResponse(inventoryItems: []);
+        if (trip == null || tripType == TripType.PostBooking) {
+          // Create block ticket request
+          var blockTicketRequest = BusMapperUtility.createBlockTicketRequest(
+            currentState.busSearch,
+            currentState.busSearchResponse,
+            currentState.busDetailResponse,
+            currentState.selectedSeats,
+            currentState.selectedBoardingPoint!,
+            currentState.selectedDroppingPoint!,
+            currentState.passengers,
+          );
 
-        // Create block ticket request
-        var blockTicketRequest = BusMapperUtility.createBlockTicketRequest(
-          currentState.busSearch,
-          currentState.busSearchResponse,
-          currentState.busDetailResponse,
-          currentState.selectedSeats,
-          currentState.selectedBoardingPoint!,
-          currentState.selectedDroppingPoint!,
-          currentState.passengers,
-        );
-
-        // Block the tickets
-        var blockResponse = await _busUseCase.blockTicket(
-          currentState.busOrderResponse.orderNumber ?? '',
-          blockTicketRequest,
-        );
+          // Block the tickets
+          blockResponse = await _busUseCase.blockTicket(
+            currentState.busOrderResponse.orderNumber ?? '',
+            blockTicketRequest,
+          );
+        }
 
         emit(currentState.copyWith(updateOrderDetailResponse: updatedOrder));
         return blockResponse;

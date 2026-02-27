@@ -19,7 +19,12 @@ import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 import 'package:yellow_rose/features/trip/presentation/pages/trip_detail_screen.dart';
 
 class CreateTripBottomSheet extends StatefulWidget {
-  const CreateTripBottomSheet({super.key});
+  final List<TripFor> allowedTripForOptions;
+
+  const CreateTripBottomSheet({
+    super.key,
+    required this.allowedTripForOptions,
+  });
 
   @override
   State<CreateTripBottomSheet> createState() => _CreateTripBottomSheetState();
@@ -31,7 +36,7 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
   final _tripNameController = TextEditingController();
   final _tripDescriptionController = TextEditingController();
 
-  TripFor _selectedTripFor = TripFor.Self;
+  late TripFor _selectedTripFor;
   String? _selectedPurpose;
   final List<UserBookingProfile> _selectedUsers = [];
 
@@ -47,6 +52,12 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
 
   List<UserBookingProfile> get _allProfiles {
     return context.read<AuthCubit>().allProfiles;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTripFor = widget.allowedTripForOptions.first;
   }
 
   @override
@@ -180,21 +191,20 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            children: TripFor.values.map((tripFor) {
+                            children:
+                                widget.allowedTripForOptions.map((tripFor) {
                               return Expanded(
                                 child: Container(
                                   margin: EdgeInsets.symmetric(horizontal: 6.h),
                                   child: PillButton(
-                                    text: tripFor == TripFor.Self
-                                        ? 'Self'
-                                        : 'On Behalf Of',
+                                    text: tripFor.value,
                                     pillType: _selectedTripFor == tripFor
                                         ? PillType.primary
                                         : PillType.secondary,
                                     onClick: () {
                                       setState(() {
                                         _selectedTripFor = tripFor;
-                                        if (tripFor == TripFor.Self) {
+                                        if (tripFor != TripFor.OnBehalfOf) {
                                           _selectedUsers.clear();
                                         }
                                       });

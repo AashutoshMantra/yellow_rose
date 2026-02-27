@@ -1,6 +1,7 @@
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_request.dart';
+import 'package:yellow_rose/features/auth/data/models/policy/corporate_policy.dart';
 import 'package:yellow_rose/features/auth/data/models/profile/user_booking_profile.dart';
 import 'package:yellow_rose/features/auth/data/models/sign_in_request.dart';
 import 'package:yellow_rose/features/auth/domain/entities/user_details.dart';
@@ -14,6 +15,7 @@ abstract class IAuthUseCase {
   Future<List<BillingEntity>> getBillingEntity(String uuid);
   Future<void> signOut();
   Future<ApprovalWorkflow> getApprovalWorkflow();
+  Future<CorporatePolicyResponse> getUserPolicies();
   Future<List<UserBookingProfile>> getAllCorporateProfile();
   Future<UserBookingProfile> getUserProfile();
   Future<List<UserBookingProfile>> getGroupByCorporateUserProfiles();
@@ -53,6 +55,11 @@ class AuthUseCase implements IAuthUseCase {
   @override
   Future<ApprovalWorkflow> getApprovalWorkflow() {
     return _authRepo.getApprovalWorkflow();
+  }
+
+  @override
+  Future<CorporatePolicyResponse> getUserPolicies() {
+    return _authRepo.getUserPolicies();
   }
 
   @override

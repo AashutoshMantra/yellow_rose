@@ -6,6 +6,7 @@ import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/bus/presentation/pages/bus_search_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/flight_search_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/cubit/app_update/app_update_cubit.dart';
@@ -75,7 +76,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: SupportedService.values.map((supportedService) {
+              children: context
+                  .read<AuthCubit>()
+                  .enabledServices
+                  .map((supportedService) {
                 return ImageIconButton(
                   onClick: () {
                     navigateToService(context, supportedService);

@@ -11,6 +11,7 @@ import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/core/utils/trip_validation_helper.dart';
 import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/bus/data/models/search/bus_search_response.dart';
 import 'package:yellow_rose/core/common_widgets/passenger_detail/traveller_details_widget.dart';
@@ -68,9 +69,13 @@ class BusBookFormScreen extends StatelessWidget {
 
                           loader.value = true;
                           try {
+                            var selectedTrip =
+                                context.read<TripCubit>().selectedTrip;
+                            var tripType = context.read<AuthCubit>().tripType;
                             var response = await context
                                 .read<BusBookCubit>()
-                                .updatePassengerDetailInOrder();
+                                .updatePassengerDetailInOrder(
+                                    trip: selectedTrip, tripType: tripType);
                             if (response.error != null) {
                               throw "Error updating passenger details";
                             }
@@ -128,16 +133,14 @@ class BusBookFormScreen extends StatelessWidget {
                                     showAge: false,
                                     passengerDetails: state.passengers,
                                     savedProfiles: allProfiles,
-                                    isReadOnly: context
-                                            .read<TripCubit>()
-                                            .selectedTrip !=
-                                        null,
-                                    lockMessage: context
-                                                .read<TripCubit>()
-                                                .selectedTrip !=
-                                            null
-                                        ? "Passenger details are fixed for this trip booking"
-                                        : null,
+                                    isReadOnly:
+                                        TripValidationHelper.shouldDisablePassengerControls(
+                                            context.read<TripCubit>().selectedTrip),
+                                    lockMessage:
+                                        TripValidationHelper.shouldDisablePassengerControls(
+                                                context.read<TripCubit>().selectedTrip)
+                                            ? "Passenger details are fixed for this trip booking"
+                                            : null,
                                     onAddUpdate: (passenger) {
                                       context
                                           .read<BusBookCubit>()

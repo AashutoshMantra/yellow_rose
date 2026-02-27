@@ -12,6 +12,7 @@ import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/core/utils/trip_validation_helper.dart';
 import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_response_data.dart';
 import 'package:yellow_rose/features/flight/domain/entities/flight_recent_search.dart';
@@ -152,12 +153,12 @@ class FlightBookingScreen extends StatelessWidget {
                             maxInfant: airSearch.infantCount,
                             passengerDetails: state.passengerDetails,
                             savedProfiles: allProfiles,
-                            isReadOnly:
-                                context.read<TripCubit>().selectedTrip != null,
-                            lockMessage: context
-                                        .read<TripCubit>()
-                                        .selectedTrip !=
-                                    null
+                            isReadOnly: TripValidationHelper
+                                .shouldDisablePassengerControls(
+                                    context.read<TripCubit>().selectedTrip),
+                            lockMessage: TripValidationHelper
+                                    .shouldDisablePassengerControls(
+                                        context.read<TripCubit>().selectedTrip)
                                 ? "Passenger details are fixed for this trip booking"
                                 : null,
                             onAddUpdate: (passengerDetail) {

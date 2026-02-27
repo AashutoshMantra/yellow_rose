@@ -10,16 +10,28 @@ import 'package:yellow_rose/features/trip/data/models/trip_detail.dart';
 // }
 
 enum TripFor {
-  Self("Self"),
-  OnBehalfOf("On Behalf Of");
+  Self("Self", "SELF"),
+  OnBehalfOf("On Behalf Of", "ON_BEHALF"),
+  NonEmployee("Non Employee", "NON_EMPLOYEE");
 
   final String value;
-  const TripFor(this.value);
+
+  final String requesterTypeCode;
+
+  const TripFor(this.value, this.requesterTypeCode);
+
   static TripFor fromString(String value) {
     return TripFor.values.firstWhere(
       (e) => e.value.toLowerCase() == value.toLowerCase(),
       orElse: () => TripFor.Self,
     );
+  }
+
+  static TripFor? fromRequesterTypeCode(String code) {
+    for (final tripFor in TripFor.values) {
+      if (tripFor.requesterTypeCode == code) return tripFor;
+    }
+    return null;
   }
 }
 

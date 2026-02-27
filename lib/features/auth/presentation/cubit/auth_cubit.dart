@@ -2,10 +2,13 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:yellow_rose/core/constants/supported_service.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_request.dart';
+import 'package:yellow_rose/features/auth/data/models/policy/corporate_policy.dart';
 import 'package:yellow_rose/features/auth/data/models/profile/user_booking_profile.dart';
+import 'package:yellow_rose/features/auth/domain/entities/requester_type_extensions.dart';
 import 'package:yellow_rose/features/auth/domain/entities/trip_type.dart';
 import 'package:yellow_rose/features/auth/domain/entities/user_booking_profile_extensions.dart';
 import 'package:yellow_rose/features/auth/domain/entities/user_details.dart';
@@ -40,6 +43,13 @@ class AuthCubit extends Cubit<AuthState> {
         } catch (e) {
           log('No approval workflow found: $e');
         }
+        CorporatePolicyResponse corporatePolicies =
+            CorporatePolicyResponse.empty;
+        try {
+          corporatePolicies = await _authUseCase.getUserPolicies();
+        } catch (e) {
+          log('No corporate policies found: $e');
+        }
         if (userDetails != null) {
           UserBookingProfile userBookingProfile =
               await _authUseCase.getUserProfile();
@@ -62,6 +72,7 @@ class AuthCubit extends Cubit<AuthState> {
               userDetails: userDetails,
               billingEntities: enitty,
               approvalWorkflow: approvalWorkflow,
+              corporatePolicies: corporatePolicies,
               userBookingProfile: userBookingProfile,
               corporateProfiles: corporateProfiles));
         } else {
@@ -113,6 +124,37 @@ class AuthCubit extends Cubit<AuthState> {
       return (state as Authenticated).userBookingProfile;
     }
     return null;
+  }
+
+  
+  CorporatePolicyResponse get corporatePolicies {
+    if (state is Authenticated) {
+      return (state as Authenticated).corporatePolicies;
+    }
+    return CorporatePolicyResponse.empty;
+  }
+
+ 
+  bool isServiceEnabled(String policyCode) {
+    return corporatePolicies.isServiceEnabledByCode(policyCode);
+  }
+
+  
+  List<SupportedService> get enabledServices {
+    return SupportedService.values.where((service) {
+      final code = service.policyCode;
+      if (code == null) return true; // No policy controls this service
+      return isServiceEnabled(code);
+    }).toList();
+  }
+
+  List<TripFor> get allowedRequesterTypes {
+    if (state is Authenticated) {
+      final workflow = (state as Authenticated).approvalWorkflow;
+      if (workflow == null) return [];
+      return workflow.allowedRequesterTypes;
+    }
+    return [];
   }
 
   List<UserBookingProfile> getFilteredProfile(

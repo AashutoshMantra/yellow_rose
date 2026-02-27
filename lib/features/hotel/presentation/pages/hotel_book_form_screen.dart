@@ -13,6 +13,7 @@ import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
+import 'package:yellow_rose/core/utils/trip_validation_helper.dart';
 import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/bottom_button.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/hotel_detail_resonse.dart';
@@ -142,16 +143,14 @@ class HotelBookFormScreen extends StatelessWidget {
                                       maxInfant: 0,
                                       passengerDetails: state.passengerDetails,
                                       savedProfiles: allProfiles,
-                                      isReadOnly: context
-                                              .read<TripCubit>()
-                                              .selectedTrip !=
-                                          null,
-                                      lockMessage: context
-                                                  .read<TripCubit>()
-                                                  .selectedTrip !=
-                                              null
-                                          ? "Passenger details are fixed for this trip booking"
-                                          : null,
+                                      isReadOnly:
+                                          TripValidationHelper.shouldDisablePassengerControls(
+                                              context.read<TripCubit>().selectedTrip),
+                                      lockMessage:
+                                          TripValidationHelper.shouldDisablePassengerControls(
+                                                  context.read<TripCubit>().selectedTrip)
+                                              ? "Passenger details are fixed for this trip booking"
+                                              : null,
                                       onAddUpdate: (passengerDetail) {
                                         context
                                             .read<HotelBookCubit>()
