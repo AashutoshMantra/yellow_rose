@@ -139,6 +139,9 @@ class OrderDetails {
     if (orderId != null) {
       result.addAll({'orderId': orderId});
     }
+     if (channel != null) {
+      result.addAll({'channel': channel!.code});
+    }
     if (pnr != null) {
       result.addAll({'pnr': pnr});
     }
