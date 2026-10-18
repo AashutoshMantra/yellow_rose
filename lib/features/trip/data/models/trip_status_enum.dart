@@ -1,14 +1,14 @@
 enum TripStatusEnum {
   SELFAPPROVED("SELF APPROVED", "Y", "Self Approved"),
+  PARTIALLYAPPROVED("PARTIALLY APPROVED", "P", "Itinerary Partially Approved"),
   PENDING("PENDING", "P", "Pending"),
   APPROVED("APPROVED", "A", "All Itinerary Approved"),
   DECLINED("DECLINED", "D", "Cancelled"),
   APPROVALINITIATED("APPROVAL INITIATED", "I", "Approval Initiated"),
-  PARTIALLYAPPROVED("PARTIALLY APPROVED", "P", "Itinerary Partially Approved"),
   SENDFORRECONSIDERATION(
       "SEND FOR RECONSIDERATION", "S", "Send For Consideration"),
   NEW("NEW", "N", "Selected Itinerary Not Yet Booked"),
-  TIMEOUT("TIMEOUT", "T", "Timeout"),
+  PENDINGTICKET("PENDINGTICKET", "T", "Pending Ticket"),
   CANCEL("CANCEL", "D", "Cancelled"),
   PAID("PAID", "O", "Paid"),
   COMPLETE("COMPLETE", "C", "Trip Completed"),

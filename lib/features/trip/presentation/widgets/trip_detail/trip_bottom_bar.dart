@@ -12,6 +12,7 @@ import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_status_enum.dart';
 import 'package:yellow_rose/features/trip/domain/entities/trip_approval_response_status.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
+import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_notes_sheet.dart';
 
 class TripBottomBar extends StatefulWidget {
   final TripResponse trip;
@@ -126,8 +127,21 @@ class _TripBottomBarState extends State<TripBottomBar> {
         subtitle: 'Total Trip Cost',
         buttonText: isTripAdmin ? "Book" : 'Send for Approval',
         onClick: () async {
+          final tripCubit = context.read<TripCubit>();
+          String? notes;
+          if (!isTripAdmin) {
+            final result = await WidgetUtil.showBottomSheet(
+              context,
+              const TripNotesSheet(
+                title: 'Send for Approval',
+                buttonText: 'Send for Approval',
+              ),
+            );
+            if (result == null || result is! String) return;
+            notes = result;
+          }
           try {
-            await context.read<TripCubit>().sendTripForApproval();
+            await tripCubit.sendTripForApproval(notes: notes);
             if (context.mounted) {
               WidgetUtil.showSnackBar(
                   isTripAdmin
@@ -183,80 +197,82 @@ class _TripBottomBarState extends State<TripBottomBar> {
   Future<void> _handleApproveTrip(BuildContext context) async {
     if (widget.trip.tripUid == null) return;
 
-    _showApprovalDialog(
+    final notes = await WidgetUtil.showBottomSheet(
       context,
-      title: "Are you sure you want to approve this trip?",
-      iconPath: "assets/images/order_success.png",
-      iconHeight: 100.h,
-      onConfirm: () async {
-        setState(() => _isApprovingOrDenying = true);
-
-        try {
-          await context.read<TripCubit>().approveTrip(widget.trip.tripUid!, '');
-
-          widget.onApprovalStatusChanged();
-          context.read<TripCubit>().refereshSelectedTrip();
-
-          if (mounted) {
-            WidgetUtil.showSnackBar(
-              'Trip approved successfully',
-              context,
-              col: AppColors.primaryGreen,
-            );
-          }
-        } catch (e) {
-          if (mounted) {
-            WidgetUtil.showSnackBar(
-              'Failed to approve trip, try again',
-              context,
-            );
-          }
-        } finally {
-          if (mounted) {
-            setState(() => _isApprovingOrDenying = false);
-          }
-        }
-      },
+      const TripNotesSheet(title: 'Approve Trip', buttonText: 'Approve'),
     );
+    if (notes == null || notes is! String || !context.mounted) return;
+
+    final tripCubit = context.read<TripCubit>();
+    setState(() => _isApprovingOrDenying = true);
+
+    try {
+      await tripCubit.approveTrip(widget.trip.tripUid!, notes);
+
+      widget.onApprovalStatusChanged();
+      tripCubit.refereshSelectedTrip();
+
+      if (mounted) {
+        WidgetUtil.showSnackBar(
+          'Trip approved successfully',
+          context,
+          col: AppColors.primaryGreen,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        WidgetUtil.showSnackBar(
+          'Failed to approve trip, try again',
+          context,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isApprovingOrDenying = false);
+      }
+    }
   }
 
   Future<void> _handleDenyTrip(BuildContext context) async {
     if (widget.trip.tripUid == null) return;
 
-    _showApprovalDialog(
+    final notes = await WidgetUtil.showBottomSheet(
       context,
-      title: "Are you sure you want to deny this trip?",
-      iconPath: "assets/images/cacel_icon.png",
-      iconHeight: 40.h,
-      onConfirm: () async {
-        setState(() => _isApprovingOrDenying = true);
-
-        try {
-          await context.read<TripCubit>().denyTrip(widget.trip.tripUid!, '');
-
-          widget.onApprovalStatusChanged();
-
-          if (mounted) {
-            WidgetUtil.showSnackBar(
-              'Trip denied successfully',
-              context,
-              col: AppColors.primaryGreen,
-            );
-          }
-        } catch (e) {
-          if (mounted) {
-            WidgetUtil.showSnackBar(
-              'Failed to deny trip: ${e.toString()}',
-              context,
-            );
-          }
-        } finally {
-          if (mounted) {
-            setState(() => _isApprovingOrDenying = false);
-          }
-        }
-      },
+      const TripNotesSheet(
+        title: 'Deny Trip',
+        buttonText: 'Deny',
+        isRequired: true,
+      ),
     );
+    if (notes == null || notes is! String || !context.mounted) return;
+
+    final tripCubit = context.read<TripCubit>();
+    setState(() => _isApprovingOrDenying = true);
+
+    try {
+      await tripCubit.denyTrip(widget.trip.tripUid!, notes);
+
+      widget.onApprovalStatusChanged();
+
+      if (mounted) {
+        WidgetUtil.showSnackBar(
+          'Trip denied successfully',
+          context,
+          col: AppColors.primaryGreen,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        WidgetUtil.showSnackBar(
+          'Failed to deny trip: ${e.toString()}',
+          context,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isApprovingOrDenying = false);
+      }
+    }
   }
 
   Future<void> _handleCancelTrip(BuildContext context) async {

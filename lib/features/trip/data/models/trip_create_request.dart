@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_detail.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_guest.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_rm_tag.dart';
 
 // {
 //    "tripName": "fsfhdfsdg",
@@ -41,6 +44,10 @@ class TripCreateRequest {
   final TripFor? tripFor;
   final String? tripPurpose;
   final TripDetail? tripDetails;
+  final String? billingEntity;
+  final String? ptcNptcType;
+  final List<TripRmTag>? rmTags;
+  final List<TripGuest>? otherList;
 
   TripCreateRequest({
     this.tripName,
@@ -48,6 +55,10 @@ class TripCreateRequest {
     this.tripFor,
     this.tripPurpose,
     this.tripDetails,
+    this.billingEntity,
+    this.ptcNptcType,
+    this.rmTags,
+    this.otherList,
   });
 
   TripCreateRequest copyWith({
@@ -56,6 +67,10 @@ class TripCreateRequest {
     TripFor? tripFor,
     String? tripPurpose,
     TripDetail? tripDetail,
+    String? billingEntity,
+    String? ptcNptcType,
+    List<TripRmTag>? rmTags,
+    List<TripGuest>? otherList,
   }) {
     return TripCreateRequest(
       tripName: tripName ?? this.tripName,
@@ -63,6 +78,10 @@ class TripCreateRequest {
       tripFor: tripFor ?? this.tripFor,
       tripPurpose: tripPurpose ?? this.tripPurpose,
       tripDetails: tripDetail ?? tripDetails,
+      billingEntity: billingEntity ?? this.billingEntity,
+      ptcNptcType: ptcNptcType ?? this.ptcNptcType,
+      rmTags: rmTags ?? this.rmTags,
+      otherList: otherList ?? this.otherList,
     );
   }
 
@@ -76,13 +95,30 @@ class TripCreateRequest {
       result.addAll({'tripDescription': tripDescription});
     }
     if (tripFor != null) {
-      result.addAll({'tripFor': tripFor!.value});
+      result.addAll({
+        'tripFor': tripFor == TripFor.NonEmployee ? 'Other' : tripFor!.value
+      });
+      if (tripFor == TripFor.NonEmployee) {
+        result.addAll({'requestFor': 'Other'});
+      }
     }
     if (tripPurpose != null) {
       result.addAll({'tripPurpose': tripPurpose});
     }
     if (tripDetails != null) {
       result.addAll({'tripDetails': tripDetails!.toMap()});
+    }
+    if (billingEntity != null) {
+      result.addAll({'billingEntity': billingEntity});
+    }
+    if (ptcNptcType != null) {
+      result.addAll({'ptcNptcType': ptcNptcType});
+    }
+    if (rmTags != null) {
+      result.addAll({'rmTags': rmTags!.map((x) => x.toRequestMap()).toList()});
+    }
+    if (otherList != null) {
+      result.addAll({'otherList': otherList!.map((x) => x.toMap()).toList()});
     }
 
     return result;
@@ -98,6 +134,14 @@ class TripCreateRequest {
       tripDetails: map['tripDetail'] != null
           ? TripDetail.fromMap(map['tripDetail'])
           : null,
+      billingEntity: map['billingEntity'],
+      ptcNptcType: map['ptcNptcType'],
+      rmTags: map['rmTags'] != null
+          ? List<TripRmTag>.from(map['rmTags']?.map((x) => TripRmTag.fromMap(x)))
+          : null,
+      otherList: map['otherList'] != null
+          ? List<TripGuest>.from(map['otherList']?.map((x) => TripGuest.fromMap(x)))
+          : null,
     );
   }
 
@@ -108,7 +152,7 @@ class TripCreateRequest {
 
   @override
   String toString() {
-    return 'TripCreateRequest(tripName: $tripName, tripDescription: $tripDescription, tripFor: $tripFor, tripPurpose: $tripPurpose, tripDetail: $tripDetails)';
+    return 'TripCreateRequest(tripName: $tripName, tripDescription: $tripDescription, tripFor: $tripFor, tripPurpose: $tripPurpose, tripDetail: $tripDetails, billingEntity: $billingEntity, ptcNptcType: $ptcNptcType, rmTags: $rmTags, otherList: $otherList)';
   }
 
   @override
@@ -120,7 +164,11 @@ class TripCreateRequest {
         other.tripDescription == tripDescription &&
         other.tripFor == tripFor &&
         other.tripPurpose == tripPurpose &&
-        other.tripDetails == tripDetails;
+        other.tripDetails == tripDetails &&
+        other.billingEntity == billingEntity &&
+        other.ptcNptcType == ptcNptcType &&
+        listEquals(other.rmTags, rmTags) &&
+        listEquals(other.otherList, otherList);
   }
 
   @override
@@ -129,6 +177,10 @@ class TripCreateRequest {
         tripDescription.hashCode ^
         tripFor.hashCode ^
         tripPurpose.hashCode ^
-        tripDetails.hashCode;
+        tripDetails.hashCode ^
+        billingEntity.hashCode ^
+        ptcNptcType.hashCode ^
+        rmTags.hashCode ^
+        otherList.hashCode;
   }
 }

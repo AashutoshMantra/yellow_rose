@@ -6,18 +6,22 @@ import 'package:yellow_rose/core/utils/dio_client.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_approval_request.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_approval_response.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_approver.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_rm_tag.dart';
 
 abstract class TripService {
   Future<TripResponse> createTrip(TripCreateRequest request);
   Future<List<TripResponse>> getTrips(String userId);
   Future<TripResponse> getTripById(String tripId);
-  Future<void> addToTrip(String orderId);
-  Future<void> sendTripForApproval(String tripId);
+  Future<void> addToTrip(String orderId, {List<String>? approverIds});
+  Future<void> sendTripForApproval(String tripId, {String? notes});
   Future<List<TripResponse>> getMyTeamTrip(String userId);
   Future<void> approveDenyTrip(TripApprovalRequest request);
   Future<TripApprovalResponse> getTripApprovalStatus(String tripUid);
+  Future<List<TripApprover>> getTripApprovers(String tripUid);
+  Future<List<TripRmTag>> getRmTags(String userId);
   Future<Map<String, String>> cancelTrip(List<String> tripItemList);
 }
 
@@ -53,17 +57,21 @@ class TripServiceImpl implements TripService {
   }
 
   @override
-  Future<void> addToTrip(String orderId) async {
+  Future<void> addToTrip(String orderId, {List<String>? approverIds}) async {
     await _dioClient.post(
       "${AppConfig.instance.apiBaseUrl}/tripapproval/submit/$orderId",
+      data: (approverIds ?? []).isEmpty ? null : {"approverIds": approverIds},
     );
   }
 
   @override
-  Future<void> sendTripForApproval(String tripId) async {
+  Future<void> sendTripForApproval(String tripId, {String? notes}) async {
     await _dioClient.post(
       "${AppConfig.instance.apiBaseUrl}/tripapproval/save",
-      data: {"tripUid": tripId},
+      data: {
+        "tripUid": tripId,
+        if (notes != null && notes.isNotEmpty) "notes": notes,
+      },
     );
   }
 
@@ -92,6 +100,28 @@ class TripServiceImpl implements TripService {
       '${AppConfig.instance.apiBaseUrl}/tripapproval/getByApprovalId/$tripUid',
     );
     return TripApprovalResponse.fromMap(response.data);
+  }
+
+  @override
+  Future<List<TripApprover>> getTripApprovers(String tripUid) async {
+    var response = await _dioClient
+        .get('${AppConfig.instance.apiBaseUrl}/tripapproval/get/$tripUid');
+    var approvers = List<TripApprover>.empty(growable: true);
+    for (var approver in (response.data as List)) {
+      approvers.add(TripApprover.fromMap(approver));
+    }
+    return approvers;
+  }
+
+  @override
+  Future<List<TripRmTag>> getRmTags(String userId) async {
+    var response = await _dioClient.get(
+        '${AppConfig.instance.apiBaseUrl}/reporting/tags/AIR/customtag/tag/PAX/$userId');
+    var tags = List<TripRmTag>.empty(growable: true);
+    for (var tag in (response.data as List)) {
+      tags.add(TripRmTag.fromMap(tag));
+    }
+    return tags;
   }
 
   @override

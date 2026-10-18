@@ -39,6 +39,12 @@ class TripAirItem {
   final String? hotelName;
 
   final String? roomType;
+
+  final String? busOperatorName;
+
+  final String? busType;
+
+  final String? busItineraryId;
   TripAirItem({
     this.id,
     this.fromAirport,
@@ -58,6 +64,9 @@ class TripAirItem {
     this.checkInDate,
     this.hotelName,
     this.roomType,
+    this.busOperatorName,
+    this.busType,
+    this.busItineraryId,
   });
 
   TripAirItem copyWith({
@@ -79,6 +88,9 @@ class TripAirItem {
     String? checkInDate,
     String? hotelName,
     String? roomType,
+    String? busOperatorName,
+    String? busType,
+    String? busItineraryId,
   }) {
     return TripAirItem(
       id: id ?? this.id,
@@ -99,6 +111,9 @@ class TripAirItem {
       checkInDate: checkInDate ?? this.checkInDate,
       hotelName: hotelName ?? this.hotelName,
       roomType: roomType ?? this.roomType,
+      busOperatorName: busOperatorName ?? this.busOperatorName,
+      busType: busType ?? this.busType,
+      busItineraryId: busItineraryId ?? this.busItineraryId,
     );
   }
 
@@ -149,6 +164,15 @@ class TripAirItem {
     if (roomType != null) {
       result.addAll({'roomType': roomType});
     }
+    if (busOperatorName != null) {
+      result.addAll({'busOperatorName': busOperatorName});
+    }
+    if (busType != null) {
+      result.addAll({'busType': busType});
+    }
+    if (busItineraryId != null) {
+      result.addAll({'busItineraryId': busItineraryId});
+    }
 
     return result;
   }
@@ -173,6 +197,9 @@ class TripAirItem {
       checkInDate: map['checkInDate'],
       hotelName: map['hotelName'],
       roomType: map['roomType'],
+      busOperatorName: map['busOperatorName'],
+      busType: map['busType'],
+      busItineraryId: map['busItineraryId']?.toString(),
     );
   }
 
@@ -183,7 +210,7 @@ class TripAirItem {
 
   @override
   String toString() {
-    return 'TripAirItem(id: $id, fromAirport: $fromAirport, toAirport: $toAirport, status: $status, requestedDate: $requestedDate, travelType: $travelType, type: $type, trip: $trip, bookingTs: $bookingTs, cartId: $cartId, failedAttempts: $failedAttempts, itineraryCost: $itineraryCost, flightNumber: $flightNumber, firstDeparture: $firstDeparture, sector: $sector, checkInDate: $checkInDate, hotelName: $hotelName, roomType: $roomType)';
+    return 'TripAirItem(id: $id, fromAirport: $fromAirport, toAirport: $toAirport, status: $status, requestedDate: $requestedDate, travelType: $travelType, type: $type, trip: $trip, bookingTs: $bookingTs, cartId: $cartId, failedAttempts: $failedAttempts, itineraryCost: $itineraryCost, flightNumber: $flightNumber, firstDeparture: $firstDeparture, sector: $sector, checkInDate: $checkInDate, hotelName: $hotelName, roomType: $roomType, busOperatorName: $busOperatorName, busType: $busType, busItineraryId: $busItineraryId)';
   }
 
   @override
@@ -208,7 +235,10 @@ class TripAirItem {
         other.sector == sector &&
         other.checkInDate == checkInDate &&
         other.hotelName == hotelName &&
-        other.roomType == roomType;
+        other.roomType == roomType &&
+        other.busOperatorName == busOperatorName &&
+        other.busType == busType &&
+        other.busItineraryId == busItineraryId;
   }
 
   @override
@@ -230,6 +260,9 @@ class TripAirItem {
         sector.hashCode ^
         checkInDate.hashCode ^
         hotelName.hashCode ^
-        roomType.hashCode;
+        roomType.hashCode ^
+        busOperatorName.hashCode ^
+        busType.hashCode ^
+        busItineraryId.hashCode;
   }
 }

@@ -5,8 +5,10 @@ import 'package:equatable/equatable.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_approval_request.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_approval_response.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_approver.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_rm_tag.dart';
 import 'package:yellow_rose/features/trip/domain/entities/trip_approval_status.dart';
 import 'package:yellow_rose/features/trip/domain/usecases/trip_usecase.dart';
 
@@ -39,7 +41,8 @@ class TripCubit extends Cubit<TripState> {
 
     final airCost = trip.totalAirCost ?? 0.0;
     final hotelCost = trip.totalHotelCost ?? 0.0;
-    return airCost + hotelCost;
+    final busCost = trip.totalBusCost ?? 0.0;
+    return airCost + hotelCost + busCost;
   }
 
   Future<void> loadTrips(String userId) async {
@@ -116,16 +119,16 @@ class TripCubit extends Cubit<TripState> {
     }
   }
 
-  Future<void> addToTrip(String orderId) async {
+  Future<void> addToTrip(String orderId, {List<String>? approverIds}) async {
     final currentSelectedTrip = selectedTrip;
     if (currentSelectedTrip == null) {
       throw Exception('No trip selected');
     }
 
-    await _tripUseCase.addToTrip(orderId);
+    await _tripUseCase.addToTrip(orderId, approverIds: approverIds);
   }
 
-  Future<void> sendTripForApproval() async {
+  Future<void> sendTripForApproval({String? notes}) async {
     final currentSelectedTrip = selectedTrip;
     if (currentSelectedTrip == null) {
       throw Exception('No trip selected');
@@ -135,7 +138,8 @@ class TripCubit extends Cubit<TripState> {
     emit(TripLoading());
 
     try {
-      await _tripUseCase.sendTripForApproval(currentSelectedTrip.tripUid!);
+      await _tripUseCase.sendTripForApproval(currentSelectedTrip.tripUid!,
+          notes: notes);
       final refreshedTrip =
           await _tripUseCase.getTripById(currentSelectedTrip.tripUid!);
 
@@ -156,6 +160,22 @@ class TripCubit extends Cubit<TripState> {
   Future<TripApprovalResponse> getTripApprovalStatus(String tripUid) async {
     try {
       return await _tripUseCase.getTripApprovalStatus(tripUid);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<TripApprover>> getTripApprovers(String tripUid) async {
+    try {
+      return await _tripUseCase.getTripApprovers(tripUid);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<TripRmTag>> getRmTags(String userId) async {
+    try {
+      return await _tripUseCase.getRmTags(userId);
     } catch (e) {
       rethrow;
     }

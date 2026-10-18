@@ -15,6 +15,7 @@ import 'package:yellow_rose/features/home_screen/presentation/pages/home_screen.
 import 'package:yellow_rose/features/trip/data/models/trip_status_enum.dart';
 import 'package:yellow_rose/features/trip/domain/entities/trip_approval_response_status.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
+import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_approval_chain.dart';
 import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_status_banner.dart';
 import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_bottom_bar.dart';
 import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_service_selector.dart';
@@ -136,6 +137,11 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<TripCubit, TripState>(
+      listenWhen: (previous, current) =>
+          current is TripLoaded &&
+          (previous is! TripLoaded ||
+              previous.selectedTrip?.tripItemList !=
+                  current.selectedTrip?.tripItemList),
       listener: (context, state) {
         if (state is TripLoaded) {
           _loadTripServices();
@@ -179,6 +185,8 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                                               navigateToService(
                                                   context, service),
                                         ),
+                                      TripApprovalChain(
+                                          trip: state.selectedTrip!),
                                       Text(
                                         'Trip Cart',
                                         style: TextStyles.bodyLargeBoldStyle(),

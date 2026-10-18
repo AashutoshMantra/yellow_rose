@@ -18,6 +18,7 @@ class TripResponse {
   final String? tripName;
   final double? totalAirCost;
   final double? totalHotelCost;
+  final double? totalBusCost;
   final TripStatusEnum? status;
   final String? statusDesc;
   final String? approvalLevel1;
@@ -52,6 +53,7 @@ class TripResponse {
     this.tripName,
     this.totalAirCost,
     this.totalHotelCost,
+    this.totalBusCost,
     this.status,
     this.statusDesc,
     this.approvalLevel1,
@@ -88,6 +90,7 @@ class TripResponse {
     String? tripName,
     double? totalAirCost,
     double? totalHotelCost,
+    double? totalBusCost,
     TripStatusEnum? status,
     String? statusDesc,
     String? approvalLevel1,
@@ -123,6 +126,7 @@ class TripResponse {
       tripName: tripName ?? this.tripName,
       totalAirCost: totalAirCost ?? this.totalAirCost,
       totalHotelCost: totalHotelCost ?? this.totalHotelCost,
+      totalBusCost: totalBusCost ?? this.totalBusCost,
       status: status ?? this.status,
       statusDesc: statusDesc ?? this.statusDesc,
       approvalLevel1: approvalLevel1 ?? this.approvalLevel1,
@@ -187,6 +191,9 @@ class TripResponse {
     }
     if (totalHotelCost != null) {
       result.addAll({'totalHotelCost': totalHotelCost});
+    }
+    if (totalBusCost != null) {
+      result.addAll({'totalBusCost': totalBusCost});
     }
     if (status != null) {
       result.addAll({'status': status!.code});
@@ -272,6 +279,7 @@ class TripResponse {
       tripName: map['tripName'],
       totalAirCost: map['totalAirCost']?.toDouble(),
       totalHotelCost: map['totalHotelCost']?.toDouble(),
+      totalBusCost: map['totalBusCost']?.toDouble(),
       status:
           map['status'] != null ? TripStatusEnum.fromCode(map['status']) : null,
       statusDesc: map['statusDesc'],
@@ -310,7 +318,7 @@ class TripResponse {
 
   @override
   String toString() {
-    return 'TripResponse(statuss: $statuss, message: $message, tripUid: $tripUid, tripId: $tripId, userUid: $userUid, tripFor: $tripFor, tripPurpose: $tripPurpose, tripDescription: $tripDescription, tripName: $tripName, totalAirCost: $totalAirCost, totalHotelCost: $totalHotelCost, status: $status, statusDesc: $statusDesc, approvalLevel1: $approvalLevel1, approvalLevel1Email: $approvalLevel1Email, approvalLevel1EmpCode: $approvalLevel1EmpCode, approvalLevel2: $approvalLevel2, approvalLevel2Email: $approvalLevel2Email, approvalLevel2EmpCode: $approvalLevel2EmpCode, approvalLevel3: $approvalLevel3, approvalLevel3Email: $approvalLevel3Email, approvalLevel3EmpCode: $approvalLevel3EmpCode, approvalLevel4: $approvalLevel4, approvalLevel4Email: $approvalLevel4Email, approvalLevel4EmpCode: $approvalLevel4EmpCode, approvalReferenceId: $approvalReferenceId, policyRuleId: $policyRuleId, policyRuleApplied: $policyRuleApplied, approvalWorkFlowId: $approvalWorkFlowId, createdBy: $createdBy, genTs: $genTs, tripDetail: $tripDetails, tripItemList: $tripItemList)';
+    return 'TripResponse(statuss: $statuss, message: $message, tripUid: $tripUid, tripId: $tripId, userUid: $userUid, tripFor: $tripFor, tripPurpose: $tripPurpose, tripDescription: $tripDescription, tripName: $tripName, totalAirCost: $totalAirCost, totalHotelCost: $totalHotelCost, totalBusCost: $totalBusCost, status: $status, statusDesc: $statusDesc, approvalLevel1: $approvalLevel1, approvalLevel1Email: $approvalLevel1Email, approvalLevel1EmpCode: $approvalLevel1EmpCode, approvalLevel2: $approvalLevel2, approvalLevel2Email: $approvalLevel2Email, approvalLevel2EmpCode: $approvalLevel2EmpCode, approvalLevel3: $approvalLevel3, approvalLevel3Email: $approvalLevel3Email, approvalLevel3EmpCode: $approvalLevel3EmpCode, approvalLevel4: $approvalLevel4, approvalLevel4Email: $approvalLevel4Email, approvalLevel4EmpCode: $approvalLevel4EmpCode, approvalReferenceId: $approvalReferenceId, policyRuleId: $policyRuleId, policyRuleApplied: $policyRuleApplied, approvalWorkFlowId: $approvalWorkFlowId, createdBy: $createdBy, genTs: $genTs, tripDetail: $tripDetails, tripItemList: $tripItemList)';
   }
 
   @override
@@ -329,6 +337,7 @@ class TripResponse {
         other.tripName == tripName &&
         other.totalAirCost == totalAirCost &&
         other.totalHotelCost == totalHotelCost &&
+        other.totalBusCost == totalBusCost &&
         other.status == status &&
         other.statusDesc == statusDesc &&
         other.approvalLevel1 == approvalLevel1 &&
@@ -366,6 +375,7 @@ class TripResponse {
         tripName.hashCode ^
         totalAirCost.hashCode ^
         totalHotelCost.hashCode ^
+        totalBusCost.hashCode ^
         status.hashCode ^
         statusDesc.hashCode ^
         approvalLevel1.hashCode ^

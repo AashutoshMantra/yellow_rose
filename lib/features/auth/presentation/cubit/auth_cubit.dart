@@ -8,6 +8,7 @@ import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_request.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/corporate_policy.dart';
 import 'package:yellow_rose/features/auth/data/models/profile/user_booking_profile.dart';
+import 'package:yellow_rose/features/auth/domain/entities/manual_approver.dart';
 import 'package:yellow_rose/features/auth/domain/entities/requester_type_extensions.dart';
 import 'package:yellow_rose/features/auth/domain/entities/trip_type.dart';
 import 'package:yellow_rose/features/auth/domain/entities/user_booking_profile_extensions.dart';
@@ -93,6 +94,14 @@ class AuthCubit extends Cubit<AuthState> {
       return (state as Authenticated).approvalWorkflow!.tripType;
     }
     return TripType.NoTrip;
+  }
+
+  List<ManualApprover> get manualApprovers {
+    if (state is Authenticated &&
+        (state as Authenticated).approvalWorkflow != null) {
+      return (state as Authenticated).approvalWorkflow!.manualApprovers;
+    }
+    return [];
   }
 
   bool get isTripAdmin {

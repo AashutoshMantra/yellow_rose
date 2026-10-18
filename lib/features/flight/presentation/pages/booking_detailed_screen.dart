@@ -25,6 +25,7 @@ import 'package:yellow_rose/features/flight/presentation/pages/flight_booking_sc
 import 'package:yellow_rose/features/flight/presentation/pages/order_status_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/order/payment_method_list.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
+import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_approver_selection_sheet.dart';
 
 class BookingDetailedScreen extends StatefulWidget {
   static const String routeName = "/bookingDetailedScreen";
@@ -112,9 +113,11 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
           orderStatus = OrderStatusEnum.success;
         }
       } else {
-        await context
-            .read<TripCubit>()
-            .addToTrip(widget.bookingData.orderDetails.orderId!);
+        final approverIds = await TripApproverSelectionSheet.select(context);
+        if (approverIds == null || !mounted) return;
+        await context.read<TripCubit>().addToTrip(
+            widget.bookingData.orderDetails.orderId!,
+            approverIds: approverIds);
         orderStatus = OrderStatusEnum.success;
       }
 

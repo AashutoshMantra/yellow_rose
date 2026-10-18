@@ -29,6 +29,7 @@ import 'package:yellow_rose/features/flight/domain/usecases/air_mapper_utility.d
 import 'package:yellow_rose/features/flight/presentation/pages/order_status_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/order/payment_method_list.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
+import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_approver_selection_sheet.dart';
 
 class BusBookingReviewScreen extends StatefulWidget {
   static const routeName = "/busBookingReviewScreen";
@@ -147,9 +148,11 @@ class _BusBookingReviewScreenState extends State<BusBookingReviewScreen> {
           orderStatus = OrderStatusEnum.error;
         }
       } else {
-        await context
-            .read<TripCubit>()
-            .addToTrip(state.busOrderResponse.orderNumber!);
+        final approverIds = await TripApproverSelectionSheet.select(context);
+        if (approverIds == null || !mounted) return;
+        await context.read<TripCubit>().addToTrip(
+            state.busOrderResponse.orderNumber!,
+            approverIds: approverIds);
       }
 
       if (mounted) {

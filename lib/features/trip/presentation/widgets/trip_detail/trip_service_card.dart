@@ -56,7 +56,9 @@ class TripServiceCard extends StatelessWidget {
         return BusOrderDetailCard(
           orderStatus: order,
           customButtonText: !showModifyButton ? null : 'Modify',
-          onCustomButtonPressed: !showModifyButton ? null : () {},
+          onCustomButtonPressed: !showModifyButton
+              ? null
+              : () => onModify(SupportedService.Buses),
           readonly: isTeamTrip,
         );
       default:

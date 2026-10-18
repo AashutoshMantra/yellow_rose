@@ -8,10 +8,13 @@ enum TripApprovalResponseStatus {
 
     switch (status.toUpperCase()) {
       case 'REVIEW':
+      case 'I':
         return TripApprovalResponseStatus.REVIEW;
       case 'APPROVED':
+      case 'A':
         return TripApprovalResponseStatus.APPROVED;
       case 'REJECTED':
+      case 'D':
         return TripApprovalResponseStatus.REJECTED;
       default:
         return null;

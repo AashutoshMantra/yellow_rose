@@ -23,6 +23,7 @@ import 'package:yellow_rose/features/flight/presentation/widgets/order/payment_m
 import 'package:yellow_rose/features/hotel/presentation/cubit/hotel_book_cubit/hotel_book_cubit.dart';
 import 'package:yellow_rose/features/hotel/domain/usecases/hotel_book_use_case.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
+import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_approver_selection_sheet.dart';
 // ...existing imports...
 
 class HotelPaymentScreen extends StatefulWidget {
@@ -85,9 +86,11 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
           orderStatus = OrderStatusEnum.error;
         }
       } else {
-        await context
-            .read<TripCubit>()
-            .addToTrip(widget.orderUpdateResponse.orderNumber!);
+        final approverIds = await TripApproverSelectionSheet.select(context);
+        if (approverIds == null || !mounted) return;
+        await context.read<TripCubit>().addToTrip(
+            widget.orderUpdateResponse.orderNumber!,
+            approverIds: approverIds);
       }
 
       if (mounted) {

@@ -120,6 +120,7 @@ class TripStatusBanner extends StatelessWidget {
       case TripStatusEnum.PENDINGAIR:
       case TripStatusEnum.PENDINGHOTEL:
       case TripStatusEnum.TOTALPENDING:
+      case TripStatusEnum.PENDINGTICKET:
       case TripStatusEnum.PARTIALLYAPPROVED:
         return Colors.orange;
       case TripStatusEnum.APPROVED:
@@ -138,7 +139,6 @@ class TripStatusBanner extends StatelessWidget {
       case TripStatusEnum.PARTIALCANCELLED:
         return Colors.grey;
       case TripStatusEnum.SENDFORRECONSIDERATION:
-      case TripStatusEnum.TIMEOUT:
       case TripStatusEnum.FAVOURITE:
         return AppColors.primaryTextSwatch[400]!;
     }
@@ -156,6 +156,7 @@ class TripStatusBanner extends StatelessWidget {
       case TripStatusEnum.PENDINGAIR:
       case TripStatusEnum.PENDINGHOTEL:
       case TripStatusEnum.TOTALPENDING:
+      case TripStatusEnum.PENDINGTICKET:
         return Icons.hourglass_empty;
       case TripStatusEnum.APPROVED:
       case TripStatusEnum.SELFAPPROVED:
@@ -180,8 +181,6 @@ class TripStatusBanner extends StatelessWidget {
         return Icons.block;
       case TripStatusEnum.SENDFORRECONSIDERATION:
         return Icons.refresh;
-      case TripStatusEnum.TIMEOUT:
-        return Icons.timer_off;
       case TripStatusEnum.FAVOURITE:
         return Icons.star;
     }

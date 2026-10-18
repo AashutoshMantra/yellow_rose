@@ -23,7 +23,9 @@ class TripCard extends StatelessWidget {
     final tripStatus = trip.status;
     final statusDesc = trip.statusDesc ?? tripStatus?.description ?? '';
     final createdDate = trip.genTs;
-    final totalCost = (trip.totalAirCost ?? 0) + (trip.totalHotelCost ?? 0);
+    final totalCost = (trip.totalAirCost ?? 0) +
+        (trip.totalHotelCost ?? 0) +
+        (trip.totalBusCost ?? 0);
 
     return GestureDetector(
       onTap: onTap,

@@ -2,8 +2,10 @@ import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/trip/data/datasources/trip_service.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_approval_request.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_approval_response.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_approver.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_rm_tag.dart';
 import 'package:yellow_rose/features/trip/domain/repositories/trip_repository.dart';
 
 class TripRepositoryImpl implements TripRepository {
@@ -25,13 +27,13 @@ class TripRepositoryImpl implements TripRepository {
   }
 
   @override
-  Future<void> addToTrip(String orderId) async {
-    return await _tripService.addToTrip(orderId);
+  Future<void> addToTrip(String orderId, {List<String>? approverIds}) async {
+    return await _tripService.addToTrip(orderId, approverIds: approverIds);
   }
 
   @override
-  Future<void> sendTripForApproval(String tripId) async {
-    return await _tripService.sendTripForApproval(tripId);
+  Future<void> sendTripForApproval(String tripId, {String? notes}) async {
+    return await _tripService.sendTripForApproval(tripId, notes: notes);
   }
 
   @override
@@ -48,7 +50,17 @@ class TripRepositoryImpl implements TripRepository {
   Future<TripApprovalResponse> getTripApprovalStatus(String tripUid) async {
     return await _tripService.getTripApprovalStatus(tripUid);
   }
-  
+
+  @override
+  Future<List<TripApprover>> getTripApprovers(String tripUid) async {
+    return await _tripService.getTripApprovers(tripUid);
+  }
+
+  @override
+  Future<List<TripRmTag>> getRmTags(String userId) async {
+    return await _tripService.getRmTags(userId);
+  }
+
   @override
   Future<Map<String, String>> cancelTrip(List<String> tripItemList) {
    return _tripService.cancelTrip(tripItemList);
