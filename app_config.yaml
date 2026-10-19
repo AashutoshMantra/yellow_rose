@@ -1,5 +1,5 @@
 dev:
-  apiBaseUrl: "https://vaptapi.gilpinonline.com/api"
+  apiBaseUrl: "https://uatv2.gilpinonline.com/api"
 
 prod:
   apiBaseUrl: "https://gilpinonline.com/api"
