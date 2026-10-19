@@ -124,8 +124,12 @@ class TripCubit extends Cubit<TripState> {
     if (currentSelectedTrip == null) {
       throw Exception('No trip selected');
     }
-
-    await _tripUseCase.addToTrip(orderId, approverIds: approverIds);
+    try {
+      await _tripUseCase.addToTrip(orderId, approverIds: approverIds);
+    } catch (e) {
+      log("Error emitting TripLoading state: $e");
+      rethrow;
+    }
   }
 
   Future<void> sendTripForApproval({String? notes}) async {

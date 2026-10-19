@@ -39,6 +39,7 @@ class BusBookingRequest {
   final String? cardDetails;
   final String? userUid;
   final String? bookedFor;
+  final String? userBookingContext;
   final String? requestUuid;
   final String? seatName;
   final String? rmApprovalUpload;
@@ -86,6 +87,7 @@ class BusBookingRequest {
     this.cardDetails,
     this.userUid,
     this.bookedFor,
+    this.userBookingContext,
     this.requestUuid,
     this.seatName,
     this.rmApprovalUpload,
@@ -135,6 +137,7 @@ class BusBookingRequest {
     String? cardDetails,
     String? userUid,
     String? bookedFor,
+    String? userBookingContext,
     String? requestUuid,
     String? seatName,
     String? rmApprovalUpload,
@@ -182,6 +185,7 @@ class BusBookingRequest {
       cardDetails: cardDetails ?? this.cardDetails,
       userUid: userUid ?? this.userUid,
       bookedFor: bookedFor ?? this.bookedFor,
+      userBookingContext: userBookingContext ?? this.userBookingContext,
       requestUuid: requestUuid ?? this.requestUuid,
       seatName: seatName ?? this.seatName,
       rmApprovalUpload: rmApprovalUpload ?? this.rmApprovalUpload,
@@ -298,6 +302,9 @@ class BusBookingRequest {
     if (bookedFor != null) {
       result.addAll({'bookedFor': bookedFor});
     }
+    if (userBookingContext != null) {
+      result.addAll({'userBookingContext': userBookingContext});
+    }
     if (requestUuid != null) {
       result.addAll({'requestUuid': requestUuid});
     }
@@ -375,6 +382,7 @@ class BusBookingRequest {
       cardDetails: map['cardDetails'],
       userUid: map['userUid'],
       bookedFor: map['bookedFor'],
+      userBookingContext: map['userBookingContext'],
       requestUuid: map['requestUuid'],
       seatName: map['seatName'],
       rmApprovalUpload: map['rmApprovalUpload'],
@@ -408,7 +416,7 @@ class BusBookingRequest {
 
   @override
   String toString() {
-    return 'BusBookingRequest(source: $source, sourceId: $sourceId, destination: $destination, destinationId: $destinationId, dateOfJourney: $dateOfJourney, requestId: $requestId, paxCount: $paxCount, adultCount: $adultCount, childCount: $childCount, infantCount: $infantCount, travelType: $travelType, journeyType: $journeyType, dealCode: $dealCode, contactNumber: $contactNumber, email: $email, gstEmail: $gstEmail, gstNumber: $gstNumber, branch: $branch, bookedBy: $bookedBy, bookingUser: $bookingUser, whiteLabelId: $whiteLabelId, billingEntity: $billingEntity, cardNo: $cardNo, channel: $channel, payment: $payment, paymentMedium: $paymentMedium, orderId: $orderId, tripUid: $tripUid, cartId: $cartId, cardDetails: $cardDetails, userUid: $userUid, bookedFor: $bookedFor, requestUuid: $requestUuid, seatName: $seatName, rmApprovalUpload: $rmApprovalUpload, fare: $fare, ladiesSeat: $ladiesSeat, busBooking: $busBooking, seats: $seats, passengerDetails: $passengerDetails, dobMandatory: $dobMandatory, repriceStatus: $repriceStatus, customerCardDetails: $customerCardDetails, passThroughCardDetails: $passThroughCardDetails, otherData: $otherData)';
+    return 'BusBookingRequest(source: $source, sourceId: $sourceId, destination: $destination, destinationId: $destinationId, dateOfJourney: $dateOfJourney, requestId: $requestId, paxCount: $paxCount, adultCount: $adultCount, childCount: $childCount, infantCount: $infantCount, travelType: $travelType, journeyType: $journeyType, dealCode: $dealCode, contactNumber: $contactNumber, email: $email, gstEmail: $gstEmail, gstNumber: $gstNumber, branch: $branch, bookedBy: $bookedBy, bookingUser: $bookingUser, whiteLabelId: $whiteLabelId, billingEntity: $billingEntity, cardNo: $cardNo, channel: $channel, payment: $payment, paymentMedium: $paymentMedium, orderId: $orderId, tripUid: $tripUid, cartId: $cartId, cardDetails: $cardDetails, userUid: $userUid, bookedFor: $bookedFor, userBookingContext: $userBookingContext, requestUuid: $requestUuid, seatName: $seatName, rmApprovalUpload: $rmApprovalUpload, fare: $fare, ladiesSeat: $ladiesSeat, busBooking: $busBooking, seats: $seats, passengerDetails: $passengerDetails, dobMandatory: $dobMandatory, repriceStatus: $repriceStatus, customerCardDetails: $customerCardDetails, passThroughCardDetails: $passThroughCardDetails, otherData: $otherData)';
   }
 
   @override
@@ -448,6 +456,7 @@ class BusBookingRequest {
         other.cardDetails == cardDetails &&
         other.userUid == userUid &&
         other.bookedFor == bookedFor &&
+        other.userBookingContext == userBookingContext &&
         other.requestUuid == requestUuid &&
         other.seatName == seatName &&
         other.rmApprovalUpload == rmApprovalUpload &&
@@ -497,6 +506,7 @@ class BusBookingRequest {
         cardDetails.hashCode ^
         userUid.hashCode ^
         bookedFor.hashCode ^
+        userBookingContext.hashCode ^
         requestUuid.hashCode ^
         seatName.hashCode ^
         rmApprovalUpload.hashCode ^

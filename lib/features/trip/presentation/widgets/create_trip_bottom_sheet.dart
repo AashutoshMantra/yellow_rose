@@ -1,10 +1,14 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:yellow_rose/core/common_widgets/bottom_sheet_title_widget.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
+import 'package:yellow_rose/core/theme/app_colors.dart';
+import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/core/common_widgets/custom_text_form_field.dart';
 import 'package:yellow_rose/core/common_widgets/cutom_dropdown_field.dart';
 import 'package:yellow_rose/core/common_widgets/passenger_detail/searchable_traveler_dropdown.dart';
@@ -52,6 +56,22 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
   List<TripRmTag> _rmTags = [];
   final Map<String, TextEditingController> _rmControllers = {};
   final Map<String, String> _rmDropdownValues = {};
+  final Map<String, ({String name, String dataUri})> _rmFiles = {};
+
+  static const Map<String, String> _rmFileMimeTypes = {
+    'jpg': 'image/jpeg',
+    'png': 'image/png',
+    'gif': 'image/gif',
+    'pdf': 'application/pdf',
+    'txt': 'text/plain',
+    'eml': 'message/rfc822',
+    'xlsx':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'xls': 'application/vnd.ms-excel',
+    'docx':
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'csv': 'text/csv',
+  };
 
   final _guestFirstNameController = TextEditingController();
   final _guestLastNameController = TextEditingController();
@@ -139,7 +159,7 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
           final fixedValue = _resolveFixedValue(tag.tagFixedValue);
           if (tag.fieldType == 'D') {
             if (fixedValue.isNotEmpty) _rmDropdownValues[name] = fixedValue;
-          } else {
+          } else if (tag.fieldType != 'F') {
             _rmControllers[name] = TextEditingController(text: fixedValue);
           }
         }
@@ -173,7 +193,37 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
   String _rmTagValue(TripRmTag tag) {
     final name = tag.tagName ?? '';
     if (tag.fieldType == 'D') return _rmDropdownValues[name] ?? '';
+    if (tag.fieldType == 'F') return _rmFiles.containsKey(name) ? 'NA' : '';
     return _rmControllers[name]?.text.trim() ?? '';
+  }
+
+  Future<void> _pickRmFile(String tagName) async {
+    try {
+      final result = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: [..._rmFileMimeTypes.keys, 'jpeg'],
+        withData: true,
+      );
+      final file = result?.files.single;
+      if (file == null || file.bytes == null) return;
+
+      final extension = (file.extension ?? '').toLowerCase();
+      final mimeType =
+          _rmFileMimeTypes[extension == 'jpeg' ? 'jpg' : extension] ??
+              'application/octet-stream';
+      if (!mounted) return;
+      setState(() {
+        _rmFiles[tagName] = (
+          name: file.name,
+          dataUri: 'data:$mimeType;base64,${base64Encode(file.bytes!)}',
+        );
+      });
+    } catch (e, s) {
+      log("$e $s");
+      if (mounted) {
+        WidgetUtil.showSnackBar('Failed to pick file, try again', context);
+      }
+    }
   }
 
   bool get _isGuestTrip => _selectedTripFor == TripFor.NonEmployee;
@@ -201,7 +251,7 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
     }
 
     for (final tag in _rmTags) {
-      if (tag.isMandatory && tag.fieldType != 'F' && _rmTagValue(tag).isEmpty) {
+      if (tag.isMandatory && _rmTagValue(tag).isEmpty) {
         _buttonController.reset();
         WidgetUtil.showSnackBar(
             'Please enter ${tag.tagDisplayName ?? tag.tagName}', context);
@@ -209,43 +259,56 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
       }
     }
 
+    final userUid = context.read<AuthCubit>().userProfile?.userUid;
     final request = TripCreateRequest(
       tripName: _tripNameController.text.trim(),
       tripDescription: _tripDescriptionController.text.trim(),
       tripFor: _selectedTripFor,
       tripPurpose: _selectedPurpose,
-      tripDetails: _selectedTripFor == TripFor.OnBehalfOf
-          ? TripDetail(
-              onBehalf: _selectedUsers
-                  .map((u) => u.userUid ?? '')
-                  .where((id) => id.isNotEmpty)
-                  .toList(),
-            )
-          : null,
-      billingEntity:
-          _isBillingEnabled ? _selectedBillingEntity?.entityRefId : null,
-      ptcNptcType: _isPtcNptcEnabled ? _selectedPtcNptc : null,
-      rmTags: _isRmTagsEnabled && _rmTags.isNotEmpty
-          ? _rmTags
-              .where((tag) => tag.fieldType != 'F')
-              .map((tag) => tag.copyWith(value: _rmTagValue(tag)))
-              .toList()
-          : null,
-      otherList: _isGuestTrip
-          ? [
-              TripGuest(
-                title: _guestTitle,
-                firstName: _guestFirstNameController.text.trim(),
-                lastName: _guestLastNameController.text.trim(),
-                email: _guestEmailController.text.trim(),
-                mobile: _guestMobileController.text.trim(),
-                passengerType: 'ADT',
-                justification: _guestJustificationController.text.trim(),
-                organization: _guestOrganizationController.text.trim(),
-                isGov: false,
-              ),
-            ]
-          : null,
+      userUid: userUid,
+      createdBy: userUid,
+      startDate: '',
+      endDate: '',
+      tripDetails: TripDetail(
+        requestFor: _selectedTripFor.requestValue,
+        onBehalf: _selectedTripFor == TripFor.OnBehalfOf
+            ? _selectedUsers
+                .map((u) => u.userUid ?? '')
+                .where((id) => id.isNotEmpty)
+                .toList()
+            : [],
+        otherList: _isGuestTrip
+            ? [
+                TripGuest(
+                  title: _guestTitle,
+                  firstName: _guestFirstNameController.text.trim(),
+                  lastName: _guestLastNameController.text.trim(),
+                  email: _guestEmailController.text.trim(),
+                  mobile: _guestMobileController.text.trim(),
+                  passengerType: 'ADT',
+                  justification: _guestJustificationController.text.trim(),
+                  organization: _guestOrganizationController.text.trim(),
+                  isGov: false,
+                ),
+              ]
+            : [],
+        billingEntity:
+            _isBillingEnabled ? _selectedBillingEntity?.entityRefId : null,
+        ptcNptcType: _isPtcNptcEnabled ? _selectedPtcNptc : null,
+        rmTags: _isRmTagsEnabled && _rmTags.isNotEmpty
+            ? _rmTags
+                .map((tag) => tag.copyWith(value: _rmTagValue(tag)))
+                .toList()
+            : null,
+        rmApprovalUpload: _rmFiles.values.firstOrNull?.dataUri ?? '',
+        document: '',
+        cabHire: 'false',
+        hotelRequired: 'false',
+        pointerEvents: true,
+        userBookingContext: 'C',
+        startDate: '',
+        endDate: '',
+      ),
     );
 
     try {
@@ -322,12 +385,36 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
   }
 
   List<Widget> _buildRmTagFields() {
-    return _rmTags.where((tag) => tag.fieldType != 'F').map((tag) {
+    return _rmTags.map((tag) {
       final name = tag.tagName ?? '';
       final label = (tag.tagDisplayName ?? '').isNotEmpty
           ? tag.tagDisplayName!
           : name;
       final title = tag.isMandatory ? '$label *' : label;
+
+      if (tag.fieldType == 'F') {
+        final pickedFile = _rmFiles[name];
+        return TitleFormWidget(
+          text: title,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomButton(
+                text: pickedFile == null ? 'Choose File' : 'Change File',
+                buttonType: ButtonType.secondary,
+                onPressed: () => _pickRmFile(name),
+              ),
+              SizedBox(height: 4.h),
+              Text(
+                pickedFile?.name ??
+                    'Acceptable file types: .jpg, .png, .gif, .pdf, .txt, .eml, .xlsx, .xls, .docx, .csv',
+                style: TextStyles.bodySmallMediumStyle()
+                    .copyWith(color: AppColors.primaryTextSwatch[500]),
+              ),
+            ],
+          ),
+        );
+      }
 
       if (tag.fieldType == 'D') {
         return TitleFormWidget(

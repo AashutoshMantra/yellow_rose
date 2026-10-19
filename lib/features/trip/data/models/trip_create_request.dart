@@ -1,9 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_detail.dart';
-import 'package:yellow_rose/features/trip/data/models/trip_guest.dart';
-import 'package:yellow_rose/features/trip/data/models/trip_rm_tag.dart';
 
 // {
 //    "tripName": "fsfhdfsdg",
@@ -20,6 +17,8 @@ enum TripFor {
   final String value;
 
   final String requesterTypeCode;
+
+  String get requestValue => this == TripFor.NonEmployee ? 'Other' : value;
 
   const TripFor(this.value, this.requesterTypeCode);
 
@@ -43,22 +42,22 @@ class TripCreateRequest {
   final String? tripDescription;
   final TripFor? tripFor;
   final String? tripPurpose;
+  final String? userUid;
+  final String? createdBy;
+  final String? startDate;
+  final String? endDate;
   final TripDetail? tripDetails;
-  final String? billingEntity;
-  final String? ptcNptcType;
-  final List<TripRmTag>? rmTags;
-  final List<TripGuest>? otherList;
 
   TripCreateRequest({
     this.tripName,
     this.tripDescription,
     this.tripFor,
     this.tripPurpose,
+    this.userUid,
+    this.createdBy,
+    this.startDate,
+    this.endDate,
     this.tripDetails,
-    this.billingEntity,
-    this.ptcNptcType,
-    this.rmTags,
-    this.otherList,
   });
 
   TripCreateRequest copyWith({
@@ -66,22 +65,22 @@ class TripCreateRequest {
     String? tripDescription,
     TripFor? tripFor,
     String? tripPurpose,
+    String? userUid,
+    String? createdBy,
+    String? startDate,
+    String? endDate,
     TripDetail? tripDetail,
-    String? billingEntity,
-    String? ptcNptcType,
-    List<TripRmTag>? rmTags,
-    List<TripGuest>? otherList,
   }) {
     return TripCreateRequest(
       tripName: tripName ?? this.tripName,
       tripDescription: tripDescription ?? this.tripDescription,
       tripFor: tripFor ?? this.tripFor,
       tripPurpose: tripPurpose ?? this.tripPurpose,
+      userUid: userUid ?? this.userUid,
+      createdBy: createdBy ?? this.createdBy,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
       tripDetails: tripDetail ?? tripDetails,
-      billingEntity: billingEntity ?? this.billingEntity,
-      ptcNptcType: ptcNptcType ?? this.ptcNptcType,
-      rmTags: rmTags ?? this.rmTags,
-      otherList: otherList ?? this.otherList,
     );
   }
 
@@ -95,30 +94,25 @@ class TripCreateRequest {
       result.addAll({'tripDescription': tripDescription});
     }
     if (tripFor != null) {
-      result.addAll({
-        'tripFor': tripFor == TripFor.NonEmployee ? 'Other' : tripFor!.value
-      });
-      if (tripFor == TripFor.NonEmployee) {
-        result.addAll({'requestFor': 'Other'});
-      }
+      result.addAll({'tripFor': tripFor!.requestValue});
     }
     if (tripPurpose != null) {
       result.addAll({'tripPurpose': tripPurpose});
     }
+    if (userUid != null) {
+      result.addAll({'userUid': userUid});
+    }
+    if (createdBy != null) {
+      result.addAll({'createdBy': createdBy});
+    }
+    if (startDate != null) {
+      result.addAll({'startDate': startDate});
+    }
+    if (endDate != null) {
+      result.addAll({'endDate': endDate});
+    }
     if (tripDetails != null) {
       result.addAll({'tripDetails': tripDetails!.toMap()});
-    }
-    if (billingEntity != null) {
-      result.addAll({'billingEntity': billingEntity});
-    }
-    if (ptcNptcType != null) {
-      result.addAll({'ptcNptcType': ptcNptcType});
-    }
-    if (rmTags != null) {
-      result.addAll({'rmTags': rmTags!.map((x) => x.toRequestMap()).toList()});
-    }
-    if (otherList != null) {
-      result.addAll({'otherList': otherList!.map((x) => x.toMap()).toList()});
     }
 
     return result;
@@ -131,16 +125,12 @@ class TripCreateRequest {
       tripFor:
           map['tripFor'] != null ? TripFor.fromString(map['tripFor']) : null,
       tripPurpose: map['tripPurpose'],
+      userUid: map['userUid'],
+      createdBy: map['createdBy'],
+      startDate: map['startDate'],
+      endDate: map['endDate'],
       tripDetails: map['tripDetail'] != null
           ? TripDetail.fromMap(map['tripDetail'])
-          : null,
-      billingEntity: map['billingEntity'],
-      ptcNptcType: map['ptcNptcType'],
-      rmTags: map['rmTags'] != null
-          ? List<TripRmTag>.from(map['rmTags']?.map((x) => TripRmTag.fromMap(x)))
-          : null,
-      otherList: map['otherList'] != null
-          ? List<TripGuest>.from(map['otherList']?.map((x) => TripGuest.fromMap(x)))
           : null,
     );
   }
@@ -152,7 +142,7 @@ class TripCreateRequest {
 
   @override
   String toString() {
-    return 'TripCreateRequest(tripName: $tripName, tripDescription: $tripDescription, tripFor: $tripFor, tripPurpose: $tripPurpose, tripDetail: $tripDetails, billingEntity: $billingEntity, ptcNptcType: $ptcNptcType, rmTags: $rmTags, otherList: $otherList)';
+    return 'TripCreateRequest(tripName: $tripName, tripDescription: $tripDescription, tripFor: $tripFor, tripPurpose: $tripPurpose, userUid: $userUid, createdBy: $createdBy, startDate: $startDate, endDate: $endDate, tripDetail: $tripDetails)';
   }
 
   @override
@@ -164,11 +154,11 @@ class TripCreateRequest {
         other.tripDescription == tripDescription &&
         other.tripFor == tripFor &&
         other.tripPurpose == tripPurpose &&
-        other.tripDetails == tripDetails &&
-        other.billingEntity == billingEntity &&
-        other.ptcNptcType == ptcNptcType &&
-        listEquals(other.rmTags, rmTags) &&
-        listEquals(other.otherList, otherList);
+        other.userUid == userUid &&
+        other.createdBy == createdBy &&
+        other.startDate == startDate &&
+        other.endDate == endDate &&
+        other.tripDetails == tripDetails;
   }
 
   @override
@@ -177,10 +167,10 @@ class TripCreateRequest {
         tripDescription.hashCode ^
         tripFor.hashCode ^
         tripPurpose.hashCode ^
-        tripDetails.hashCode ^
-        billingEntity.hashCode ^
-        ptcNptcType.hashCode ^
-        rmTags.hashCode ^
-        otherList.hashCode;
+        userUid.hashCode ^
+        createdBy.hashCode ^
+        startDate.hashCode ^
+        endDate.hashCode ^
+        tripDetails.hashCode;
   }
 }

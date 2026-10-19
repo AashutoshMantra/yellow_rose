@@ -88,8 +88,8 @@ class TripRmTag {
   factory TripRmTag.fromMap(Map<String, dynamic> map) {
     final tagValue = map['tagValue'];
     return TripRmTag(
-      tagName: map['tagName'],
-      tagDisplayName: map['tagDisplayName'],
+      tagName: map['tagName'] ?? map['name'],
+      tagDisplayName: map['tagDisplayName'] ?? map['displayName'],
       tagFixedValue: map['tagFixedValue'],
       checkValue: map['checkValue'] ??
           (tagValue is Map ? tagValue['checkValue'] : null),

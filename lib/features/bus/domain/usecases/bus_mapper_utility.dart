@@ -49,12 +49,14 @@ class BusMapperUtility {
       destinationId: busSearchResponse.destinationId,
       dateOfJourney: busSearchResponse.doj,
       requestId: busSearch.requestId,
+      userBookingContext: 'C',
       paxCount: selectedSeats.length,
       adultCount: selectedSeats.length,
       childCount: 0,
       infantCount: 0,
       busBooking: [
         UserBusBookingRequest(
+          operatorDetails: busSearchResponse.operatorDetails,
           requestId: busSearch.requestId,
           source: busSearchResponse.source,
           sourceId: busSearchResponse.sourceId,
@@ -88,8 +90,9 @@ class BusMapperUtility {
     BusPoint selectedBoardingPoint,
     BusPoint selectedDroppingPoint,
     List<PassengerDetailsEntity> passengers,
-    BillingEntity? billingEntity,
-  ) {
+    BillingEntity? billingEntity, {
+    String? bookedFor,
+  }) {
     // Convert passengers to API format for passengerDetails
     List<PassengerDetails> passengerDetails = [];
     List<String> seatList = selectedSeats.toList();
@@ -141,6 +144,7 @@ class BusMapperUtility {
             passengers.isNotEmpty ? passengers.first.phoneNumber : null,
         email: passengers.isNotEmpty ? passengers.first.email : null,
         billingEntity: billingEntity?.entityRefId,
+        bookedFor: bookedFor,
         seats: busDetail.seats
             .where((seat) => selectedSeats.contains(seat.name))
             .toList(),

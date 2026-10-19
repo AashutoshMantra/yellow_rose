@@ -16,6 +16,7 @@ import 'package:yellow_rose/features/bus/data/models/search/bus_search_response.
 import 'package:yellow_rose/features/bus/domain/entities/bus_search.dart';
 import 'package:yellow_rose/features/bus/domain/usecases/bus_usecase.dart';
 import 'package:yellow_rose/features/bus/domain/usecases/bus_mapper_utility.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 part 'bus_book_state.dart';
@@ -49,6 +50,8 @@ class BusBookCubit extends Cubit<BusBookState> {
       );
 
       var createOrderRequest = BusOrderCreateRequest(
+        requestUuid: busSearch.requestId,
+        userBookingContext: 'C',
         inventoryId: busSearchResponse.id,
         source: busSearchResponse.source,
         destination: busSearchResponse.destination,
@@ -119,6 +122,9 @@ class BusBookCubit extends Cubit<BusBookState> {
           currentState.selectedDroppingPoint!,
           currentState.passengers,
           currentState.billingEntity,
+          bookedFor: trip?.tripFor == TripFor.OnBehalfOf.value
+              ? trip?.tripDetails?.onBehalf?.firstOrNull
+              : null,
         );
 
         // Update order with passenger details

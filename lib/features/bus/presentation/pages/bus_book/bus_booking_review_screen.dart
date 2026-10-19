@@ -205,8 +205,12 @@ class _BusBookingReviewScreenState extends State<BusBookingReviewScreen> {
                   child: BottomButton(
                     title: '₹ ${totalAmount.toStringAsFixed(2)}',
                     subtitle: '$currency • Taxes included',
-                    buttonText:
-                        paymentMethods.isEmpty ? 'Payment Unavailable' : 'Pay',
+                    buttonText: paymentMethods.isEmpty
+                        ? 'Payment Unavailable'
+                        : context.read<AuthCubit>().tripType ==
+                                TripType.PreBooking
+                            ? 'Add to cart'
+                            : 'Pay',
                     onClick: () => _handlePaymentSelection(
                       context,
                       paymentMethods,

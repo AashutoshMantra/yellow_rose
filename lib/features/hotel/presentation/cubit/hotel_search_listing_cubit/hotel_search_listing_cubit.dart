@@ -21,6 +21,7 @@ class HotelSearchListingCubit extends Cubit<HotelSearchListingState> {
       emit(HotelSearchListingLoading(hotelSearch: hotelSearch));
 
       var hotelSearchResponse = await _hotelUsecase.getHotels(hotelSearch);
+      
       if (isClosed) return;
       emit(HotelSearchListingLoaded(
           hotelSearchResponse: hotelSearchResponse, hotelSearch: hotelSearch));

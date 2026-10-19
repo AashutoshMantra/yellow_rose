@@ -28,9 +28,14 @@ class HotelResponseList {
   }
 
   factory HotelResponseList.fromMap(Map<String, dynamic> map) {
+    var hotels = List<HotelSearchResponse>.from(
+        map['hotels']?.map((x) => HotelSearchResponse.fromMap(x)));
+
     return HotelResponseList(
-      hotels: List<HotelSearchResponse>.from(
-          map['hotels']?.map((x) => HotelSearchResponse.fromMap(x))),
+      hotels: hotels
+          .where((hotel) => hotel.rooms != null && hotel.rooms!.isNotEmpty)
+          .toList()
+          .cast<HotelSearchResponse>(),
     );
   }
 

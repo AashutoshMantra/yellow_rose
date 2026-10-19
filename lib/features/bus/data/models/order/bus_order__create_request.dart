@@ -29,6 +29,7 @@ class BusOrderCreateRequest {
   final String? gstEmail;
   final Payment? payment;
   final String? bookedFor;
+  final String? userBookingContext;
   final String? bookedBy;
   final String? bookingUser;
   final String? userUid;
@@ -63,6 +64,7 @@ class BusOrderCreateRequest {
     this.gstEmail,
     this.payment,
     this.bookedFor,
+    this.userBookingContext,
     this.bookedBy,
     this.bookingUser,
     this.userUid,
@@ -98,6 +100,7 @@ class BusOrderCreateRequest {
     String? gstEmail,
     Payment? payment,
     String? bookedFor,
+    String? userBookingContext,
     String? bookedBy,
     String? bookingUser,
     String? userUid,
@@ -132,6 +135,7 @@ class BusOrderCreateRequest {
       gstEmail: gstEmail ?? this.gstEmail,
       payment: payment ?? this.payment,
       bookedFor: bookedFor ?? this.bookedFor,
+      userBookingContext: userBookingContext ?? this.userBookingContext,
       bookedBy: bookedBy ?? this.bookedBy,
       bookingUser: bookingUser ?? this.bookingUser,
       userUid: userUid ?? this.userUid,
@@ -207,6 +211,9 @@ class BusOrderCreateRequest {
     if (bookedFor != null) {
       result.addAll({'bookedFor': bookedFor});
     }
+    if (userBookingContext != null) {
+      result.addAll({'userBookingContext': userBookingContext});
+    }
     if (bookedBy != null) {
       result.addAll({'bookedBy': bookedBy});
     }
@@ -278,6 +285,7 @@ class BusOrderCreateRequest {
       gstEmail: map['gstEmail'],
       payment: map['payment'] != null ? Payment.fromMap(map['payment']) : null,
       bookedFor: map['bookedFor'],
+      userBookingContext: map['userBookingContext'],
       bookedBy: map['bookedBy'],
       bookingUser: map['bookingUser'],
       userUid: map['userUid'],
@@ -302,7 +310,7 @@ class BusOrderCreateRequest {
 
   @override
   String toString() {
-    return 'BusOrderCreateRequest(orderId: $orderId, requestUuid: $requestUuid, requestId: $requestId, paymentMedium: $paymentMedium, cardNo: $cardNo, inventoryId: $inventoryId, dupeValidation: $dupeValidation, channel: $channel, busBooking: $busBooking, bookingRequest: $bookingRequest, cardDetails: $cardDetails, contactNumber: $contactNumber, email: $email, gstNumber: $gstNumber, billingEntity: $billingEntity, gstEmail: $gstEmail, payment: $payment, bookedFor: $bookedFor, bookedBy: $bookedBy, bookingUser: $bookingUser, userUid: $userUid, cartId: $cartId, branch: $branch, whiteLabelId: $whiteLabelId, tripUid: $tripUid, customerCardDetails: $customerCardDetails, passThroughCardDetails: $passThroughCardDetails, repriceStatus: $repriceStatus, source: $source, destination: $destination, sourceId: $sourceId, destinationId: $destinationId)';
+    return 'BusOrderCreateRequest(orderId: $orderId, requestUuid: $requestUuid, requestId: $requestId, paymentMedium: $paymentMedium, cardNo: $cardNo, inventoryId: $inventoryId, dupeValidation: $dupeValidation, channel: $channel, busBooking: $busBooking, bookingRequest: $bookingRequest, cardDetails: $cardDetails, contactNumber: $contactNumber, email: $email, gstNumber: $gstNumber, billingEntity: $billingEntity, gstEmail: $gstEmail, payment: $payment, bookedFor: $bookedFor, userBookingContext: $userBookingContext, bookedBy: $bookedBy, bookingUser: $bookingUser, userUid: $userUid, cartId: $cartId, branch: $branch, whiteLabelId: $whiteLabelId, tripUid: $tripUid, customerCardDetails: $customerCardDetails, passThroughCardDetails: $passThroughCardDetails, repriceStatus: $repriceStatus, source: $source, destination: $destination, sourceId: $sourceId, destinationId: $destinationId)';
   }
 
   @override
@@ -328,6 +336,7 @@ class BusOrderCreateRequest {
         other.gstEmail == gstEmail &&
         other.payment == payment &&
         other.bookedFor == bookedFor &&
+        other.userBookingContext == userBookingContext &&
         other.bookedBy == bookedBy &&
         other.bookingUser == bookingUser &&
         other.userUid == userUid &&
@@ -364,6 +373,7 @@ class BusOrderCreateRequest {
         gstEmail.hashCode ^
         payment.hashCode ^
         bookedFor.hashCode ^
+        userBookingContext.hashCode ^
         bookedBy.hashCode ^
         bookingUser.hashCode ^
         userUid.hashCode ^

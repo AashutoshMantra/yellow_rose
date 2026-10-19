@@ -96,10 +96,10 @@ class AuthCubit extends Cubit<AuthState> {
     return TripType.NoTrip;
   }
 
-  List<ManualApprover> get manualApprovers {
+  List<List<ManualApprover>> get manualApproverGroups {
     if (state is Authenticated &&
         (state as Authenticated).approvalWorkflow != null) {
-      return (state as Authenticated).approvalWorkflow!.manualApprovers;
+      return (state as Authenticated).approvalWorkflow!.manualApproverGroups;
     }
     return [];
   }

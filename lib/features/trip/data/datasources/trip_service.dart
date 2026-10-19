@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:yellow_rose/core/app_config.dart';
 import 'package:yellow_rose/core/utils/dio_client.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
@@ -33,8 +34,9 @@ class TripServiceImpl implements TripService {
     var response = await _dioClient.post(
         "${AppConfig.instance.apiBaseUrl}/trips/save",
         data: request.toMap());
-    log(jsonEncode(request.toMap()));
-
+    if(kDebugMode) {
+      log(jsonEncode(request.toMap()));
+    }
     return TripResponse.fromMap(response.data);
   }
 
