@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 import 'package:uuid/v4.dart';
+import 'package:yellow_rose/core/nullable.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/passenger_detiald.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/segment.dart';
@@ -9,6 +10,7 @@ import 'package:yellow_rose/features/flight/domain/usecases/air_mapper_utility.d
 import 'package:yellow_rose/features/hotel/data/models/details/expedia/hotel_detail_expedia_room.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/hotel_detail_request.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/hotel_detail_resonse.dart';
+import 'package:yellow_rose/features/hotel/data/models/details/hummingbird/hotel_detail_hummingbird_room.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/mmt/hotel_detail_mmt_room.dart';
 import 'package:yellow_rose/features/hotel/data/models/order/hotel-source.dart';
 import 'package:yellow_rose/features/hotel/data/models/order/hotel_booking_request.dart';
@@ -50,7 +52,10 @@ class HotelMapperUtiity {
   static HotelDetailRequest mapToHotelDetailRequest(
       HotelSearch hotelSearch, HotelSearchResponse hotelSearchResponse) {
     return HotelDetailRequest(
-      hotelId: hotelSearchResponse.id,
+      hotelId: hotelSearchResponse.id ??
+          int.tryParse(hotelSearchResponse.hummingbirdHotelId ?? ''),
+      hummingbirdHotelId: hotelSearchResponse.hummingbirdHotelId,
+      hummingbirdHotelCode: hotelSearchResponse.hummingbirdHotelCode,
       checkInDate: hotelSearch.checkInDate!,
       checkOutDate: hotelSearch.checkOutDate!,
       country: hotelSearch.place!.countryCode!,
@@ -73,6 +78,8 @@ class HotelMapperUtiity {
     var selectedHotelOrder = hotel;
     var mmtRoomSelected = getSelectedHotelRoomMmt(hotel, selectedRoom);
     var expediaRoomSelected = getSelectedHotelRoomExpedia(hotel, selectedRoom);
+    var hummingbirdRoomSelected =
+        getSelectedHotelRoomHummingbird(hotel, selectedRoom);
     var randomUid = const Uuid().v4();
     selectedHotelOrder = selectedHotelOrder.copyWith(
         expediaSessionId: expediaRoomSelected != null ? randomUid : null,
@@ -80,7 +87,11 @@ class HotelMapperUtiity {
         hotel: hotel.hotel?.copyWith(
             mmtRooms: mmtRoomSelected != null ? [mmtRoomSelected] : null,
             expediaRooms:
-                expediaRoomSelected != null ? [expediaRoomSelected] : null));
+                expediaRoomSelected != null ? [expediaRoomSelected] : null,
+            hummingbirdRooms: Nullable(hummingbirdRoomSelected != null
+                ? List.filled(
+                    hotelSearch.roomCount ?? 1, hummingbirdRoomSelected)
+                : null)));
     return HotelOrderRequest(
         requestUuid: randomUid,
         source: selectedRoom.hotelSourceEnum.name,
@@ -99,8 +110,11 @@ class HotelMapperUtiity {
         hotelLoadedState.hotel, hotelLoadedState.selectedRoom);
     var expediaRoomSelected = getSelectedHotelRoomExpedia(
         hotelLoadedState.hotel, hotelLoadedState.selectedRoom);
+    var hummingbirdRoomSelected = getSelectedHotelRoomHummingbird(
+        hotelLoadedState.hotel, hotelLoadedState.selectedRoom);
     var markup = mmtRoomSelected?.ratePlans?.firstOrNull?.commercial ??
-        expediaRoomSelected?.rates?.firstOrNull?.commercial;
+        expediaRoomSelected?.rates?.firstOrNull?.commercial ??
+        hummingbirdRoomSelected?.commercial;
     return HotelBookingRequest(
         mmtBookingRequestList: [],
         expediaBookingRequestList: [],
@@ -176,6 +190,20 @@ class HotelMapperUtiity {
     return roomSelected;
   }
 
+  static HotelDetailHummingbirdRoom? getSelectedHotelRoomHummingbird(
+    HotelDetailResponse hotel,
+    HotelRoom selectedRoom,
+  ) {
+    if (selectedRoom.hotelSourceEnum != HotelSourceEnum.HUMMINGBIRD) {
+      return null;
+    }
+    return hotel.hotel?.hummingbirdRooms?.firstWhereOrNull((room) =>
+        room.roomTypeCode?.equalsIgnoreCase(selectedRoom.id) == true &&
+        room.ratePlanCode
+                ?.equalsIgnoreCase(selectedRoom.hotelRooms.first.id) ==
+            true);
+  }
+
   static String? getImageUrl(String? url) {
     if (url?.contains("https") == true) {
       return url;
@@ -190,9 +218,45 @@ class HotelMapperUtiity {
     var expediaRooms =
         hotelDetail?.expediaRooms?.map(getExpediaHotelRoom).toList();
     var mmtRooms = hotelDetail?.mmtRooms?.map(getMmtHotelRoom).toList();
+    var hummingbirdRooms =
+        hotelDetail?.hummingbirdRooms?.groupListsBy((room) => room.roomTypeCode);
     hotelRooms.addAll(expediaRooms ?? []);
     hotelRooms.addAll(mmtRooms ?? []);
+    hotelRooms.addAll(
+        hummingbirdRooms?.values.map(getHummingbirdHotelRoom) ?? []);
     return hotelRooms;
+  }
+
+  static HotelRoom getHummingbirdHotelRoom(
+      List<HotelDetailHummingbirdRoom> hummingbirdRates) {
+    var hummingbirdRoom = hummingbirdRates.first;
+    var image = getImageUrl(hummingbirdRoom.roomImage);
+    List<HotelRoomType> hotelRoomType = hummingbirdRates.map((rate) {
+      var cancelpenalty = rate.freeCancellationUntil != null
+          ? [
+              HotelRoomPenalty(
+                  startDate: rate.freeCancellationUntil,
+                  value: rate.cancellationPenalty)
+            ]
+          : null;
+      var amenities = [
+        if (rate.mealPlan != null) 'Meal Plan: ${rate.mealPlan}',
+        if (rate.breakfastIncluded == true) 'Free breakfast',
+      ].map((name) => HotelRoomAmenities(name: name)).toList();
+      return HotelRoomType(
+          name: rate.inclusion,
+          id: rate.ratePlanCode ?? '',
+          totalcost: rate.totalAmount ?? 0,
+          hotelRoomAmenities: amenities,
+          hotelRoomPenalty: cancelpenalty);
+    }).toList();
+    hotelRoomType.sort((a, b) => a.totalcost.compareTo(b.totalcost));
+    return HotelRoom(
+        id: hummingbirdRoom.roomTypeCode ?? '',
+        name: hummingbirdRoom.name,
+        images: image != null ? [image] : [],
+        hotelSourceEnum: HotelSourceEnum.HUMMINGBIRD,
+        hotelRooms: hotelRoomType);
   }
 
   static HotelRoom getExpediaHotelRoom(HotelDetailExpediaRoom expediaRoom) {

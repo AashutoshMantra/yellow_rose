@@ -2,5 +2,6 @@ enum HotelSourceEnum {
   COMMON,
   MMT,
   AGODA,
-  EXPEDIA;
+  EXPEDIA,
+  HUMMINGBIRD;
 }

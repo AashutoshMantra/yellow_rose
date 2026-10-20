@@ -3,6 +3,7 @@ import 'dart:convert';
 class GeoLocation {
     final double latitude;
     final double _longitude;
+    double get longitude => _longitude;
   GeoLocation({
     required this.latitude,
     required double longitude,
@@ -31,7 +32,8 @@ class GeoLocation {
   factory GeoLocation.fromMap(Map<String, dynamic> map) {
     return GeoLocation(
       latitude: map['latitude']?.toDouble() ?? 0.0,
-      longitude: map['_longitude']?.toDouble() ?? 0.0,
+      longitude:
+          (map['longitude'] ?? map['_longitude'])?.toDouble() ?? 0.0,
     );
   }
 

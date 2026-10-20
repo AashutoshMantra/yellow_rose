@@ -21,6 +21,13 @@ class HotelDetailSummaryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final latitude = hotelDetailResponse.hotel?.latitude ??
+        hotelSearchResponse.geo?.latitude;
+    final longitude = hotelDetailResponse.hotel?.longitude ??
+        hotelSearchResponse.geo?.longitude;
+    final address =
+        hotelDetailResponse.hotel?.address ?? hotelSearchResponse.address ?? '';
+    final hasLocation = latitude != null && longitude != null;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -105,7 +112,8 @@ class HotelDetailSummaryWidget extends StatelessWidget {
                 )
               ],
             ),
-            SizedBox(height: 12.h),
+            if (address.isNotEmpty || hasLocation) SizedBox(height: 12.h),
+            if (address.isNotEmpty || hasLocation)
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
@@ -113,10 +121,9 @@ class HotelDetailSummaryWidget extends StatelessWidget {
               ),
               child: ListTile(
                 dense: true,
-                onTap: () {
-                  Utils.launchMap(hotelDetailResponse.hotel!.latitude!,
-                      hotelDetailResponse.hotel!.longitude!);
-                },
+                onTap: latitude != null && longitude != null
+                    ? () => Utils.launchMap(latitude, longitude)
+                    : null,
                 contentPadding: EdgeInsets.only(left: 2.h),
                 leading: Container(
                   height: double.infinity,
@@ -130,16 +137,18 @@ class HotelDetailSummaryWidget extends StatelessWidget {
                   ),
                 ),
                 title: Text(
-                  hotelDetailResponse.hotel?.address ?? '',
+                  address.isNotEmpty ? address : 'View on map',
                   style: TextStyles.bodyMediumBoldStyle(),
                 ),
-                trailing: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: AppColors.primary,
-                  ),
-                ),
+                trailing: hasLocation
+                    ? const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: AppColors.primary,
+                        ),
+                      )
+                    : null,
               ),
             )
           ],

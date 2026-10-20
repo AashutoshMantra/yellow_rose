@@ -11,6 +11,8 @@ class HotelDetailRequest {
   final int? hotelId;
   final String? mmtHotelId;
   final int? agodaHotelId;
+  final String? hummingbirdHotelId;
+  final String? hummingbirdHotelCode;
   final String? country;
   final String? requestId;
   final DateTime? checkInDate;
@@ -23,6 +25,8 @@ class HotelDetailRequest {
       {this.hotelId,
       this.mmtHotelId,
       this.agodaHotelId,
+      this.hummingbirdHotelId,
+      this.hummingbirdHotelCode,
       this.country,
       this.checkInDate,
       this.checkOutDate,
@@ -34,6 +38,8 @@ class HotelDetailRequest {
     int? hotelId,
     String? mmtHotelId,
     int? agodaHotelId,
+    String? hummingbirdHotelId,
+    String? hummingbirdHotelCode,
     String? country,
     DateTime? checkInDate,
     DateTime? checkOutDate,
@@ -45,6 +51,8 @@ class HotelDetailRequest {
       hotelId: hotelId ?? this.hotelId,
       mmtHotelId: mmtHotelId ?? this.mmtHotelId,
       agodaHotelId: agodaHotelId ?? this.agodaHotelId,
+      hummingbirdHotelId: hummingbirdHotelId ?? this.hummingbirdHotelId,
+      hummingbirdHotelCode: hummingbirdHotelCode ?? this.hummingbirdHotelCode,
       country: country ?? this.country,
       checkInDate: checkInDate ?? this.checkInDate,
       checkOutDate: checkOutDate ?? this.checkOutDate,
@@ -65,6 +73,12 @@ class HotelDetailRequest {
     }
     if (agodaHotelId != null) {
       result.addAll({'agodaHotelId': agodaHotelId});
+    }
+    if (hummingbirdHotelId != null) {
+      result.addAll({'hummingbirdHotelId': hummingbirdHotelId});
+    }
+    if (hummingbirdHotelCode != null) {
+      result.addAll({'hummingbirdHotelCode': hummingbirdHotelCode});
     }
     if (country != null) {
       result.addAll({'country': country});
@@ -96,6 +110,8 @@ class HotelDetailRequest {
       hotelId: map['hotelId']?.toInt(),
       mmtHotelId: map['mmtHotelId'],
       agodaHotelId: map['agodaHotelId']?.toInt(),
+      hummingbirdHotelId: map['hummingbirdHotelId']?.toString(),
+      hummingbirdHotelCode: map['hummingbirdHotelCode']?.toString(),
       country: map['country'],
       checkInDate: map['checkInDate'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['checkInDate'])
@@ -118,7 +134,7 @@ class HotelDetailRequest {
 
   @override
   String toString() {
-    return 'HotelDetailRequest(hotelId: $hotelId, mmtHotelId: $mmtHotelId, agodaHotelId: $agodaHotelId, country: $country, checkInDate: $checkInDate, checkOutDate: $checkOutDate, roomCount: $roomCount, rooms: $rooms)';
+    return 'HotelDetailRequest(hotelId: $hotelId, mmtHotelId: $mmtHotelId, agodaHotelId: $agodaHotelId, hummingbirdHotelId: $hummingbirdHotelId, hummingbirdHotelCode: $hummingbirdHotelCode, country: $country, checkInDate: $checkInDate, checkOutDate: $checkOutDate, roomCount: $roomCount, rooms: $rooms)';
   }
 
   @override
@@ -129,6 +145,8 @@ class HotelDetailRequest {
         other.hotelId == hotelId &&
         other.mmtHotelId == mmtHotelId &&
         other.agodaHotelId == agodaHotelId &&
+        other.hummingbirdHotelId == hummingbirdHotelId &&
+        other.hummingbirdHotelCode == hummingbirdHotelCode &&
         other.country == country &&
         other.checkInDate == checkInDate &&
         other.checkOutDate == checkOutDate &&
@@ -141,6 +159,8 @@ class HotelDetailRequest {
     return hotelId.hashCode ^
         mmtHotelId.hashCode ^
         agodaHotelId.hashCode ^
+        hummingbirdHotelId.hashCode ^
+        hummingbirdHotelCode.hashCode ^
         country.hashCode ^
         checkInDate.hashCode ^
         checkOutDate.hashCode ^

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:yellow_rose/features/flight/data/models/erro_code_handler.dart';
 import 'package:yellow_rose/features/hotel/data/models/order/expedia/expedia_booking_response.dart';
+import 'package:yellow_rose/features/hotel/data/models/order/hummingbird/hummingbird_booking_response.dart';
 import 'package:yellow_rose/features/hotel/data/models/order/mmt/mmt_booking_response.dart';
 
 class HotelBookingResponse {
@@ -13,11 +14,13 @@ class HotelBookingResponse {
 
   final List<MmtBookingResponse>? mmtBookingResponse;
   final List<ExpediaBookingResponse>? expediaBookingResponse;
+  final List<HummingbirdBookingResponse>? hummingBirdBookingResponses;
   HotelBookingResponse({
     required this.source,
     this.error,
     this.mmtBookingResponse,
     this.expediaBookingResponse,
+    this.hummingBirdBookingResponses,
   });
 
   HotelBookingResponse copyWith({
@@ -25,12 +28,15 @@ class HotelBookingResponse {
     ErrorCodeHandler? error,
     List<MmtBookingResponse>? mmtBookingResponse,
     List<ExpediaBookingResponse>? expediaBookingResponse,
+    List<HummingbirdBookingResponse>? hummingBirdBookingResponses,
   }) {
     return HotelBookingResponse(
       source: source ?? this.source,
       error: error ?? this.error,
       mmtBookingResponse: mmtBookingResponse ?? this.mmtBookingResponse,
       expediaBookingResponse: expediaBookingResponse ?? this.expediaBookingResponse,
+      hummingBirdBookingResponses:
+          hummingBirdBookingResponses ?? this.hummingBirdBookingResponses,
     );
   }
 
@@ -47,7 +53,10 @@ class HotelBookingResponse {
     if(expediaBookingResponse != null){
       result.addAll({'expediaBookingResponse': expediaBookingResponse!.map((x) => x?.toMap()).toList()});
     }
-  
+    if(hummingBirdBookingResponses != null){
+      result.addAll({'hummingBirdBookingResponses': hummingBirdBookingResponses!.map((x) => x.toMap()).toList()});
+    }
+
     return result;
   }
 
@@ -57,6 +66,7 @@ class HotelBookingResponse {
       error: map['error'] != null ? ErrorCodeHandler.fromMap(map['error']) : null,
       mmtBookingResponse: map['mmtBookingResponse'] != null ? List<MmtBookingResponse>.from(map['mmtBookingResponse']?.map((x) => MmtBookingResponse.fromMap(x))) : null,
       expediaBookingResponse: map['expediaBookingResponse'] != null ? List<ExpediaBookingResponse>.from(map['expediaBookingResponse']?.map((x) => ExpediaBookingResponse.fromMap(x))) : null,
+      hummingBirdBookingResponses: map['hummingBirdBookingResponses'] != null ? List<HummingbirdBookingResponse>.from(map['hummingBirdBookingResponses']?.map((x) => HummingbirdBookingResponse.fromMap(x))) : null,
     );
   }
 
@@ -66,7 +76,7 @@ class HotelBookingResponse {
 
   @override
   String toString() {
-    return 'HotelBookingResponse(source: $source, error: $error, mmtBookingResponse: $mmtBookingResponse, expediaBookingResponse: $expediaBookingResponse)';
+    return 'HotelBookingResponse(source: $source, error: $error, mmtBookingResponse: $mmtBookingResponse, expediaBookingResponse: $expediaBookingResponse, hummingBirdBookingResponses: $hummingBirdBookingResponses)';
   }
 
   @override
@@ -77,7 +87,8 @@ class HotelBookingResponse {
       other.source == source &&
       other.error == error &&
       listEquals(other.mmtBookingResponse, mmtBookingResponse) &&
-      listEquals(other.expediaBookingResponse, expediaBookingResponse);
+      listEquals(other.expediaBookingResponse, expediaBookingResponse) &&
+      listEquals(other.hummingBirdBookingResponses, hummingBirdBookingResponses);
   }
 
   @override
@@ -85,6 +96,7 @@ class HotelBookingResponse {
     return source.hashCode ^
       error.hashCode ^
       mmtBookingResponse.hashCode ^
-      expediaBookingResponse.hashCode;
+      expediaBookingResponse.hashCode ^
+      hummingBirdBookingResponses.hashCode;
   }
 }

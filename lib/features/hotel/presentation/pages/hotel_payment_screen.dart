@@ -20,6 +20,7 @@ import 'package:yellow_rose/features/flight/domain/entities/passenger_details_en
 import 'package:yellow_rose/features/flight/domain/usecases/air_mapper_utility.dart';
 import 'package:yellow_rose/features/flight/presentation/pages/order_status_screen.dart';
 import 'package:yellow_rose/features/flight/presentation/widgets/order/payment_method_list.dart';
+import 'package:yellow_rose/features/hotel/domain/entities/hotel_booking_response_extensions.dart';
 import 'package:yellow_rose/features/hotel/presentation/cubit/hotel_book_cubit/hotel_book_cubit.dart';
 import 'package:yellow_rose/features/hotel/domain/usecases/hotel_book_use_case.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
@@ -79,11 +80,10 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
         var bookResponse = await _hotelUseCase
             .bookHotel(widget.orderUpdateResponse.orderNumber!);
 
-        var hasErrors = bookResponse.error?.errorData != null;
-        if (hasErrors ||
-            (bookResponse.mmtBookingResponse ?? []).isEmpty &&
-                (bookResponse.expediaBookingResponse ?? []).isEmpty) {
+        if (bookResponse.isBookingFailed) {
           orderStatus = OrderStatusEnum.error;
+        } else if (bookResponse.isBookingPending) {
+          orderStatus = OrderStatusEnum.warning;
         }
       } else {
         final approverIds = await TripApproverSelectionSheet.select(context);

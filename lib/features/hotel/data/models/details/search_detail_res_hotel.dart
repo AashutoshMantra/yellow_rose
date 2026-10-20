@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:yellow_rose/core/nullable.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/agoda/agoda_detail_room.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/expedia/content_resposne_policy.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/expedia/hotel_detail_expedia_room.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/expedia/onsite_payment.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/expedia/room/content_room_images.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/hotel_detail_rating.dart';
+import 'package:yellow_rose/features/hotel/data/models/details/hummingbird/hotel_detail_hummingbird_room.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/mmt/hotel_detail_mmt_room.dart';
 import 'package:yellow_rose/features/hotel/data/models/details/mmt/hotel_metadata_policy.dart';
 import 'package:yellow_rose/features/hotel/data/models/search/hotel_search_response_entoty.dart';
@@ -58,6 +60,9 @@ class SearchDetailRespHotels {
 
   final ExpediaHotelContentResponseOnsitePayment? expediaOnsitePayment;
   final List<ExpediaHotelContentResponseImage>? expediaImages;
+
+  final String? hummingbirdHotelId;
+  final List<HotelDetailHummingbirdRoom>? hummingbirdRooms;
   SearchDetailRespHotels({
     this.hotelId,
     this.mmtId,
@@ -96,6 +101,8 @@ class SearchDetailRespHotels {
     this.expediaPolicies,
     this.expediaOnsitePayment,
     this.expediaImages,
+    this.hummingbirdHotelId,
+    this.hummingbirdRooms,
   });
 
   SearchDetailRespHotels copyWith({
@@ -136,6 +143,8 @@ class SearchDetailRespHotels {
     ExpediaHotelContentResponsePolicy? expediaPolicies,
     ExpediaHotelContentResponseOnsitePayment? expediaOnsitePayment,
     List<ExpediaHotelContentResponseImage>? expediaImages,
+    String? hummingbirdHotelId,
+    Nullable<List<HotelDetailHummingbirdRoom>>? hummingbirdRooms,
   }) {
     return SearchDetailRespHotels(
       hotelId: hotelId ?? this.hotelId,
@@ -176,6 +185,10 @@ class SearchDetailRespHotels {
       expediaPolicies: expediaPolicies ?? this.expediaPolicies,
       expediaOnsitePayment: expediaOnsitePayment ?? this.expediaOnsitePayment,
       expediaImages: expediaImages ?? this.expediaImages,
+      hummingbirdHotelId: hummingbirdHotelId ?? this.hummingbirdHotelId,
+      hummingbirdRooms: hummingbirdRooms == null
+          ? this.hummingbirdRooms
+          : hummingbirdRooms.value,
     );
   }
 
@@ -298,6 +311,13 @@ class SearchDetailRespHotels {
       result.addAll(
           {'expediaImages': expediaImages!.map((x) => x.toMap()).toList()});
     }
+    if (hummingbirdHotelId != null) {
+      result.addAll({'hummingbirdHotelId': hummingbirdHotelId});
+    }
+    if (hummingbirdRooms != null) {
+      result.addAll(
+          {'hummingbirdRooms': hummingbirdRooms!.map((x) => x.toMap()).toList()});
+    }
 
     return result;
   }
@@ -376,6 +396,11 @@ class SearchDetailRespHotels {
           ? List<ExpediaHotelContentResponseImage>.from(map['expediaImages']
               ?.map((x) => ExpediaHotelContentResponseImage.fromMap(x)))
           : null,
+      hummingbirdHotelId: map['hummingbirdHotelId']?.toString(),
+      hummingbirdRooms: map['hummingbirdRooms'] != null
+          ? List<HotelDetailHummingbirdRoom>.from(map['hummingbirdRooms']
+              ?.map((x) => HotelDetailHummingbirdRoom.fromMap(x)))
+          : null,
     );
   }
 
@@ -386,7 +411,7 @@ class SearchDetailRespHotels {
 
   @override
   String toString() {
-    return 'SearchDetailRespHotels(hotelId: $hotelId, mmtId: $mmtId, agodaId: $agodaId, expediaId: $expediaId, name: $name, hotelChainName: $hotelChainName, address: $address, pinCode: $pinCode, propertyType: $propertyType, childrenAgeFrom: $childrenAgeFrom, childrenAgeTo: $childrenAgeTo, childrenStayFree: $childrenStayFree, infantAge: $infantAge, minGuestAge: $minGuestAge, latitude: $latitude, longitude: $longitude, ratings: $ratings, checkInInstruction: $checkInInstruction, checkInSpecialInstruction: $checkInSpecialInstruction, singleRoomProperty: $singleRoomProperty, checkIn: $checkIn, checkOut: $checkOut, description: $description, myBizAssured: $myBizAssured, gstin: $gstin, mmtAmenities: $mmtAmenities, expediaAmenities: $expediaAmenities, mmtMedia: $mmtMedia, agodaAmenities: $agodaAmenities, agodaMedia: $agodaMedia, mmtRooms: $mmtRooms, agodaRooms: $agodaRooms, mmtPolicies: $mmtPolicies, expediaRooms: $expediaRooms, expediaPolicies: $expediaPolicies, expediaOnsitePayment: $expediaOnsitePayment, expediaImages: $expediaImages)';
+    return 'SearchDetailRespHotels(hotelId: $hotelId, mmtId: $mmtId, agodaId: $agodaId, expediaId: $expediaId, name: $name, hotelChainName: $hotelChainName, address: $address, pinCode: $pinCode, propertyType: $propertyType, childrenAgeFrom: $childrenAgeFrom, childrenAgeTo: $childrenAgeTo, childrenStayFree: $childrenStayFree, infantAge: $infantAge, minGuestAge: $minGuestAge, latitude: $latitude, longitude: $longitude, ratings: $ratings, checkInInstruction: $checkInInstruction, checkInSpecialInstruction: $checkInSpecialInstruction, singleRoomProperty: $singleRoomProperty, checkIn: $checkIn, checkOut: $checkOut, description: $description, myBizAssured: $myBizAssured, gstin: $gstin, mmtAmenities: $mmtAmenities, expediaAmenities: $expediaAmenities, mmtMedia: $mmtMedia, agodaAmenities: $agodaAmenities, agodaMedia: $agodaMedia, mmtRooms: $mmtRooms, agodaRooms: $agodaRooms, mmtPolicies: $mmtPolicies, expediaRooms: $expediaRooms, expediaPolicies: $expediaPolicies, expediaOnsitePayment: $expediaOnsitePayment, expediaImages: $expediaImages, hummingbirdHotelId: $hummingbirdHotelId, hummingbirdRooms: $hummingbirdRooms)';
   }
 
   @override
@@ -430,7 +455,9 @@ class SearchDetailRespHotels {
         listEquals(other.expediaRooms, expediaRooms) &&
         other.expediaPolicies == expediaPolicies &&
         other.expediaOnsitePayment == expediaOnsitePayment &&
-        listEquals(other.expediaImages, expediaImages);
+        listEquals(other.expediaImages, expediaImages) &&
+        other.hummingbirdHotelId == hummingbirdHotelId &&
+        listEquals(other.hummingbirdRooms, hummingbirdRooms);
   }
 
   @override
@@ -471,6 +498,8 @@ class SearchDetailRespHotels {
         expediaRooms.hashCode ^
         expediaPolicies.hashCode ^
         expediaOnsitePayment.hashCode ^
-        expediaImages.hashCode;
+        expediaImages.hashCode ^
+        hummingbirdHotelId.hashCode ^
+        hummingbirdRooms.hashCode;
   }
 }

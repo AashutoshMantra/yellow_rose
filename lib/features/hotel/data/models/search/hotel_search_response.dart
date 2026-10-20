@@ -12,6 +12,8 @@ class HotelSearchResponse {
   final String? agodaSearchId;
   final String? mmtHotelId;
   final String? agodaHotelId;
+  final String? hummingbirdHotelId;
+  final String? hummingbirdHotelCode;
   final String? name;
   final String? checkIn;
   final String? checkOut;
@@ -29,6 +31,8 @@ class HotelSearchResponse {
     this.agodaSearchId,
     this.mmtHotelId,
     this.agodaHotelId,
+    this.hummingbirdHotelId,
+    this.hummingbirdHotelCode,
     this.name,
     this.checkIn,
     this.checkOut,
@@ -48,6 +52,8 @@ class HotelSearchResponse {
     String? agodaSearchId,
     String? mmtHotelId,
     String? agodaHotelId,
+    String? hummingbirdHotelId,
+    String? hummingbirdHotelCode,
     String? name,
     String? checkIn,
     String? checkOut,
@@ -66,6 +72,8 @@ class HotelSearchResponse {
       agodaSearchId: agodaSearchId ?? this.agodaSearchId,
       mmtHotelId: mmtHotelId ?? this.mmtHotelId,
       agodaHotelId: agodaHotelId ?? this.agodaHotelId,
+      hummingbirdHotelId: hummingbirdHotelId ?? this.hummingbirdHotelId,
+      hummingbirdHotelCode: hummingbirdHotelCode ?? this.hummingbirdHotelCode,
       name: name ?? this.name,
       checkIn: checkIn ?? this.checkIn,
       checkOut: checkOut ?? this.checkOut,
@@ -95,6 +103,12 @@ class HotelSearchResponse {
     }
     if(agodaHotelId != null){
       result.addAll({'agodaHotelId': agodaHotelId});
+    }
+    if(hummingbirdHotelId != null){
+      result.addAll({'hummingbirdHotelId': hummingbirdHotelId});
+    }
+    if(hummingbirdHotelCode != null){
+      result.addAll({'hummingbirdHotelCode': hummingbirdHotelCode});
     }
     if(name != null){
       result.addAll({'name': name});
@@ -142,6 +156,8 @@ class HotelSearchResponse {
       agodaSearchId: map['agodaSearchId'],
       mmtHotelId: map['mmtHotelId'],
       agodaHotelId: map['agodaHotelId'],
+      hummingbirdHotelId: map['hummingbirdHotelId']?.toString(),
+      hummingbirdHotelCode: map['hummingbirdHotelCode']?.toString(),
       name: map['name'],
       checkIn: map['checkIn'],
       checkOut: map['checkOut'],
@@ -164,7 +180,7 @@ class HotelSearchResponse {
 
   @override
   String toString() {
-    return 'HotelSearchResponse(id: $id, agodaSearchId: $agodaSearchId, mmtHotelId: $mmtHotelId, agodaHotelId: $agodaHotelId, name: $name, checkIn: $checkIn, checkOut: $checkOut, geo: $geo, starRating: $starRating, propertyType: $propertyType, reviewDetails: $reviewDetails, amenities: $amenities, media: $media, rooms: $rooms, source: $source, address: $address)';
+    return 'HotelSearchResponse(id: $id, agodaSearchId: $agodaSearchId, mmtHotelId: $mmtHotelId, agodaHotelId: $agodaHotelId, hummingbirdHotelId: $hummingbirdHotelId, hummingbirdHotelCode: $hummingbirdHotelCode, name: $name, checkIn: $checkIn, checkOut: $checkOut, geo: $geo, starRating: $starRating, propertyType: $propertyType, reviewDetails: $reviewDetails, amenities: $amenities, media: $media, rooms: $rooms, source: $source, address: $address)';
   }
 
   @override
@@ -176,6 +192,8 @@ class HotelSearchResponse {
       other.agodaSearchId == agodaSearchId &&
       other.mmtHotelId == mmtHotelId &&
       other.agodaHotelId == agodaHotelId &&
+      other.hummingbirdHotelId == hummingbirdHotelId &&
+      other.hummingbirdHotelCode == hummingbirdHotelCode &&
       other.name == name &&
       other.checkIn == checkIn &&
       other.checkOut == checkOut &&
@@ -196,6 +214,8 @@ class HotelSearchResponse {
       agodaSearchId.hashCode ^
       mmtHotelId.hashCode ^
       agodaHotelId.hashCode ^
+      hummingbirdHotelId.hashCode ^
+      hummingbirdHotelCode.hashCode ^
       name.hashCode ^
       checkIn.hashCode ^
       checkOut.hashCode ^
