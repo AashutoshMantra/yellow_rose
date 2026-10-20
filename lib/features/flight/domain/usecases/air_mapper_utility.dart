@@ -3,6 +3,7 @@ import 'package:yellow_rose/core/utils/date_utils.dart';
 import 'package:yellow_rose/core/utils/extensions.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_response_data.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_request.dart';
+import 'package:yellow_rose/features/flight/data/models/airsearch/air_search_response.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/fare_details_with_type.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/booking_request.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order/order_details.dart';
@@ -17,6 +18,35 @@ import 'package:yellow_rose/features/flight/presentation/cubit/flight_booking/fl
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 
 class AirMapperUtility {
+  static List<AirSearchResponse> removeOutOfPolicyFares(
+      List<AirSearchResponse> responses) {
+    return responses.map((response) {
+      final flights = response.flights
+          .map((flight) => AirResponseData(
+                schDepartureTime: flight.schDepartureTime,
+                schArrivalTime: flight.schArrivalTime,
+                travelDuration: flight.travelDuration,
+                source: flight.source,
+                routeRequest: flight.routeRequest,
+                hopCount: flight.hopCount,
+                fare: flight.fare
+                    .where((fare) => fare.outOfPolicy != true)
+                    .toList(),
+                flightDetailsList: flight.flightDetailsList,
+                otherData: flight.otherData,
+              ))
+          .where((flight) => flight.fare.isNotEmpty)
+          .toList();
+      return AirSearchResponse(
+        fromAirport: response.fromAirport,
+        toAirport: response.toAirport,
+        source: response.source,
+        routeRequest: response.routeRequest,
+        flights: flights,
+      );
+    }).toList();
+  }
+
   AirMapperUtility._();
 
   static OrderDetails mapFlightStateToFlightOrderDetails(

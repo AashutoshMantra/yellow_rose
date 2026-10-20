@@ -23,6 +23,7 @@ class FareDetailsWithType {
   final Map<String, List<double>>? taxes;
   final Map<String, Object>? otherData;
   final double surCharge;
+  final bool? outOfPolicy;
   FareDetailsWithType({
     required this.fareType,
     this.fareTypeDisplay,
@@ -41,6 +42,7 @@ class FareDetailsWithType {
     this.taxes,
     this.otherData,
     required this.surCharge,
+    this.outOfPolicy,
   });
 
   Map<String, dynamic> toMap() {
@@ -77,6 +79,9 @@ class FareDetailsWithType {
       result.addAll({'otherData': otherData});
     }
     result.addAll({'surCharge': surCharge});
+    if (outOfPolicy != null) {
+      result.addAll({'outOfPolicy': outOfPolicy});
+    }
 
     return result;
   }
@@ -113,6 +118,7 @@ class FareDetailsWithType {
           ? Map<String, Object>.from(map['otherData'])
           : null,
       surCharge: map['surCharge']?.toDouble() ?? 0.0,
+      outOfPolicy: map['outOfPolicy'],
     );
   }
 
@@ -146,6 +152,7 @@ class FareDetailsWithType {
     Map<String, List<double>>? taxes,
     Map<String, Object>? otherData,
     double? surCharge,
+    bool? outOfPolicy,
   }) {
     return FareDetailsWithType(
       fareType: fareType ?? this.fareType,
@@ -165,12 +172,13 @@ class FareDetailsWithType {
       taxes: taxes ?? this.taxes,
       otherData: otherData ?? this.otherData,
       surCharge: surCharge ?? this.surCharge,
+      outOfPolicy: outOfPolicy ?? this.outOfPolicy,
     );
   }
 
   @override
   String toString() {
-    return 'FareDetailsWithType(fareType: $fareType, fareTypeDisplay: $fareTypeDisplay, source: $source, refundable: $refundable, corporateFare: $corporateFare, commercialData: $commercialData, hasFreeMeal: $hasFreeMeal, baseFare: $baseFare, finalTax: $finalTax, supplier: $supplier, netFare: $netFare, incentiveAmt: $incentiveAmt, incentiveTds: $incentiveTds, miscellaneousData: $miscellaneousData, taxes: $taxes, otherData: $otherData, surCharge: $surCharge)';
+    return 'FareDetailsWithType(fareType: $fareType, fareTypeDisplay: $fareTypeDisplay, source: $source, refundable: $refundable, corporateFare: $corporateFare, commercialData: $commercialData, hasFreeMeal: $hasFreeMeal, baseFare: $baseFare, finalTax: $finalTax, supplier: $supplier, netFare: $netFare, incentiveAmt: $incentiveAmt, incentiveTds: $incentiveTds, miscellaneousData: $miscellaneousData, taxes: $taxes, otherData: $otherData, surCharge: $surCharge, outOfPolicy: $outOfPolicy)';
   }
 
   @override
@@ -194,7 +202,8 @@ class FareDetailsWithType {
         mapEquals(other.miscellaneousData, miscellaneousData) &&
         mapEquals(other.taxes, taxes) &&
         mapEquals(other.otherData, otherData) &&
-        other.surCharge == surCharge;
+        other.surCharge == surCharge &&
+        other.outOfPolicy == outOfPolicy;
   }
 
   @override
@@ -215,6 +224,7 @@ class FareDetailsWithType {
         miscellaneousData.hashCode ^
         taxes.hashCode ^
         otherData.hashCode ^
-        surCharge.hashCode;
+        surCharge.hashCode ^
+        outOfPolicy.hashCode;
   }
 }
