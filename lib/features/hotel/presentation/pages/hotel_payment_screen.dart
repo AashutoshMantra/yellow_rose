@@ -86,7 +86,7 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
           orderStatus = OrderStatusEnum.warning;
         }
       } else {
-        final approverIds = await TripApproverSelectionSheet.select(context);
+        final approverIds = await TripApproverSelectionSheet.select(context, product: 'HOTEL');
         if (approverIds == null || !mounted) return;
         await context.read<TripCubit>().addToTrip(
             widget.orderUpdateResponse.orderNumber!,

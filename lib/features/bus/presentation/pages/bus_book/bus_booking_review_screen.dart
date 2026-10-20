@@ -148,7 +148,7 @@ class _BusBookingReviewScreenState extends State<BusBookingReviewScreen> {
           orderStatus = OrderStatusEnum.error;
         }
       } else {
-        final approverIds = await TripApproverSelectionSheet.select(context);
+        final approverIds = await TripApproverSelectionSheet.select(context, product: 'BUS');
         if (approverIds == null || !mounted) return;
         await context.read<TripCubit>().addToTrip(
             state.busOrderResponse.orderNumber!,

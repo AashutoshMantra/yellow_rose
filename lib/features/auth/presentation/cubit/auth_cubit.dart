@@ -96,10 +96,46 @@ class AuthCubit extends Cubit<AuthState> {
     return TripType.NoTrip;
   }
 
-  List<List<ManualApprover>> get manualApproverGroups {
+  String? approverNameById(String approverId) {
+    if (state is! Authenticated) return null;
+    final authState = state as Authenticated;
+    final ruleApprovers =
+        authState.approvalWorkflow?.workflowRule?.values.expand((e) => e) ?? [];
+    final ruleName = ruleApprovers
+        .where((a) => a.approverId == approverId)
+        .firstOrNull
+        ?.approverName
+        ?.replaceAll('_', ' ')
+        .trim();
+    if (ruleName != null && ruleName.isNotEmpty && ruleName != 'unknown') {
+      return ruleName;
+    }
+    final profile = [authState.userBookingProfile, ...authState.corporateProfiles]
+        .where((p) => p.userUid == approverId || p.username == approverId)
+        .firstOrNull;
+    final name = profile?.displayName;
+    return (name == null || name.isEmpty) ? null : name;
+  }
+
+  Future<List<List<ManualApprover>>> getManualApproverGroups(
+    String product, {
+    String? ptcNptcType,
+  }) async {
+    try {
+      final rule = await _authUseCase.getTripApprovalRule();
+      return rule.manualApproverGroupsFor(product, ptcNptcType: ptcNptcType);
+    } catch (e, s) {
+      log("$e $s");
+      return manualApproverGroupsFor(product);
+    }
+  }
+
+  List<List<ManualApprover>> manualApproverGroupsFor(String product) {
     if (state is Authenticated &&
         (state as Authenticated).approvalWorkflow != null) {
-      return (state as Authenticated).approvalWorkflow!.manualApproverGroups;
+      return (state as Authenticated)
+          .approvalWorkflow!
+          .manualApproverGroupsFor(product);
     }
     return [];
   }

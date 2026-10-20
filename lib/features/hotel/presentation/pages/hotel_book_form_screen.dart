@@ -121,6 +121,22 @@ class HotelBookFormScreen extends StatelessWidget {
                             (context.read<AuthCubit>().state as Authenticated)
                                 .billingEntities;
 
+                        final tripBillingEntity =
+                            TripValidationHelper.getTripBillingEntity(
+                                context.read<TripCubit>().selectedTrip,
+                                billingEntities);
+                        if (tripBillingEntity != null &&
+                            state.billingEntity?.entityRefId !=
+                                tripBillingEntity.entityRefId) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (context.mounted) {
+                              context
+                                  .read<HotelBookCubit>()
+                                  .onBillingEntityChange(tripBillingEntity);
+                            }
+                          });
+                        }
+
                         // Get saved profiles for searchable dropdown
                         final allProfiles =
                             context.read<AuthCubit>().allProfiles;
@@ -161,7 +177,8 @@ class HotelBookFormScreen extends StatelessWidget {
                                     SizedBox(
                                       height: 16.h,
                                     ),
-                                    Container(
+                                    if (tripBillingEntity == null)
+                                      Container(
                                       decoration: BoxDecoration(
                                           border: Border.all(
                                             color:

@@ -1,7 +1,19 @@
+import 'package:collection/collection.dart';
+import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_create_request.dart';
 
 class TripValidationHelper {
+  static BillingEntity? getTripBillingEntity(
+    TripResponse? selectedTrip,
+    List<BillingEntity> billingEntities,
+  ) {
+    final entityRefId = selectedTrip?.tripDetails?.billingEntity;
+    if (entityRefId == null || entityRefId.isEmpty) return null;
+    return billingEntities
+        .firstWhereOrNull((entity) => entity.entityRefId == entityRefId);
+  }
+
   static TripValidationResult validatePassengerCounts({
     required TripResponse? selectedTrip,
     required int currentAdultCount,

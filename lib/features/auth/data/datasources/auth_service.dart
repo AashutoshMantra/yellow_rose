@@ -3,6 +3,7 @@ import 'package:yellow_rose/core/utils/dio_client.dart';
 import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/auth/data/models/billing_entity.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_request.dart';
+import 'package:yellow_rose/features/auth/data/models/policy/approval_workflow_rule_response.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/corporate_policy.dart';
 import 'package:yellow_rose/features/auth/data/models/profile/user_booking_profile.dart';
 import 'package:yellow_rose/features/auth/data/models/sign_in_request.dart';
@@ -12,6 +13,7 @@ abstract interface class AuthService {
   Future<SignInResponse> signIn(SignInRequest signInRequest);
   Future<List<BillingEntity>> getBillingEntity(String uuid);
   Future<ApprovalWorkflow> getApprovalWorkflow();
+  Future<ApprovalWorkflowRuleResponse> getTripApprovalRule();
   Future<CorporatePolicyResponse> getUserPolicies();
   Future<List<UserBookingProfile>> getAllCorporateProfile();
   Future<UserBookingProfile> getUserProfile();
@@ -50,6 +52,14 @@ class AuthServiceIml implements AuthService {
       '${AppConfig.instance.apiBaseUrl}/approval/workflow/assigned',
     );
     return ApprovalWorkflow.fromMap(response.data);
+  }
+
+  @override
+  Future<ApprovalWorkflowRuleResponse> getTripApprovalRule() async {
+    var response = await _dioClinet.get(
+      '${AppConfig.instance.apiBaseUrl}/approval/workflow/rule/ALL/CORPORATE/TRIP_MGMT/ENABLE_TRIP_MGMT',
+    );
+    return ApprovalWorkflowRuleResponse.fromMap(response.data);
   }
 
   @override

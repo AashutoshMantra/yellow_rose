@@ -543,6 +543,7 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: MediaQuery.of(context).size.height * .85,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -552,146 +553,150 @@ class _CreateTripBottomSheetState extends State<CreateTripBottomSheet> {
           const BottomSheetTitleWidget(
             title: 'Create Trip',
           ),
-          Form(
-            key: _formKey,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                children: [
-                  TitleFormWidget(
-                    text: 'Trip Name *',
-                    child: CustomTextFormField(
-                      cont: _tripNameController,
-                      text: 'Trip Name',
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Trip name is required';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  TitleFormWidget(
-                    text: 'Description',
-                    child: CustomTextFormField(
-                      cont: _tripDescriptionController,
-                      text: 'Description',
-                      maxLines: 2,
-                    ),
-                  ),
-                  TitleFormWidget(
-                    text: 'Purpose',
-                    child: CustomDropDownField(
-                      hint: 'Select Purpose',
-                      val: _selectedPurpose,
-                      data: _purposeOptions,
-                      validator: (_) {
-                        if (_selectedPurpose == null ||
-                            _selectedPurpose!.isEmpty) {
-                          return 'Please select a purpose';
-                        }
-                        return null;
-                      },
-                      onchange: (value) {
-                        setState(() {
-                          _selectedPurpose = value;
-                        });
-                      },
-                    ),
-                  ),
-                  TitleFormWidget(
-                    text: 'Trip For *',
-                    child: Container(
-                      margin: EdgeInsets.only(top: 8.h),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children:
-                                widget.allowedTripForOptions.map((tripFor) {
-                              return Expanded(
-                                child: Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 6.h),
-                                  child: PillButton(
-                                    text: tripFor.value,
-                                    pillType: _selectedTripFor == tripFor
-                                        ? PillType.primary
-                                        : PillType.secondary,
-                                    onClick: () {
+          Expanded(
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    children: [
+                      TitleFormWidget(
+                        text: 'Trip Name *',
+                        child: CustomTextFormField(
+                          cont: _tripNameController,
+                          text: 'Trip Name',
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Trip name is required';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      TitleFormWidget(
+                        text: 'Description',
+                        child: CustomTextFormField(
+                          cont: _tripDescriptionController,
+                          text: 'Description',
+                          maxLines: 2,
+                        ),
+                      ),
+                      TitleFormWidget(
+                        text: 'Purpose',
+                        child: CustomDropDownField(
+                          hint: 'Select Purpose',
+                          val: _selectedPurpose,
+                          data: _purposeOptions,
+                          validator: (_) {
+                            if (_selectedPurpose == null ||
+                                _selectedPurpose!.isEmpty) {
+                              return 'Please select a purpose';
+                            }
+                            return null;
+                          },
+                          onchange: (value) {
+                            setState(() {
+                              _selectedPurpose = value;
+                            });
+                          },
+                        ),
+                      ),
+                      TitleFormWidget(
+                        text: 'Trip For *',
+                        child: Container(
+                          margin: EdgeInsets.only(top: 8.h),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children:
+                                    widget.allowedTripForOptions.map((tripFor) {
+                                  return Expanded(
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(horizontal: 6.h),
+                                      child: PillButton(
+                                        text: tripFor.value,
+                                        pillType: _selectedTripFor == tripFor
+                                            ? PillType.primary
+                                            : PillType.secondary,
+                                        onClick: () {
+                                          setState(() {
+                                            _selectedTripFor = tripFor;
+                                            if (tripFor != TripFor.OnBehalfOf) {
+                                              _selectedUsers.clear();
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                              if (_selectedTripFor == TripFor.OnBehalfOf) ...[
+                                SizedBox(height: 12.h),
+                                SearchableTravelerDropdown(
+                                  profiles: _allProfiles,
+                                  mode: SelectionMode.profile,
+                                  multiSelect: true,
+                                  maxSelections: _maxOnBehalfOfUsers,
+                                  excludeProfileIds: _selectedUsers
+                                      .map((u) =>
+                                          u.bookingProfileUuid ?? u.userUid ?? '')
+                                      .toList(),
+                                  onProfileSelected: (profile) {
+                                    setState(() {
+                                      final profileId =
+                                          profile.bookingProfileUuid ??
+                                              profile.userUid ??
+                                              '';
+                                      final existingIndex =
+                                          _selectedUsers.indexWhere((u) =>
+                                              (u.bookingProfileUuid ??
+                                                  u.userUid ??
+                                                  '') ==
+                                              profileId);
+                                      if (existingIndex != -1) {
+                                        _selectedUsers.removeAt(existingIndex);
+                                      } else {
+                                        _selectedUsers.add(profile);
+                                      }
+                                    });
+                                  },
+                                  onAddNew: () {
+                                    // Not applicable for user selection
+                                  },
+                                ),
+                                if (_selectedUsers.isNotEmpty) ...[
+                                  SizedBox(height: 12.h),
+                                  SelectedUserTags(
+                                    selectedUsers: _selectedUsers,
+                                    onRemove: (user) {
                                       setState(() {
-                                        _selectedTripFor = tripFor;
-                                        if (tripFor != TripFor.OnBehalfOf) {
-                                          _selectedUsers.clear();
-                                        }
+                                        _selectedUsers.remove(user);
                                       });
                                     },
                                   ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                          if (_selectedTripFor == TripFor.OnBehalfOf) ...[
-                            SizedBox(height: 12.h),
-                            SearchableTravelerDropdown(
-                              profiles: _allProfiles,
-                              mode: SelectionMode.profile,
-                              multiSelect: true,
-                              maxSelections: _maxOnBehalfOfUsers,
-                              excludeProfileIds: _selectedUsers
-                                  .map((u) =>
-                                      u.bookingProfileUuid ?? u.userUid ?? '')
-                                  .toList(),
-                              onProfileSelected: (profile) {
-                                setState(() {
-                                  final profileId =
-                                      profile.bookingProfileUuid ??
-                                          profile.userUid ??
-                                          '';
-                                  final existingIndex =
-                                      _selectedUsers.indexWhere((u) =>
-                                          (u.bookingProfileUuid ??
-                                              u.userUid ??
-                                              '') ==
-                                          profileId);
-                                  if (existingIndex != -1) {
-                                    _selectedUsers.removeAt(existingIndex);
-                                  } else {
-                                    _selectedUsers.add(profile);
-                                  }
-                                });
-                              },
-                              onAddNew: () {
-                                // Not applicable for user selection
-                              },
-                            ),
-                            if (_selectedUsers.isNotEmpty) ...[
-                              SizedBox(height: 12.h),
-                              SelectedUserTags(
-                                selectedUsers: _selectedUsers,
-                                onRemove: (user) {
-                                  setState(() {
-                                    _selectedUsers.remove(user);
-                                  });
-                                },
-                              ),
+                                ],
+                              ],
                             ],
-                          ],
-                        ],
+                          ),
+                        ),
                       ),
-                    ),
+                      if (_isGuestTrip) ..._buildGuestFields(),
+                      if (_isBillingEnabled) _buildBillingField(),
+                      if (_isPtcNptcEnabled) _buildPtcNptcField(),
+                      if (_isRmTagsEnabled) ..._buildRmTagFields(),
+                      SizedBox(height: 24.h),
+                      CustomButton(
+                        text: 'Create Trip',
+                        buttonController: _buttonController,
+                        onPressed: _createTrip,
+                      ),
+                      SizedBox(height: 50.h),
+                    ],
                   ),
-                  if (_isGuestTrip) ..._buildGuestFields(),
-                  if (_isBillingEnabled) _buildBillingField(),
-                  if (_isPtcNptcEnabled) _buildPtcNptcField(),
-                  if (_isRmTagsEnabled) ..._buildRmTagFields(),
-                  SizedBox(height: 24.h),
-                  CustomButton(
-                    text: 'Create Trip',
-                    buttonController: _buttonController,
-                    onPressed: _createTrip,
-                  ),
-                  SizedBox(height: 50.h),
-                ],
+                ),
               ),
             ),
           ),

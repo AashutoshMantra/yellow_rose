@@ -102,6 +102,22 @@ class FlightBookingScreen extends StatelessWidget {
                   (context.read<AuthCubit>().state as Authenticated)
                       .billingEntities;
 
+              final tripBillingEntity =
+                  TripValidationHelper.getTripBillingEntity(
+                      context.read<TripCubit>().selectedTrip,
+                      billingEntities);
+              if (tripBillingEntity != null &&
+                  state.billingEntity?.entityRefId !=
+                      tripBillingEntity.entityRefId) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (context.mounted) {
+                    context
+                        .read<FlightBookingCubit>()
+                        .onBillingEntityChange(tripBillingEntity);
+                  }
+                });
+              }
+
               final allProfiles = context.read<AuthCubit>().allProfiles;
 
               return SingleChildScrollView(
@@ -171,7 +187,8 @@ class FlightBookingScreen extends StatelessWidget {
                           SizedBox(
                             height: 16.h,
                           ),
-                          Container(
+                          if (tripBillingEntity == null)
+                            Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
                                   color: AppColors.primarySwatch[200]!,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'package:yellow_rose/core/utils/extensions.dart';
+import 'package:yellow_rose/features/auth/data/models/policy/approver_details.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/approvers.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/condition_request.dart';
 import 'package:yellow_rose/features/auth/data/models/policy/travel_rule.dart';
@@ -24,6 +25,7 @@ class ApprovalWorkflow {
   final String? policyApplied;
   final int? priority;
   final bool? approvalAdmin;
+  final Map<String, List<ApproverDetails>>? workflowRule;
   ApprovalWorkflow({
     this.workFlowId,
     this.workFlowName,
@@ -39,6 +41,7 @@ class ApprovalWorkflow {
     this.policyApplied,
     this.priority,
     this.approvalAdmin,
+    this.workflowRule,
   });
 
   ApprovalWorkflow copyWith({
@@ -56,6 +59,7 @@ class ApprovalWorkflow {
     String? policyApplied,
     int? priority,
     bool? approvalAdmin,
+    Map<String, List<ApproverDetails>>? workflowRule,
   }) {
     return ApprovalWorkflow(
       workFlowId: workFlowId ?? this.workFlowId,
@@ -72,6 +76,7 @@ class ApprovalWorkflow {
       policyApplied: policyApplied ?? this.policyApplied,
       priority: priority ?? this.priority,
       approvalAdmin: approvalAdmin ?? this.approvalAdmin,
+      workflowRule: workflowRule ?? this.workflowRule,
     );
   }
 
@@ -120,6 +125,12 @@ class ApprovalWorkflow {
     if(approvalAdmin != null){
       result.addAll({'approvalAdmin': approvalAdmin});
     }
+    if(workflowRule != null){
+      result.addAll({
+        'workflowRule': workflowRule!.map((key, value) =>
+            MapEntry(key, value.map((x) => x.toMap()).toList()))
+      });
+    }
   
     return result;
   }
@@ -140,6 +151,12 @@ class ApprovalWorkflow {
       policyApplied: map['policyApplied'],
       priority: map['priority']?.toInt(),
       approvalAdmin: map['approvalAdmin'],
+      workflowRule: map['workflowRule'] != null
+          ? (map['workflowRule'] as Map).map((key, value) => MapEntry(
+              key.toString(),
+              List<ApproverDetails>.from(
+                  value.map((x) => ApproverDetails.fromMap(x)))))
+          : null,
     );
   }
 
@@ -150,7 +167,7 @@ class ApprovalWorkflow {
 
   @override
   String toString() {
-    return 'ApprovalWorkflow(workFlowId: $workFlowId, workFlowName: $workFlowName, workFlowDesc: $workFlowDesc, status: $status, workflow: $workflow, travelRules: $travelRules, createdBy: $createdBy, corporateUserUid: $corporateUserUid, lastModifiedBy: $lastModifiedBy, travelPolicyId: $travelPolicyId, product: $product, policyApplied: $policyApplied, priority: $priority, approvalAdmin: $approvalAdmin)';
+    return 'ApprovalWorkflow(workFlowId: $workFlowId, workFlowName: $workFlowName, workFlowDesc: $workFlowDesc, status: $status, workflow: $workflow, travelRules: $travelRules, createdBy: $createdBy, corporateUserUid: $corporateUserUid, lastModifiedBy: $lastModifiedBy, travelPolicyId: $travelPolicyId, product: $product, policyApplied: $policyApplied, priority: $priority, approvalAdmin: $approvalAdmin, workflowRule: $workflowRule)';
   }
 
   @override
@@ -171,7 +188,8 @@ class ApprovalWorkflow {
       other.product == product &&
       other.policyApplied == policyApplied &&
       other.priority == priority &&
-      other.approvalAdmin == approvalAdmin;
+      other.approvalAdmin == approvalAdmin &&
+      mapEquals(other.workflowRule, workflowRule);
   }
 
   @override
@@ -189,6 +207,7 @@ class ApprovalWorkflow {
       product.hashCode ^
       policyApplied.hashCode ^
       priority.hashCode ^
-      approvalAdmin.hashCode;
+      approvalAdmin.hashCode ^
+      workflowRule.hashCode;
   }
 }

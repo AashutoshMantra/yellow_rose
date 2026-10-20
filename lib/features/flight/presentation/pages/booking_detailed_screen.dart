@@ -113,7 +113,7 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
           orderStatus = OrderStatusEnum.success;
         }
       } else {
-        final approverIds = await TripApproverSelectionSheet.select(context);
+        final approverIds = await TripApproverSelectionSheet.select(context, product: 'AIR');
         if (approverIds == null || !mounted) return;
         await context.read<TripCubit>().addToTrip(
             widget.bookingData.orderDetails.orderId!,
