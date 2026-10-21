@@ -88,9 +88,12 @@ class FlightSearchListScreen extends StatelessWidget {
         preferredSize: Size.fromHeight(100.h),
         child: BlocBuilder<FlightSearchListingCubit, FlightSearchListingState>(
           builder: (context, state) {
+            final isSearching = state is FlightSearchListingInitial ||
+                state is FlightSearchListingLoading;
             return BaseAppBar(
               title: getFlightDetailTitle(state.airSearch!),
-              onAppBarClick: () => onAppBarClick(context),
+              onAppBarClick:
+                  isSearching ? null : () => onAppBarClick(context),
               subTitle: getFLightDetailSubtitle(state.airSearch!),
               shouldHaveRadius: false,
               actionsCustom: [
@@ -98,7 +101,8 @@ class FlightSearchListScreen extends StatelessWidget {
                     margin: EdgeInsets.only(right: 8.w),
                     child: IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () => onAppBarClick(context),
+                      onPressed:
+                          isSearching ? null : () => onAppBarClick(context),
                     ))
               ],
             );

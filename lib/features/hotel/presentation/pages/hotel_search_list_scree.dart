@@ -52,9 +52,12 @@ class HotelSearchListScreen extends StatelessWidget {
         preferredSize: Size.fromHeight(100.h),
         child: BlocBuilder<HotelSearchListingCubit, HotelSearchListingState>(
           builder: (context, state) {
+            final isSearching = state is HotelSearchListingInitial ||
+                state is HotelSearchListingLoading;
             return BaseAppBar(
               title: state.hotelSearch?.place?.city ?? "Hotel Search",
-              onAppBarClick: () => onAppBarClick(context),
+              onAppBarClick:
+                  isSearching ? null : () => onAppBarClick(context),
               subTitle: getTravellerDetailsAndDate(state.hotelSearch!),
               shouldHaveRadius: false,
               actionsCustom: [
@@ -62,7 +65,8 @@ class HotelSearchListScreen extends StatelessWidget {
                     margin: EdgeInsets.only(right: 8.w),
                     child: IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () => onAppBarClick(context),
+                      onPressed:
+                          isSearching ? null : () => onAppBarClick(context),
                     ))
               ],
             );

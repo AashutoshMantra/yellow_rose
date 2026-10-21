@@ -47,16 +47,20 @@ class BusSearchListScreen extends StatelessWidget {
         preferredSize: Size.fromHeight(100.h),
         child: BlocBuilder<BusSearchListingCubit, BusSearchListingState>(
           builder: (context, state) {
+            final isSearching = state is BusSearchListingInitial ||
+                state is BusSearchListingLoading;
             return BaseAppBar(
               title: getBusDetailTitle(state.busSearch!),
-              onAppBarClick: () => onAppBarClick(context),
+              onAppBarClick:
+                  isSearching ? null : () => onAppBarClick(context),
               shouldHaveRadius: false,
               actionsCustom: [
                 Container(
                   margin: EdgeInsets.only(right: 8.w),
                   child: IconButton(
                     icon: const Icon(Icons.edit),
-                    onPressed: () => onAppBarClick(context),
+                    onPressed:
+                        isSearching ? null : () => onAppBarClick(context),
                   ),
                 )
               ],
