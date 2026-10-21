@@ -42,6 +42,7 @@ class AirSearch {
   final NameCode? preferredCarrier;
   final bool? directFlight;
   final String requestId;
+  final String userBookingContext;
   AirSearch({
     this.childCount = 0,
     required this.adultCount,
@@ -50,6 +51,7 @@ class AirSearch {
     required this.searchClass,
     this.preferredCarrier,
     this.directFlight,
+    this.userBookingContext = 'C',
   }) : requestId = const Uuid().v4();
 
   Map<String, dynamic> toMap() {

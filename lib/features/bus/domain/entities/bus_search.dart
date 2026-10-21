@@ -9,22 +9,26 @@ class BusSearch {
   final BusCityResponse? destination;
   final DateTime? dateOfJourney;
   final String requestId;
+  final String userBookingContext;
 
   BusSearch({
     this.source,
     this.destination,
     this.dateOfJourney,
+    this.userBookingContext = 'C',
   }) : requestId = const Uuid().v4();
 
   BusSearch copyWith({
     BusCityResponse? source,
     BusCityResponse? destination,
     DateTime? dateOfJourney,
+    String? userBookingContext,
   }) {
     return BusSearch(
       source: source ?? this.source,
       destination: destination ?? this.destination,
       dateOfJourney: dateOfJourney ?? this.dateOfJourney,
+      userBookingContext: userBookingContext ?? this.userBookingContext,
     );
   }
 

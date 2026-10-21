@@ -31,8 +31,68 @@ class AuthCubit extends Cubit<AuthState> {
     throw Exception("User not authenticated");
   }
 
+  bool get isPersonalBookingOnly {
+    final currentState = state;
+    return currentState is Authenticated &&
+        currentState.userDetails.personalBookingOnly;
+  }
+
+  bool get canSwitchBookingMode {
+    final currentState = state;
+    return currentState is Authenticated &&
+        currentState.userDetails.personalBooking &&
+        !currentState.userDetails.personalBookingOnly;
+  }
+
+  bool get isPersonalMode {
+    final currentState = state;
+    return currentState is Authenticated &&
+        (currentState.userDetails.personalBookingOnly ||
+            currentState.isPersonalMode);
+  }
+
+  String get userBookingContext => isPersonalMode ? 'P' : 'C';
+
+  Future<void> setPersonalMode(bool isPersonal) async {
+    final currentState = state;
+    if (currentState is! Authenticated ||
+        !canSwitchBookingMode ||
+        currentState.isPersonalMode == isPersonal) {
+      return;
+    }
+    emit(currentState.copyWith(isPersonalMode: isPersonal));
+    try {
+      final profiles = await _loadCorporateProfiles(
+          isPersonal || tripType == TripType.NoTrip);
+      final latestState = state;
+      if (latestState is Authenticated &&
+          latestState.isPersonalMode == isPersonal) {
+        emit(latestState.copyWith(corporateProfiles: profiles));
+      }
+    } catch (e, s) {
+      log("$e $s");
+    }
+  }
+
+  Future<List<UserBookingProfile>> _loadCorporateProfiles(
+      bool useAllProfiles) async {
+    var corporateProfiles = useAllProfiles
+        ? await _authUseCase.getAllCorporateProfile()
+        : await _authUseCase.getGroupByCorporateUserProfiles();
+    return corporateProfiles
+        .where((profile) =>
+            profile.firstName != null &&
+            profile.firstName!.isNotEmpty &&
+            profile.gender != null &&
+            profile.contactNumber != null)
+        .toList();
+  }
+
   Future<void> appStarted() async {
     try {
+      final previousState = state;
+      final wasPersonalMode =
+          previousState is Authenticated && previousState.isPersonalMode;
       emit(AuthInitial());
       if (_authUseCase.isLoggedIn()) {
         UserDetails? userDetails = _authUseCase.getUserDetails();
@@ -54,20 +114,10 @@ class AuthCubit extends Cubit<AuthState> {
         if (userDetails != null) {
           UserBookingProfile userBookingProfile =
               await _authUseCase.getUserProfile();
-          List<UserBookingProfile> corporateProfiles = [];
-          if (approvalWorkflow?.tripType != TripType.NoTrip) {
-            corporateProfiles =
-                await _authUseCase.getGroupByCorporateUserProfiles();
-          } else {
-            corporateProfiles = await _authUseCase.getAllCorporateProfile();
-          }
-          corporateProfiles = corporateProfiles
-              .where((profile) =>
-                  profile.firstName != null &&
-                  profile.firstName!.isNotEmpty &&
-                  profile.gender != null &&
-                  profile.contactNumber != null)
-              .toList();
+          final isPersonal = userDetails.personalBookingOnly ||
+              (userDetails.personalBooking && wasPersonalMode);
+          final corporateProfiles = await _loadCorporateProfiles(
+              isPersonal || approvalWorkflow?.tripType == TripType.NoTrip);
 
           emit(Authenticated(
               userDetails: userDetails,
@@ -75,7 +125,8 @@ class AuthCubit extends Cubit<AuthState> {
               approvalWorkflow: approvalWorkflow,
               corporatePolicies: corporatePolicies,
               userBookingProfile: userBookingProfile,
-              corporateProfiles: corporateProfiles));
+              corporateProfiles: corporateProfiles,
+              isPersonalMode: isPersonal));
         } else {
           emit(Unauthenticated());
         }
@@ -89,6 +140,9 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   TripType get tripType {
+    if (isPersonalMode) {
+      return TripType.NoTrip;
+    }
     if (state is Authenticated &&
         (state as Authenticated).approvalWorkflow != null) {
       return (state as Authenticated).approvalWorkflow!.tripType;

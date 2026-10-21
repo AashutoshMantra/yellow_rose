@@ -86,7 +86,8 @@ class _BusBookingReviewScreenState extends State<BusBookingReviewScreen> {
     }).toList();
     var selectedTrip = context.read<TripCubit>().selectedTrip;
     return AirMapperUtility.getFilteredPaymentMediumStatusList(
-        paymentStatus, selectedTrip);
+        paymentStatus, selectedTrip,
+        isPersonal: context.read<AuthCubit>().isPersonalMode);
   }
 
   void _handlePaymentSelection(

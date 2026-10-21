@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/date_picker.dart';
 import 'package:yellow_rose/core/common_widgets/labeled_info_widget.dart';
@@ -54,8 +55,9 @@ class BusSearchWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          BusSearchCubit()..loadInitial(busSearch: initialData),
+      create: (context) => BusSearchCubit(
+          userBookingContext: context.read<AuthCubit>().userBookingContext)
+        ..loadInitial(busSearch: initialData),
       child: BlocBuilder<BusSearchCubit, BusSearchState>(
         builder: (context, state) {
           if (state.isLoading) {

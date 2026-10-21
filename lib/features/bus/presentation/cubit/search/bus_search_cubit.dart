@@ -10,7 +10,9 @@ import 'package:yellow_rose/features/bus/domain/usecases/bus_usecase.dart';
 part 'bus_search_state.dart';
 
 class BusSearchCubit extends Cubit<BusSearchState> {
-  BusSearchCubit() : super(BusSearchState.initial());
+  BusSearchCubit({this.userBookingContext = 'C'})
+      : super(BusSearchState.initial());
+  final String userBookingContext;
   final busUseCase = getIt<BusUseCase>();
 
   void loadInitial({BusSearch? busSearch}) async {
@@ -67,6 +69,7 @@ class BusSearchCubit extends Cubit<BusSearchState> {
       source: state.source,
       destination: state.destination,
       dateOfJourney: state.dateOfJourney,
+      userBookingContext: userBookingContext,
     );
   }
 }

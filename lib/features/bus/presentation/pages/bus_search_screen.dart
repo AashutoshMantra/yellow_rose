@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/core/common_widgets/base_appbar.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
@@ -20,7 +21,9 @@ class BusSearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var busSearchListner = ValueNotifier<BusSearch?>(busSearch);
     return BlocProvider(
-      create: (context) => BusSearchCubit()..loadInitial(busSearch: busSearch),
+      create: (context) => BusSearchCubit(
+          userBookingContext: context.read<AuthCubit>().userBookingContext)
+        ..loadInitial(busSearch: busSearch),
       child: Scaffold(
         appBar: BaseAppBar(
           title: "Book Bus Ticket",

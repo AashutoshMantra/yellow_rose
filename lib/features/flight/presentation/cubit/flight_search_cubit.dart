@@ -14,9 +14,11 @@ import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 part 'flight_search_state.dart';
 
 class FlightSearchCubit extends Cubit<FlightSearchState> {
-  FlightSearchCubit({this.selectedTrip}) : super(FlightSearchState.initial());
+  FlightSearchCubit({this.selectedTrip, this.userBookingContext = 'C'})
+      : super(FlightSearchState.initial());
   final airUseCase = getIt<AirUseCase>();
   final TripResponse? selectedTrip;
+  final String userBookingContext;
 
   void loadInitial({AirSearch? airSearch}) async {
     try {
@@ -233,6 +235,7 @@ class FlightSearchCubit extends Cubit<FlightSearchState> {
       searchClass: state.searchClass,
       preferredCarrier: state.preferredCarrier,
       directFlight: state.directFlight,
+      userBookingContext: userBookingContext,
     );
   }
 }

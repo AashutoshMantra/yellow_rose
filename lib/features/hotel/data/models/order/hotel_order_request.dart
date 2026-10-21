@@ -16,6 +16,7 @@ class HotelOrderRequest {
   final String? bookingStatus;
   final String? paymentMedium;
   final String? requestUuid;
+  final String? userBookingContext;
   final HotelTravellerDetailCount? travellerDetails;
   final String? contactNumber;
   final String? email;
@@ -44,6 +45,7 @@ class HotelOrderRequest {
     this.bookingStatus,
     this.paymentMedium,
     this.requestUuid,
+    this.userBookingContext,
     this.travellerDetails,
     this.contactNumber,
     this.email,
@@ -74,6 +76,7 @@ class HotelOrderRequest {
     String? bookingStatus,
     String? paymentMedium,
     String? requestUuid,
+    String? userBookingContext,
     HotelTravellerDetailCount? travellerDetails,
     String? contactNumber,
     String? email,
@@ -103,6 +106,7 @@ class HotelOrderRequest {
       bookingStatus: bookingStatus ?? this.bookingStatus,
       paymentMedium: paymentMedium ?? this.paymentMedium,
       requestUuid: requestUuid ?? this.requestUuid,
+      userBookingContext: userBookingContext ?? this.userBookingContext,
       travellerDetails: travellerDetails ?? this.travellerDetails,
       contactNumber: contactNumber ?? this.contactNumber,
       email: email ?? this.email,
@@ -147,6 +151,9 @@ class HotelOrderRequest {
     }
     if (requestUuid != null) {
       result.addAll({'requestUuid': requestUuid});
+    }
+    if (userBookingContext != null) {
+      result.addAll({'userBookingContext': userBookingContext});
     }
     if (travellerDetails != null) {
       result.addAll({'travellerDetails': travellerDetails!.toMap()});
@@ -223,6 +230,7 @@ class HotelOrderRequest {
       bookingStatus: map['bookingStatus'],
       paymentMedium: map['paymentMedium'],
       requestUuid: map['requestUuid'],
+      userBookingContext: map['userBookingContext'],
       travellerDetails: map['travellerDetails'] != null
           ? HotelTravellerDetailCount.fromMap(map['travellerDetails'])
           : null,
@@ -259,7 +267,7 @@ class HotelOrderRequest {
 
   @override
   String toString() {
-    return 'HotelOrderRequest(channel: $channel, hotelRequest: $hotelRequest, orderId: $orderId, bookingId: $bookingId, bookingStatus: $bookingStatus, paymentMedium: $paymentMedium, requestUuid: $requestUuid, travellerDetails: $travellerDetails, contactNumber: $contactNumber, email: $email, gstNumber: $gstNumber, billingEntity: $billingEntity, hotelContactEmail: $hotelContactEmail, hotelContactNumber: $hotelContactNumber, gstEmail: $gstEmail, payment: $payment, bookedFor: $bookedFor, bookedBy: $bookedBy, branch: $branch, userUid: $userUid, tripUid: $tripUid, source: $source, supplier: $supplier, bookingPaymentType: $bookingPaymentType, whiteLabelId: $whiteLabelId, hotelBookingRequest: $hotelBookingRequest, selectedHotelOrder: $selectedHotelOrder)';
+    return 'HotelOrderRequest(channel: $channel, hotelRequest: $hotelRequest, orderId: $orderId, bookingId: $bookingId, bookingStatus: $bookingStatus, paymentMedium: $paymentMedium, requestUuid: $requestUuid, userBookingContext: $userBookingContext, travellerDetails: $travellerDetails, contactNumber: $contactNumber, email: $email, gstNumber: $gstNumber, billingEntity: $billingEntity, hotelContactEmail: $hotelContactEmail, hotelContactNumber: $hotelContactNumber, gstEmail: $gstEmail, payment: $payment, bookedFor: $bookedFor, bookedBy: $bookedBy, branch: $branch, userUid: $userUid, tripUid: $tripUid, source: $source, supplier: $supplier, bookingPaymentType: $bookingPaymentType, whiteLabelId: $whiteLabelId, hotelBookingRequest: $hotelBookingRequest, selectedHotelOrder: $selectedHotelOrder)';
   }
 
   @override
@@ -274,6 +282,7 @@ class HotelOrderRequest {
         other.bookingStatus == bookingStatus &&
         other.paymentMedium == paymentMedium &&
         other.requestUuid == requestUuid &&
+        other.userBookingContext == userBookingContext &&
         other.travellerDetails == travellerDetails &&
         other.contactNumber == contactNumber &&
         other.email == email &&
@@ -305,6 +314,7 @@ class HotelOrderRequest {
         bookingStatus.hashCode ^
         paymentMedium.hashCode ^
         requestUuid.hashCode ^
+        userBookingContext.hashCode ^
         travellerDetails.hashCode ^
         contactNumber.hashCode ^
         email.hashCode ^

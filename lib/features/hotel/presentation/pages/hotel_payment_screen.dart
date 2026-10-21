@@ -173,7 +173,8 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
               final paymentMethods =
                   AirMapperUtility.getFilteredPaymentMediumStatusList(
                       widget.orderUpdateResponse.paymentConfig?.status ?? [],
-                      selectedTrip);
+                      selectedTrip,
+                      isPersonal: context.read<AuthCubit>().isPersonalMode);
               if (paymentMethods.isEmpty) {
                 WidgetUtil.showSnackBar(
                     "No payment methods available", context);
@@ -186,7 +187,8 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
                   FlightPaymentMethodListWidget(
                     paymentMediumStatusList: AirMapperUtility.getFilteredPaymentMediumStatusList(
                         widget.orderUpdateResponse.paymentConfig?.status ?? [],
-                        null),
+                        null,
+                        isPersonal: context.read<AuthCubit>().isPersonalMode),
                     onPaymentMethodSelected: (paymentMedium) async {
                       await _handlePaymentAndBooking(paymentMedium);
                     },

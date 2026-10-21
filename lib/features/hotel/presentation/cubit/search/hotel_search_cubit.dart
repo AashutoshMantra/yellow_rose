@@ -8,8 +8,10 @@ import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 part 'hotel_search_state.dart';
 
 class HotelSearchCubit extends Cubit<HotelSearchState> {
-  HotelSearchCubit({this.selectedTrip}) : super(HotelSearchState.initial());
+  HotelSearchCubit({this.selectedTrip, this.userBookingContext = 'C'})
+      : super(HotelSearchState.initial());
   final TripResponse? selectedTrip;
+  final String userBookingContext;
 
   void loadInitial({HotelSearch? hotelSearch}) {
     if (hotelSearch != null) {
@@ -101,6 +103,7 @@ class HotelSearchCubit extends Cubit<HotelSearchState> {
       adultCount: state.adultCount,
       childAges: state.childAges,
       place: state.place,
+      userBookingContext: userBookingContext,
     );
   }
 }

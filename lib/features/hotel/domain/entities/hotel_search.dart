@@ -15,6 +15,7 @@ class HotelSearch {
   final bool isInternational;
   final PlaceEntity? place;
   final String requestId;
+  final String userBookingContext;
   HotelSearch({
     this.checkInDate,
     this.checkOutDate,
@@ -22,6 +23,7 @@ class HotelSearch {
     this.adultCount,
     this.childAges,
     this.place,
+    this.userBookingContext = 'C',
   })  : isInternational =
             (place == null || place.country?.equalsIgnoreCase("IN") == true)
                 ? false
@@ -36,6 +38,7 @@ class HotelSearch {
     List<int>? childAges,
     String? country,
     PlaceEntity? place,
+    String? userBookingContext,
   }) {
     return HotelSearch(
       checkInDate: checkInDate ?? this.checkInDate,
@@ -44,6 +47,7 @@ class HotelSearch {
       adultCount: adultCount ?? this.adultCount,
       childAges: childAges ?? this.childAges,
       place: place ?? this.place,
+      userBookingContext: userBookingContext ?? this.userBookingContext,
     );
   }
 

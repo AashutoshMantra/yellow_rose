@@ -15,6 +15,7 @@ class HotelDetailRequest {
   final String? hummingbirdHotelCode;
   final String? country;
   final String? requestId;
+  final String? userBookingContext;
   final DateTime? checkInDate;
   final DateTime? checkOutDate;
   final int? roomCount;
@@ -32,7 +33,8 @@ class HotelDetailRequest {
       this.checkOutDate,
       this.roomCount,
       this.rooms,
-      this.requestId});
+      this.requestId,
+      this.userBookingContext});
 
   HotelDetailRequest copyWith({
     int? hotelId,
@@ -45,6 +47,7 @@ class HotelDetailRequest {
     DateTime? checkOutDate,
     int? roomCount,
     String? requestId,
+    String? userBookingContext,
     List<HotelRoomRequest>? rooms,
   }) {
     return HotelDetailRequest(
@@ -59,6 +62,7 @@ class HotelDetailRequest {
       roomCount: roomCount ?? this.roomCount,
       rooms: rooms ?? this.rooms,
       requestId: requestId ?? this.requestId,
+      userBookingContext: userBookingContext ?? this.userBookingContext,
     );
   }
 
@@ -101,6 +105,9 @@ class HotelDetailRequest {
     if (requestId != null) {
       result.addAll({'requestId': requestId});
     }
+    if (userBookingContext != null) {
+      result.addAll({'userBookingContext': userBookingContext});
+    }
 
     return result;
   }
@@ -124,6 +131,7 @@ class HotelDetailRequest {
           ? List<HotelRoomRequest>.from(
               map['rooms']?.map((x) => HotelRoomRequest.fromMap(x)))
           : null,
+      userBookingContext: map['userBookingContext'],
     );
   }
 
@@ -151,6 +159,7 @@ class HotelDetailRequest {
         other.checkInDate == checkInDate &&
         other.checkOutDate == checkOutDate &&
         other.roomCount == roomCount &&
+        other.userBookingContext == userBookingContext &&
         listEquals(other.rooms, rooms);
   }
 
@@ -165,6 +174,7 @@ class HotelDetailRequest {
         checkInDate.hashCode ^
         checkOutDate.hashCode ^
         roomCount.hashCode ^
+        userBookingContext.hashCode ^
         rooms.hashCode;
   }
 }

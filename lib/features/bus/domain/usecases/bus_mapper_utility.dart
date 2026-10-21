@@ -49,7 +49,7 @@ class BusMapperUtility {
       destinationId: busSearchResponse.destinationId,
       dateOfJourney: busSearchResponse.doj,
       requestId: busSearch.requestId,
-      userBookingContext: 'C',
+      userBookingContext: busSearch.userBookingContext,
       paxCount: selectedSeats.length,
       adultCount: selectedSeats.length,
       childCount: 0,

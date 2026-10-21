@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/date_picker.dart';
 import 'package:yellow_rose/core/common_widgets/labeled_info_widget.dart';
@@ -134,7 +135,9 @@ class HotelSearchWidget extends StatelessWidget {
     final selectedTrip = context.read<TripCubit>().selectedTrip;
 
     return BlocProvider(
-      create: (context) => HotelSearchCubit(selectedTrip: selectedTrip)
+      create: (context) => HotelSearchCubit(
+          selectedTrip: selectedTrip,
+          userBookingContext: context.read<AuthCubit>().userBookingContext)
         ..loadInitial(hotelSearch: initialData),
       child: BlocListener<HotelSearchCubit, HotelSearchState>(
         listener: (context, state) {},

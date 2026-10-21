@@ -25,6 +25,7 @@ class HotelListSearchRequest {
   final DateTime checkOutDate;
   final int roomCount;
   final List<HotelRoomRequest> rooms;
+  final String? userBookingContext;
   HotelListSearchRequest({
     required this.pageNo,
     this.pageSize,
@@ -40,6 +41,7 @@ class HotelListSearchRequest {
     required this.checkOutDate,
     required this.roomCount,
     required this.rooms,
+    this.userBookingContext,
   });
 
   HotelListSearchRequest copyWith({
@@ -57,6 +59,7 @@ class HotelListSearchRequest {
     DateTime? checkOutDate,
     int? roomCount,
     List<HotelRoomRequest>? rooms,
+    String? userBookingContext,
   }) {
     return HotelListSearchRequest(
       pageNo: pageNo ?? this.pageNo,
@@ -73,6 +76,7 @@ class HotelListSearchRequest {
       checkOutDate: checkOutDate ?? this.checkOutDate,
       roomCount: roomCount ?? this.roomCount,
       rooms: rooms ?? this.rooms,
+      userBookingContext: userBookingContext ?? this.userBookingContext,
     );
   }
 
@@ -109,6 +113,9 @@ class HotelListSearchRequest {
         {'checkOutDate': CustomDateUtils.customApiDayFormat(checkOutDate)});
     result.addAll({'roomCount': roomCount});
     result.addAll({'rooms': rooms.map((x) => x.toMap()).toList()});
+    if (userBookingContext != null) {
+      result.addAll({'userBookingContext': userBookingContext});
+    }
 
     return result;
   }
@@ -130,6 +137,7 @@ class HotelListSearchRequest {
       roomCount: map['roomCount']?.toInt() ?? 0,
       rooms: List<HotelRoomRequest>.from(
           map['rooms']?.map((x) => HotelRoomRequest.fromMap(x))),
+      userBookingContext: map['userBookingContext'],
     );
   }
 
@@ -140,7 +148,7 @@ class HotelListSearchRequest {
 
   @override
   String toString() {
-    return 'HotelListSearchRequest(pageNo: $pageNo, pageSize: $pageSize, city: $city, country: $country, priceMin: $priceMin, priceMax: $priceMax, starRating: $starRating, userRating: $userRating, mealBasis: $mealBasis, address: $address, checkInDate: $checkInDate, checkOutDate: $checkOutDate, roomCount: $roomCount, rooms: $rooms)';
+    return 'HotelListSearchRequest(pageNo: $pageNo, pageSize: $pageSize, city: $city, country: $country, priceMin: $priceMin, priceMax: $priceMax, starRating: $starRating, userRating: $userRating, mealBasis: $mealBasis, address: $address, checkInDate: $checkInDate, checkOutDate: $checkOutDate, roomCount: $roomCount, rooms: $rooms, userBookingContext: $userBookingContext)';
   }
 
   @override
@@ -161,7 +169,8 @@ class HotelListSearchRequest {
         other.checkInDate == checkInDate &&
         other.checkOutDate == checkOutDate &&
         other.roomCount == roomCount &&
-        listEquals(other.rooms, rooms);
+        listEquals(other.rooms, rooms) &&
+        other.userBookingContext == userBookingContext;
   }
 
   @override
@@ -179,6 +188,7 @@ class HotelListSearchRequest {
         checkInDate.hashCode ^
         checkOutDate.hashCode ^
         roomCount.hashCode ^
-        rooms.hashCode;
+        rooms.hashCode ^
+        userBookingContext.hashCode;
   }
 }

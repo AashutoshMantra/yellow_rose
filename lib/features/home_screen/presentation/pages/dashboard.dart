@@ -16,9 +16,11 @@ import 'package:yellow_rose/features/home_screen/presentation/cubit/home_screen_
 import 'package:yellow_rose/features/home_screen/presentation/pages/order_list_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/pages/home_screen.dart';
 import 'package:yellow_rose/features/home_screen/presentation/pages/profile_screen.dart';
+import 'package:yellow_rose/features/home_screen/presentation/widgets/booking_mode_switch.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/bottom_navigation_bar.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/flight_recent_search.dart';
 import 'package:yellow_rose/features/home_screen/presentation/widgets/recent/show_recent_searches_widget.dart';
+import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 import 'package:yellow_rose/features/trip/presentation/pages/trip_home_screen.dart';
 
 class Dashboard extends StatefulWidget {
@@ -51,50 +53,79 @@ class _DashboardState extends State<Dashboard> {
     return authCubit.shouldShowTripAsHome();
   }
 
+  void _onBookingModeChanged(bool isPersonal) {
+    context.read<AuthCubit>().setPersonalMode(isPersonal);
+    context.read<TripCubit>().clearSelectedTrip();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeScreenCubit, HomeScreenState>(
-      builder: (context, state) {
-        var castedState = state;
-        return Scaffold(
-            appBar: BaseAppBar(
-              title: castedState.selectedPage == 0
-                  ? (_shouldShowTripAsHome ? "Trips" : "Where to go?")
-                  : castedState.selectedPage == 1
-                      ? "My Bookings"
-                      : "Profile",
-              subTitle: "",
-              titleStyle: TextStyles.bodyXLargeBoldStyle()
-                  .copyWith(color: Colors.white),
-              height: _shouldShowTripAsHome ? 45.h : 90.h,
-              shouldHaveRadius:
-                  castedState.selectedPage == 0 && !_shouldShowTripAsHome,
-            ),
-            bottomNavigationBar: CustomBottomNavigationBar(
-                selected: castedState.selectedPage,
-                hideBookings: _shouldShowTripAsHome,
-                onClick: (value) {
-                  if (value == castedState.selectedPage) return;
-                  controller.animateToPage(value,
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOut);
-                  context.read<HomeScreenCubit>().setSelectedPage(value);
-                }),
-            body: PageView(
-              controller: controller,
-              physics: const NeverScrollableScrollPhysics(),
-              children: _shouldShowTripAsHome
-                  ? [
-                      const TripHomeScreen(),
-                      const ProfileScreen(),
-                    ]
-                  : [
-                      const HomeScreen(),
-                      const OrderListScreen(),
-                      const ProfileScreen(),
-                    ],
+    return BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, authState) =>
+            BlocBuilder<HomeScreenCubit, HomeScreenState>(
+              builder: (context, state) {
+                var castedState = state;
+                final authCubit = context.read<AuthCubit>();
+                final showModeSwitch = authCubit.canSwitchBookingMode &&
+                    castedState.selectedPage == 0;
+                return Scaffold(
+                    appBar: BaseAppBar(
+                      title: castedState.selectedPage == 0
+                          ? (_shouldShowTripAsHome ? "Trips" : "Where to go?")
+                          : castedState.selectedPage == 1
+                              ? "My Bookings"
+                              : "Profile",
+                      subTitle: "",
+                      titleStyle: TextStyles.bodyXLargeBoldStyle()
+                          .copyWith(color: Colors.white),
+                      height: _shouldShowTripAsHome ? 45.h : 90.h,
+                      shouldHaveRadius: castedState.selectedPage == 0 &&
+                          !_shouldShowTripAsHome &&
+                          !showModeSwitch,
+                    ),
+                    bottomNavigationBar: CustomBottomNavigationBar(
+                        selected: castedState.selectedPage,
+                        hideBookings: _shouldShowTripAsHome,
+                        onClick: (value) {
+                          if (value == castedState.selectedPage) return;
+                          controller.animateToPage(value,
+                              duration: const Duration(milliseconds: 400),
+                              curve: Curves.easeInOut);
+                          context
+                              .read<HomeScreenCubit>()
+                              .setSelectedPage(value);
+                        }),
+                    body: Column(
+                      children: [
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeInOut,
+                          child: showModeSwitch
+                              ? BookingModeSwitch(
+                                  isPersonal: authCubit.isPersonalMode,
+                                  onChanged: _onBookingModeChanged,
+                                )
+                              : const SizedBox(width: double.infinity),
+                        ),
+                        Expanded(
+                          child: PageView(
+                            controller: controller,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: _shouldShowTripAsHome
+                                ? [
+                                    const TripHomeScreen(),
+                                    const ProfileScreen(),
+                                  ]
+                                : [
+                                    const HomeScreen(),
+                                    const OrderListScreen(),
+                                    const ProfileScreen(),
+                                  ],
+                          ),
+                        ),
+                      ],
+                    ));
+              },
             ));
-      },
-    );
   }
 }

@@ -46,6 +46,7 @@ class HotelMapperUtiity {
       roomCount: hotelSearch.roomCount ?? 0,
       pageNo: 1,
       pageSize: null,
+      userBookingContext: hotelSearch.userBookingContext,
     );
   }
 
@@ -61,6 +62,7 @@ class HotelMapperUtiity {
       country: hotelSearch.place!.countryCode!,
       roomCount: hotelSearch.roomCount ?? 0,
       requestId: hotelSearch.requestId,
+      userBookingContext: hotelSearch.userBookingContext,
       rooms: List.generate(
         hotelSearch.roomCount ?? 0,
         (index) => HotelRoomRequest(
@@ -94,6 +96,7 @@ class HotelMapperUtiity {
                 : null)));
     return HotelOrderRequest(
         requestUuid: randomUid,
+        userBookingContext: hotelSearch.userBookingContext,
         source: selectedRoom.hotelSourceEnum.name,
         hotelRequest: hotelSearchMapped,
         tripUid: trip?.tripUid,

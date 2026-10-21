@@ -816,7 +816,9 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
                                   widget.orderUpdateResponse.paymentConfig
                                           ?.status ??
                                       [],
-                                  selectedTrip) ??
+                                  selectedTrip,
+                                  isPersonal:
+                                      context.read<AuthCubit>().isPersonalMode) ??
                               [];
                       if (paymentMethods.isEmpty) {
                         WidgetUtil.showSnackBar(
@@ -833,7 +835,10 @@ class _BookingDetailedScreenState extends State<BookingDetailedScreen> {
                                         widget.orderUpdateResponse.paymentConfig
                                                 ?.status ??
                                             [],
-                                        null) ??
+                                        null,
+                                        isPersonal: context
+                                            .read<AuthCubit>()
+                                            .isPersonalMode) ??
                                 [],
                             onPaymentMethodSelected: (paymentMedium) async {
                               await _handlePaymentAndBooking(paymentMedium);

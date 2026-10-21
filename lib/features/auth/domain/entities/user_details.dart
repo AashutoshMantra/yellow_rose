@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:yellow_rose/features/auth/data/models/sign_in_response.dart';
 
+bool _claimToBool(dynamic value) =>
+    value == true || value?.toString().toLowerCase() == 'true';
+
 class UserDetails {
   final String? displayName;
   final String? username;
@@ -13,6 +16,8 @@ class UserDetails {
   int? loginDomainId;
   String? userType;
   String? platform;
+  bool personalBooking = false;
+  bool personalBookingOnly = false;
 
   UserDetails({
     this.displayName,
@@ -26,6 +31,8 @@ class UserDetails {
     loginDomainId = decodedToken['loginDomainId']?.toInt();
     userType = decodedToken['userType']?.toString();
     platform = decodedToken['platform']?.toString();
+    personalBooking = _claimToBool(decodedToken['personalBooking']);
+    personalBookingOnly = _claimToBool(decodedToken['personalBookingOnly']);
   }
 
   UserDetails copyWith({

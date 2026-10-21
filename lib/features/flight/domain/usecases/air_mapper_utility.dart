@@ -130,6 +130,7 @@ class AirMapperUtility {
         prefAirline: airSearch.preferredCarrier?.code,
         directFlight: airSearch.directFlight,
         tripUid: trip?.tripUid,
+        userBookingContext: airSearch.userBookingContext,
         journeyType: airSearch.sources.length == 1
             ? JourneyType.oneWay
             : JourneyType.Return,
@@ -304,9 +305,12 @@ class AirMapperUtility {
   }
 
   static List<PaymentMediumStatus> getFilteredPaymentMediumStatusList(
-      List<PaymentMediumStatus> paymentMediumStatusList, TripResponse? trip) {
+      List<PaymentMediumStatus> paymentMediumStatusList, TripResponse? trip,
+      {bool isPersonal = false}) {
     return paymentMediumStatusList
-        .where((d) => (d.isBusinessEnabled == true))
+        .where((d) => isPersonal
+            ? d.isPersonalEnabled == true
+            : d.isBusinessEnabled == true)
         .toList();
   }
 }

@@ -51,7 +51,7 @@ class BusBookCubit extends Cubit<BusBookState> {
 
       var createOrderRequest = BusOrderCreateRequest(
         requestUuid: busSearch.requestId,
-        userBookingContext: 'C',
+        userBookingContext: busSearch.userBookingContext,
         inventoryId: busSearchResponse.id,
         source: busSearchResponse.source,
         destination: busSearchResponse.destination,
