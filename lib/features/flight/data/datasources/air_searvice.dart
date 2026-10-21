@@ -166,10 +166,10 @@ class AirServiceImpl implements AirService {
   Future<List<PNR_RetrieveResponseData>> cancelOrder(
       OrderCancelRequest cancelRequest, String orderId) async {
     var response = await _dioClient.post(
-      '${AppConfig.instance.apiBaseUrl}/order/cancel/v1/$orderId',
+      '${AppConfig.instance.apiBaseUrl}/order/cancel/v2/$orderId',
       data: cancelRequest.toMap(),
     );
-    
+
     var mappedResponse = List<PNR_RetrieveResponseData>.from(
         ((response.data?["result"]) ?? [])
             .map<PNR_RetrieveResponseData>(
