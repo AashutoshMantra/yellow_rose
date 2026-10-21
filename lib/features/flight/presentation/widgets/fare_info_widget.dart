@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yellow_rose/core/common_widgets/ImageIcon.dart';
+import 'package:yellow_rose/core/common_widgets/chip_button.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/theme/text_styles.dart';
 import 'package:yellow_rose/features/flight/data/models/airsearch/fare_details_with_type.dart';
@@ -43,6 +44,15 @@ class FareInfoWidget extends StatelessWidget {
                     color: AppColors.primaryTextSwatch[700],
                   ),
                 ),
+                subtitle: fareDetail.outOfPolicy == true
+                    ? const Align(
+                        alignment: Alignment.centerLeft,
+                        child: ChipButton(
+                          text: "Out of policy",
+                          chipType: ChipType.error,
+                        ),
+                      )
+                    : null,
                 secondary: Text(
                   "₹ ${fareDetail.baseFare + fareDetail.finalTax}",
                   style: TextStyles.bodyXLargeBoldStyle().copyWith(

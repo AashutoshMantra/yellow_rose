@@ -14,7 +14,6 @@ import 'package:yellow_rose/features/flight/data/models/pnr/pnr_retrieve_respons
 import 'package:yellow_rose/features/flight/data/models/seat_map/air_seat_map_request.dart';
 import 'package:yellow_rose/features/flight/data/models/seat_map/air_seat_map_response.dart';
 import 'package:yellow_rose/features/flight/domain/repositories/air_repository.dart';
-import 'package:yellow_rose/features/flight/domain/usecases/air_mapper_utility.dart';
 
 abstract interface class AirUseCase {
   Future<List<Airport>> getAirports();
@@ -50,8 +49,7 @@ class AirUseCaseImpl implements AirUseCase {
   @override
   Future<List<AirSearchResponse>> getAirSearchResponse(
       AirSearchRequest request) async {
-    return AirMapperUtility.removeOutOfPolicyFares(
-        await _airRepo.getAirSearchResponse(request));
+    return await _airRepo.getAirSearchResponse(request);
   }
 
   @override
