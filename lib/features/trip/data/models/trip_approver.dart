@@ -8,6 +8,9 @@ class TripApprover {
   final String? status;
   final String? tripState;
   final String? product;
+  final String? userUid;
+  final String? emailCode;
+  final String? whatsAppCode;
 
   TripApprover({
     this.approvalReferenceId,
@@ -17,6 +20,9 @@ class TripApprover {
     this.status,
     this.tripState,
     this.product,
+    this.userUid,
+    this.emailCode,
+    this.whatsAppCode,
   });
 
   TripApprover copyWith({
@@ -27,6 +33,9 @@ class TripApprover {
     String? status,
     String? tripState,
     String? product,
+    String? userUid,
+    String? emailCode,
+    String? whatsAppCode,
   }) {
     return TripApprover(
       approvalReferenceId: approvalReferenceId ?? this.approvalReferenceId,
@@ -36,6 +45,9 @@ class TripApprover {
       status: status ?? this.status,
       tripState: tripState ?? this.tripState,
       product: product ?? this.product,
+      userUid: userUid ?? this.userUid,
+      emailCode: emailCode ?? this.emailCode,
+      whatsAppCode: whatsAppCode ?? this.whatsAppCode,
     );
   }
 
@@ -63,6 +75,15 @@ class TripApprover {
     if (product != null) {
       result.addAll({'product': product});
     }
+    if (userUid != null) {
+      result.addAll({'userUid': userUid});
+    }
+    if (emailCode != null) {
+      result.addAll({'emailCode': emailCode});
+    }
+    if (whatsAppCode != null) {
+      result.addAll({'whatsAppCode': whatsAppCode});
+    }
 
     return result;
   }
@@ -76,6 +97,9 @@ class TripApprover {
       status: map['status'],
       tripState: map['tripState'],
       product: map['product'],
+      userUid: map['userUid']?.toString(),
+      emailCode: map['emailCode'],
+      whatsAppCode: map['whatsAppCode'],
     );
   }
 
@@ -86,7 +110,7 @@ class TripApprover {
 
   @override
   String toString() {
-    return 'TripApprover(approvalReferenceId: $approvalReferenceId, approvalLevel: $approvalLevel, approverName: $approverName, approverEmail: $approverEmail, status: $status, tripState: $tripState, product: $product)';
+    return 'TripApprover(approvalReferenceId: $approvalReferenceId, approvalLevel: $approvalLevel, approverName: $approverName, approverEmail: $approverEmail, status: $status, tripState: $tripState, product: $product, userUid: $userUid, emailCode: $emailCode, whatsAppCode: $whatsAppCode)';
   }
 
   @override
@@ -100,7 +124,10 @@ class TripApprover {
         other.approverEmail == approverEmail &&
         other.status == status &&
         other.tripState == tripState &&
-        other.product == product;
+        other.product == product &&
+        other.userUid == userUid &&
+        other.emailCode == emailCode &&
+        other.whatsAppCode == whatsAppCode;
   }
 
   @override
@@ -111,6 +138,9 @@ class TripApprover {
         approverEmail.hashCode ^
         status.hashCode ^
         tripState.hashCode ^
-        product.hashCode;
+        product.hashCode ^
+        userUid.hashCode ^
+        emailCode.hashCode ^
+        whatsAppCode.hashCode;
   }
 }

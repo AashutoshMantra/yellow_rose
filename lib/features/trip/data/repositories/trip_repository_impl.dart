@@ -57,6 +57,11 @@ class TripRepositoryImpl implements TripRepository {
   }
 
   @override
+  Future<List<TripApprover>> getPendingApprovals(String tripUid) async {
+    return await _tripService.getPendingApprovals(tripUid);
+  }
+
+  @override
   Future<List<TripRmTag>> getRmTags(String userId) async {
     return await _tripService.getRmTags(userId);
   }

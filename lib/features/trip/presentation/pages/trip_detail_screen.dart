@@ -12,8 +12,9 @@ import 'package:yellow_rose/dependncy_injection.dart';
 import 'package:yellow_rose/features/flight/data/models/booking/order_status/order_status.dart';
 import 'package:yellow_rose/features/flight/domain/usecases/air_usecase.dart';
 import 'package:yellow_rose/features/home_screen/presentation/pages/home_screen.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_approver.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_status_enum.dart';
-import 'package:yellow_rose/features/trip/domain/entities/trip_approval_response_status.dart';
+import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_approval_chain.dart';
 import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_status_banner.dart';
@@ -37,7 +38,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   bool _isLoading = true;
   String? _error;
   Timer? _refreshTimer;
-  TripApprovalResponseStatus? _approvalStatus;
+  TripApprover? _pendingApproval;
 
   @override
   void initState() {
@@ -76,12 +77,18 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     final trip = tripState.selectedTrip;
     if (trip?.tripUid == null) return;
 
+    final authState = context.read<AuthCubit>().state;
+    if (authState is! Authenticated || authState.userDetails.userUid == null) {
+      return;
+    }
+
     try {
-      final response =
-          await context.read<TripCubit>().getTripApprovalStatus(trip!.tripUid!);
+      final pendingApproval = await context
+          .read<TripCubit>()
+          .getPendingApproval(trip!.tripUid!, authState.userDetails.userUid!);
       if (mounted) {
         setState(() {
-          _approvalStatus = response.status;
+          _pendingApproval = pendingApproval;
         });
       }
     } catch (e) {
@@ -211,7 +218,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                 ? TripBottomBar(
                     trip: state.selectedTrip!,
                     orderDetails: _orderDetails,
-                    approvalStatus: _approvalStatus,
+                    pendingApproval: _pendingApproval,
                     onApprovalStatusChanged: _loadApprovalStatusIfTeamTrip,
                   )
                 : null,

@@ -15,6 +15,7 @@ abstract interface class TripUseCase {
   Future<void> approveDenyTrip(TripApprovalRequest request);
   Future<TripApprovalResponse> getTripApprovalStatus(String tripUid);
   Future<List<TripApprover>> getTripApprovers(String tripUid);
+  Future<List<TripApprover>> getPendingApprovals(String tripUid);
   Future<List<TripRmTag>> getRmTags(String userId);
     Future<Map<String, String>> cancelTrip(List<String> tripItemList);
 

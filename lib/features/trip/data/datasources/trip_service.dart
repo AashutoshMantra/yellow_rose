@@ -22,6 +22,7 @@ abstract class TripService {
   Future<void> approveDenyTrip(TripApprovalRequest request);
   Future<TripApprovalResponse> getTripApprovalStatus(String tripUid);
   Future<List<TripApprover>> getTripApprovers(String tripUid);
+  Future<List<TripApprover>> getPendingApprovals(String tripUid);
   Future<List<TripRmTag>> getRmTags(String userId);
   Future<Map<String, String>> cancelTrip(List<String> tripItemList);
 }
@@ -34,7 +35,7 @@ class TripServiceImpl implements TripService {
     var response = await _dioClient.post(
         "${AppConfig.instance.apiBaseUrl}/trips/save",
         data: request.toMap());
-    if(kDebugMode) {
+    if (kDebugMode) {
       log(jsonEncode(request.toMap()));
     }
     return TripResponse.fromMap(response.data);
@@ -90,10 +91,14 @@ class TripServiceImpl implements TripService {
 
   @override
   Future<void> approveDenyTrip(TripApprovalRequest request) async {
-    await _dioClient.post(
+    var response = await _dioClient.post(
       "${AppConfig.instance.apiBaseUrl}/external/app/air/update-status-web",
       data: request.toMap(),
     );
+    if (response.data["statuss"]?.toLowerCase() == "failure") {
+      throw Exception(
+          "Failed to approve/deny trip: ${response.data["message"]}");
+    }
   }
 
   @override
@@ -113,6 +118,17 @@ class TripServiceImpl implements TripService {
       approvers.add(TripApprover.fromMap(approver));
     }
     return approvers;
+  }
+
+  @override
+  Future<List<TripApprover>> getPendingApprovals(String tripUid) async {
+    var response = await _dioClient.get(
+        '${AppConfig.instance.apiBaseUrl}/tripapproval/approvallist/$tripUid');
+    var approvals = List<TripApprover>.empty(growable: true);
+    for (var approval in (response.data as List)) {
+      approvals.add(TripApprover.fromMap(approval));
+    }
+    return approvals;
   }
 
   @override

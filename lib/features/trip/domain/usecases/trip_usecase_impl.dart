@@ -57,6 +57,11 @@ class TripUseCaseImpl implements TripUseCase {
   }
 
   @override
+  Future<List<TripApprover>> getPendingApprovals(String tripUid) async {
+    return await _tripRepository.getPendingApprovals(tripUid);
+  }
+
+  @override
   Future<List<TripRmTag>> getRmTags(String userId) async {
     return await _tripRepository.getRmTags(userId);
   }

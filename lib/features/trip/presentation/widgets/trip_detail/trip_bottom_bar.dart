@@ -1,30 +1,33 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yellow_rose/core/common_widgets/bottom_button.dart';
 import 'package:yellow_rose/core/common_widgets/button.dart';
 import 'package:yellow_rose/core/common_widgets/custom_outline_button.dart';
+import 'package:yellow_rose/core/common_widgets/loader.dart';
 import 'package:yellow_rose/core/common_widgets/popup.dart';
 import 'package:yellow_rose/core/theme/app_colors.dart';
 import 'package:yellow_rose/core/utils/size_config.dart';
 import 'package:yellow_rose/core/utils/WidgetUtils.dart';
 import 'package:yellow_rose/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:yellow_rose/features/trip/data/models/trip_approver.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_status_enum.dart';
-import 'package:yellow_rose/features/trip/domain/entities/trip_approval_response_status.dart';
 import 'package:yellow_rose/features/trip/presentation/cubit/trip_cubit.dart';
 import 'package:yellow_rose/features/trip/presentation/widgets/trip_detail/trip_notes_sheet.dart';
 
 class TripBottomBar extends StatefulWidget {
   final TripResponse trip;
   final Map<String, dynamic> orderDetails;
-  final TripApprovalResponseStatus? approvalStatus;
+  final TripApprover? pendingApproval;
   final VoidCallback onApprovalStatusChanged;
 
   const TripBottomBar({
     super.key,
     required this.trip,
     required this.orderDetails,
-    this.approvalStatus,
+    this.pendingApproval,
     required this.onApprovalStatusChanged,
   });
 
@@ -75,10 +78,7 @@ class _TripBottomBarState extends State<TripBottomBar> {
   }
 
   Widget _buildTeamTripBottomBar(BuildContext context) {
-    final showApprovalButtons =
-        widget.approvalStatus == TripApprovalResponseStatus.REVIEW;
-
-    if (!showApprovalButtons) {
+    if (widget.pendingApproval == null) {
       return const SizedBox.shrink();
     }
 
@@ -89,14 +89,14 @@ class _TripBottomBarState extends State<TripBottomBar> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
         ],
       ),
       child: _isApprovingOrDenying
-          ? const Center(child: CircularProgressIndicator())
+          ? _buildLoadingIndicator()
           : Row(
               children: [
                 Expanded(
@@ -172,19 +172,26 @@ class _TripBottomBarState extends State<TripBottomBar> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
         ],
       ),
       child: _isApprovingOrDenying
-          ? const Center(child: CircularProgressIndicator())
+          ? _buildLoadingIndicator()
           : CustomOutlinedButton(
               text: 'Cancel Trip',
               buttonType: OutlinedButtonType.danger,
               onPressed: () => _handleCancelTrip(context),
             ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return SizedBox(
+      height: 48.h,
+      child: const Loader(color: Colors.transparent),
     );
   }
 
@@ -207,7 +214,8 @@ class _TripBottomBarState extends State<TripBottomBar> {
     setState(() => _isApprovingOrDenying = true);
 
     try {
-      await tripCubit.approveTrip(widget.trip.tripUid!, notes);
+      await tripCubit.approveTrip(
+          widget.trip.tripUid!, notes, widget.pendingApproval!);
 
       widget.onApprovalStatusChanged();
       tripCubit.refereshSelectedTrip();
@@ -219,7 +227,8 @@ class _TripBottomBarState extends State<TripBottomBar> {
           col: AppColors.primaryGreen,
         );
       }
-    } catch (e) {
+    } catch (e, s) {
+      log("Error approving trip: $e $s");
       if (mounted) {
         WidgetUtil.showSnackBar(
           'Failed to approve trip, try again',
@@ -250,7 +259,8 @@ class _TripBottomBarState extends State<TripBottomBar> {
     setState(() => _isApprovingOrDenying = true);
 
     try {
-      await tripCubit.denyTrip(widget.trip.tripUid!, notes);
+      await tripCubit.denyTrip(
+          widget.trip.tripUid!, notes, widget.pendingApproval!);
 
       widget.onApprovalStatusChanged();
 

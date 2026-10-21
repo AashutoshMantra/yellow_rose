@@ -60,6 +60,24 @@ class TripCubit extends Cubit<TripState> {
     }
   }
 
+  Future<void> refreshTrips(String userId) async {
+    if (state is! TripLoaded) {
+      return loadTrips(userId);
+    }
+    try {
+      final results = await Future.wait([
+        _tripUseCase.getTrips(userId),
+        _tripUseCase.getMyTeamTrip(userId),
+      ]);
+      final currentState = state;
+      if (currentState is TripLoaded) {
+        emit(currentState.copyWith(trips: results[0], teamTrips: results[1]));
+      }
+    } catch (e, s) {
+      log("$e $s");
+    }
+  }
+
   Future<TripResponse> createTrip(TripCreateRequest request) async {
     final currentState = state;
     try {
@@ -185,25 +203,44 @@ class TripCubit extends Cubit<TripState> {
     }
   }
 
-  Future<void> approveTrip(String tripUid, String notes) async {
+  Future<TripApprover?> getPendingApproval(
+      String tripUid, String userUid) async {
     try {
-      final request = TripApprovalRequest(
-        approvalNotes: notes,
-        tripUid: tripUid,
-        status: TripApprovalStatus.APPROVE,
-      );
-      await _tripUseCase.approveDenyTrip(request);
-    } catch (e) {
+      final approvals = await _tripUseCase.getPendingApprovals(tripUid);
+      return approvals
+          .where((approval) =>
+              approval.approvalReferenceId == userUid &&
+              approval.tripState?.toUpperCase() == 'INITIATED')
+          .firstOrNull;
+    } catch (e, s) {
+      log("$e $s");
       rethrow;
     }
   }
 
-  Future<void> denyTrip(String tripUid, String notes) async {
+  Future<void> approveTrip(
+      String tripUid, String notes, TripApprover approval) async {
+    await _submitApproval(tripUid, notes, approval, TripApprovalStatus.APPROVE);
+  }
+
+  Future<void> denyTrip(
+      String tripUid, String notes, TripApprover approval) async {
+    await _submitApproval(tripUid, notes, approval, TripApprovalStatus.DENY);
+  }
+
+  Future<void> _submitApproval(String tripUid, String notes,
+      TripApprover approval, TripApprovalStatus status) async {
     try {
       final request = TripApprovalRequest(
         approvalNotes: notes,
         tripUid: tripUid,
-        status: TripApprovalStatus.DENY,
+        status: status,
+        level: approval.approvalLevel,
+        userUid: approval.userUid,
+        approvalId: approval.approvalReferenceId,
+        whatsAppCode: approval.whatsAppCode,
+        emailCode: approval.emailCode,
+        product: approval.product,
       );
       await _tripUseCase.approveDenyTrip(request);
     } catch (e) {

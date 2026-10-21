@@ -14,6 +14,7 @@ import 'package:yellow_rose/features/trip/presentation/pages/trip_detail_screen.
 import 'package:yellow_rose/features/trip/presentation/widgets/create_trip_bottom_sheet.dart';
 import 'package:yellow_rose/features/trip/presentation/widgets/trip_card.dart';
 import 'package:yellow_rose/features/trip/data/models/trip_response.dart';
+import 'package:yellow_rose/main.dart';
 
 class TripHomeScreen extends StatefulWidget {
   static const String routeName = '/trip-home';
@@ -24,7 +25,7 @@ class TripHomeScreen extends StatefulWidget {
   State<TripHomeScreen> createState() => _TripHomeScreenState();
 }
 
-class _TripHomeScreenState extends State<TripHomeScreen> {
+class _TripHomeScreenState extends State<TripHomeScreen> with RouteAware {
   final ValueNotifier<String> _searchQuery = ValueNotifier<String>('');
 
   @override
@@ -34,7 +35,19 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
+  }
+
+  @override
+  void didPopNext() {
+    _refreshTripsSilently();
+  }
+
+  @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     _searchQuery.dispose();
     super.dispose();
   }
@@ -44,6 +57,13 @@ class _TripHomeScreenState extends State<TripHomeScreen> {
     if (authState is Authenticated) {
       final userId = authState.userDetails.userUid;
       context.read<TripCubit>().loadTrips(userId!);
+    }
+  }
+
+  void _refreshTripsSilently() {
+    final authState = context.read<AuthCubit>().state;
+    if (authState is Authenticated && authState.userDetails.userUid != null) {
+      context.read<TripCubit>().refreshTrips(authState.userDetails.userUid!);
     }
   }
 
