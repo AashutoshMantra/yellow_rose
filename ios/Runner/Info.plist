@@ -26,6 +26,12 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Gilpin Travels uses the camera so you can take a photo of a document to attach to your trip request.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Gilpin Travels uses your location to show nearby places and directions for your travel.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Gilpin Travels needs access to your photos so you can attach an image to your trip request.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
